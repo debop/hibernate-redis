@@ -8,10 +8,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>hibernate-search-redis</artifactId>
+    <artifactId>redis-lucene-directory</artifactId>
     <packaging>jar</packaging>
 
-    <name>hibernate-search-redis</name>
+    <name>redis-lucene-directory</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -27,12 +27,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- spring-data-redis -->
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-redis</artifactId>
-            <scope>provided</scope>
-        </dependency>
 
         <!-- project lombok -->
         <dependency>
@@ -40,5 +34,6 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 </project>
