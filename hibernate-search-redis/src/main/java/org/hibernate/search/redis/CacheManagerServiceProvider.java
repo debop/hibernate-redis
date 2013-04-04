@@ -2,7 +2,6 @@ package org.hibernate.search.redis;
 
 import org.hibernate.search.spi.BuildContext;
 import org.hibernate.search.spi.ServiceProvider;
-import org.springframework.data.redis.cache.RedisCacheManager;
 
 import java.util.Properties;
 
