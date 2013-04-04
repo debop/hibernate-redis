@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * redis.client.serializer.SerializationTool
+ * Serialization 툴 (복수의 값을 한번에 직렬화/역직렬화를 수행합니다)
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 4. 오후 11:38

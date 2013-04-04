@@ -8,13 +8,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * redis.client.serializer.BinarySerializationRedisSerializer
+ * {@link ObjectOutputStream}, {@link ObjectInputStream} 을 이용하여 객체를 직렬화/역직렬화 합니다.
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 4. 오후 11:00
  */
 @Slf4j
-public class BinarySerializationRedisSerializer implements IRedisSerializer<Object> {
+public class BinaryRedisSerializer implements IRedisSerializer<Object> {
 
     @Override
     public byte[] serialize(Object graph) throws SerializationException {
@@ -28,7 +28,7 @@ public class BinarySerializationRedisSerializer implements IRedisSerializer<Obje
 
             return bos.toByteArray();
         } catch (Exception e) {
-            log.error("객체정보를 직렬화하는데 실패했습니다.", e);
+            BinaryRedisSerializer.log.error("객체정보를 직렬화하는데 실패했습니다.", e);
             throw new RuntimeException(e);
         }
     }
@@ -42,7 +42,7 @@ public class BinarySerializationRedisSerializer implements IRedisSerializer<Obje
              ObjectInputStream ois = new ObjectInputStream(bis)) {
             return ois.readObject();
         } catch (Exception e) {
-            log.error("객체정보를 역직렬화하는데 실패했습니다.", e);
+            BinaryRedisSerializer.log.error("객체정보를 역직렬화하는데 실패했습니다.", e);
             throw new RuntimeException(e);
         }
     }
