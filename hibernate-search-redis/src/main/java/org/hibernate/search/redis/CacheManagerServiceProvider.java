@@ -2,7 +2,7 @@ package org.hibernate.search.redis;
 
 import org.hibernate.search.spi.BuildContext;
 import org.hibernate.search.spi.ServiceProvider;
-import org.springframework.cache.CacheManager;
+import org.springframework.data.redis.cache.RedisCacheManager;
 
 import java.util.Properties;
 
@@ -12,7 +12,7 @@ import java.util.Properties;
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 3. 오후 8:26
  */
-public class CacheManagerServiceProvider implements ServiceProvider<CacheManager> {
+public class CacheManagerServiceProvider implements ServiceProvider<RedisCacheManager> {
 
     @Override
     public void start(Properties properties, BuildContext context) {
@@ -20,7 +20,7 @@ public class CacheManagerServiceProvider implements ServiceProvider<CacheManager
     }
 
     @Override
-    public CacheManager getService() {
+    public RedisCacheManager getService() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

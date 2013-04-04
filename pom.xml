@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>hibernate-redis-parent</groupId>
+    <groupId>hibernate-redis</groupId>
     <artifactId>hibernate-redis-parent</artifactId>
     <packaging>pom</packaging>
     <version>0.1.0-SNAPSHOT</version>
@@ -19,9 +19,11 @@
         <hibernate.version>4.2.0.Final</hibernate.version>
         <hibernate.search.version>4.2.0.Final</hibernate.search.version>
 
-        <spring.data.redis.version>1.0.3.RELEASE</spring.data.redis.version>
+        <jedis.version>2.1.0</jedis.version>
         <lucene.version>3.6.2</lucene.version>
         <avro.version>1.6.3</avro.version>
+
+        <jackson.version>2.0.6</jackson.version>
 
         <slf4j.version>1.7.3</slf4j.version>
         <logback.version>1.0.10</logback.version>
@@ -62,20 +64,19 @@
                 <version>${hibernate.search.version}</version>
             </dependency>
 
+            <!-- Redis -->
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
+            </dependency>
+
             <!-- Lucene -->
             <dependency>
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-core</artifactId>
                 <version>${lucene.version}</version>
             </dependency>
-
-            <!-- spring-data-redis -->
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-redis</artifactId>
-                <version>${spring.data.redis.version}</version>
-            </dependency>
-
 
             <!-- Avro -->
             <dependency>
@@ -89,6 +90,18 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${google.guava.version}</version>
+            </dependency>
+
+            <!-- Jackson JSON Serializer -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
 
             <!-- Logging -->
