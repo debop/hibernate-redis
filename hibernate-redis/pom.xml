@@ -19,11 +19,23 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>hibernate-redis</groupId>
+            <artifactId>redis-client</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
         <!-- Hibernate -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jboss-logging</artifactId>
+                    <groupId>org.jboss.logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>

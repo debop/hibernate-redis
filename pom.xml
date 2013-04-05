@@ -12,9 +12,7 @@
     <modules>
         <module>redis-client</module>
         <module>redis-spring-cache</module>
-
         <module>hibernate-redis</module>
-
         <module>redis-lucene-directory</module>
         <module>hibernate-search-redis</module>
     </modules>
@@ -35,6 +33,7 @@
         <logback.version>1.0.10</logback.version>
         <google.guava.version>14.0.1</google.guava.version>
         <google.gson.version>2.2.2</google.gson.version>
+        <jodd.version>3.4.2</jodd.version>
     </properties>
 
     <dependencyManagement>
@@ -98,6 +97,29 @@
                 <artifactId>guava</artifactId>
                 <version>${google.guava.version}</version>
             </dependency>
+
+            <!-- Jodd -->
+            <dependency>
+                <groupId>org.jodd</groupId>
+                <artifactId>jodd-core</artifactId>
+                <version>${jodd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jodd</groupId>
+                <artifactId>jodd-bean</artifactId>
+                <version>${jodd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jodd</groupId>
+                <artifactId>jodd-props</artifactId>
+                <version>${jodd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jodd</groupId>
+                <artifactId>jodd-jtx</artifactId>
+                <version>${jodd.version}</version>
+            </dependency>
+
 
             <!-- Google Gson -->
             <dependency>
