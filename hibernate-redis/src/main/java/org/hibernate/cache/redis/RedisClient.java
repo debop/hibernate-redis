@@ -1,6 +1,9 @@
 package org.hibernate.cache.redis;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.cache.CacheException;
+import org.hibernate.cache.redis.util.RedisTool;
+import org.hibernate.cache.spi.Region;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
@@ -10,6 +13,9 @@ import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Redis Client 입니다.
@@ -51,6 +57,50 @@ public class RedisClient extends RedisTemplate<String, Object> {
      */
     public List<Object> mget(final Collection<String> keys) {
         return opsForValue().multiGet(keys);
+    }
+
+    public void set(Object key, Object value) {
+        opsForValue().set(key.toString(), value);
+    }
+
+    public void set(Object key, Object value, long timeout, TimeUnit unit) {
+        opsForValue().set(key.toString(), value, timeout, unit);
+    }
+
+    public void deleteRegion(final String regionName) throws CacheException {
+        if (log.isInfoEnabled())
+            log.info("Region을 Clear 합니다. Region=[{}]", regionName);
+
+        try {
+            RedisTool.withinTx(this, new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    Set<String> keys = keys(regionName + ":*");
+                    delete(keys);
+                    return null;
+                }
+            });
+        } catch (Exception e) {
+            log.error("Region을 삭제하는데 실패했습니다.", e);
+            throw new CacheException(e);
+        }
+    }
+
+    public void deleteRegion(Region region) throws CacheException {
+        deleteRegion(region.getName());
+    }
+
+    public void flushDb() {
+        if (log.isInfoEnabled())
+            log.info("DB를 Flush 합니다...");
+
+        execute(new RedisCallback<Object>() {
+            @Override
+            public Object doInRedis(RedisConnection connection) throws DataAccessException {
+                connection.flushDb();
+                return null;
+            }
+        });
     }
 
 

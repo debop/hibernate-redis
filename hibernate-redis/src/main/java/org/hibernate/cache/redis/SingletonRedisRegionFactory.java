@@ -6,20 +6,24 @@ import org.hibernate.cache.redis.util.RedisTool;
 import org.hibernate.cfg.Settings;
 
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A non-singleton RedisRegionFactory implementation.
+ * A singleton RedisRegionFactory implementation.
  *
  * @author sunghyouk.bae@gmail.com
- * @since 13. 4. 6. 오전 12:41
+ * @since 13. 4. 6. 오전 12:31
  */
 @Slf4j
-public class RedisRegionFactory extends AbstractRedisRegionFactory {
+public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
+
+    private static final AtomicInteger ReferenceCount = new AtomicInteger();
 
     private RedisClient redis;
 
-    public RedisRegionFactory(Properties props) {
+    public SingletonRedisRegionFactory(Properties props) {
         super(props);
+        this.redis = RedisTool.createRedisClient(props);
     }
 
     @Override
@@ -31,6 +35,7 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
 
         try {
             this.redis = RedisTool.createRedisClient(props);
+            ReferenceCount.incrementAndGet();
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -42,7 +47,9 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
             log.debug("Stop regoin factory");
 
         try {
-            redis.flushDb();
+            if (ReferenceCount.decrementAndGet() == 0) {
+                redis.flushDb();
+            }
             redis = null;
         } catch (Exception e) {
             log.error("redis region factory fail to stop.", e);

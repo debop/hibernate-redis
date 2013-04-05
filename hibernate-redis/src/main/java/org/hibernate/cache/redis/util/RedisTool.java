@@ -1,6 +1,7 @@
 package org.hibernate.cache.redis.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.RedisClient;
 import org.hibernate.cache.redis.serializer.GzipRedisSerializer;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -69,7 +70,7 @@ public class RedisTool {
     }
 
 
-    public static <T> T withinTx(RedisClient redis, Callable<T> callable) throws Exception {
+    public static <T> T withinTx(RedisClient redis, Callable<T> callable) throws CacheException {
 
         if (log.isTraceEnabled())
             log.debug("RedisClient 작업을 Transaction 하에서 수행합니다.");
@@ -83,7 +84,7 @@ public class RedisTool {
             redis.discard();
             if (log.isWarnEnabled())
                 log.warn("Transaction 하에서 작업 중에 실패했습니다.", e);
-            throw e;
+            throw new CacheException(e);
         }
         return result;
     }
