@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
-import redis.clients.jedis.Jedis;
+import org.hibernate.cache.redis.RedisClient;
 
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
@@ -82,7 +82,7 @@ public class PutFromLoadValidator {
      * is not a "naked put" and is allowed to proceed.
      */
     private final ConcurrentMap<Object, PendingPutMap> pendingPuts;
-    private final Jedis jedis;
+    private final RedisClient redis;
 
     private final ConcurrentMap<Object, Long> recentRemovals = Maps.newConcurrentMap();
 
@@ -107,19 +107,19 @@ public class PutFromLoadValidator {
      */
     private volatile long invalidationTimestamp;
 
-    public PutFromLoadValidator(Jedis jedis) {
-        this(jedis, NAKED_PUT_INVALIDATION_PERIOD);
+    public PutFromLoadValidator(RedisClient redis) {
+        this(redis, NAKED_PUT_INVALIDATION_PERIOD);
     }
 
-    public PutFromLoadValidator(Jedis jedis, long nakedPutInvalidationPeriod) {
-        this(jedis, null, nakedPutInvalidationPeriod);
+    public PutFromLoadValidator(RedisClient redis, long nakedPutInvalidationPeriod) {
+        this(redis, null, nakedPutInvalidationPeriod);
     }
 
-    public PutFromLoadValidator(Jedis jedis, TransactionManager tm, long nakedPutInvalidationPeriod) {
+    public PutFromLoadValidator(RedisClient redis, TransactionManager tm, long nakedPutInvalidationPeriod) {
         Cache<Object, PendingPutMap> cache = CacheBuilder.newBuilder().build();
         pendingPuts = cache.asMap();
 
-        this.jedis = jedis;
+        this.redis = redis;
         this.transactionManager = tm;
         this.nakedPutInvalidationPeriod = nakedPutInvalidationPeriod;
 

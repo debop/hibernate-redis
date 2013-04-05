@@ -1,6 +1,13 @@
 package org.hibernate.cache.redis.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.cache.redis.RedisClient;
+import org.hibernate.cache.redis.serializer.GzipRedisSerializer;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
+import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisShardInfo;
 import redis.clients.jedis.Transaction;
@@ -20,8 +27,66 @@ public class RedisTool {
 
     private RedisTool() {}
 
-    private static final StringSerializer keySerializer = new StringSerializer();
-    private static final JsonSerializer valueSerializer = new JsonSerializer();
+    private static final StringRedisSerializer keySerializer = new StringRedisSerializer();
+    private static final JacksonJsonRedisSerializer valueSerializer = new JacksonJsonRedisSerializer(Object.class);
+
+
+    public static JedisShardInfo createShardInfo(Properties props) {
+        String host = props.getProperty("redis.host", "localhost");
+        Integer port = Integer.valueOf(props.getProperty("redis.port", "6379"));
+        Integer timeout = Integer.valueOf(props.getProperty("redis.timeout", "2000"));
+
+        return new JedisShardInfo(host, port, timeout);
+    }
+
+    public static JedisConnectionFactory createConnectionFactory(Properties props) {
+        JedisConnectionFactory factory = new JedisConnectionFactory(createShardInfo(props));
+
+        Integer database = Integer.valueOf(props.getProperty("redis.database", "0"));
+        Boolean usePool = Boolean.valueOf(props.getProperty("redis.usePool", "true"));
+        factory.setDatabase(database);
+        factory.setUsePool(usePool);
+
+        return factory;
+    }
+
+    public static RedisClient createRedisClient(Properties props) {
+        if (log.isInfoEnabled())
+            log.info("RedisClient 를 생성합니다...");
+        RedisClient redis = new RedisClient();
+        redis.setConnectionFactory(createConnectionFactory(props));
+
+        StringRedisSerializer keySerializer = new StringRedisSerializer();
+        redis.setKeySerializer(keySerializer);
+        redis.setHashKeySerializer(keySerializer);
+
+        RedisSerializer valueSerializer = new GzipRedisSerializer(new JdkSerializationRedisSerializer());
+        redis.setValueSerializer(valueSerializer);
+        redis.setHashValueSerializer(valueSerializer);
+
+        redis.afterPropertiesSet();
+        return redis;
+    }
+
+
+    public static <T> T withinTx(RedisClient redis, Callable<T> callable) throws Exception {
+
+        if (log.isTraceEnabled())
+            log.debug("RedisClient 작업을 Transaction 하에서 수행합니다.");
+
+        T result = null;
+        redis.multi();
+        try {
+            result = callable.call();
+            redis.exec();
+        } catch (Exception e) {
+            redis.discard();
+            if (log.isWarnEnabled())
+                log.warn("Transaction 하에서 작업 중에 실패했습니다.", e);
+            throw e;
+        }
+        return result;
+    }
 
     /**
      * Redis Java Client 인 Jedis 를 생성합니다.
@@ -71,31 +136,5 @@ public class RedisTool {
             arr[i++] = str;
         }
         return arr;
-    }
-
-    public static byte[] serializeString(String str) {
-        return keySerializer.serialize(str);
-    }
-
-    public static String deserializeToString(byte[] bytes) {
-        return keySerializer.deserialize(bytes);
-    }
-
-    public static byte[][] serializeStringList(Collection<String> strs) {
-        final byte[][] raws = new byte[strs.size()][];
-
-        int i = 0;
-        for (String str : strs) {
-            raws[i++] = serializeString(str);
-        }
-        return raws;
-    }
-
-    public static String serializeValue(Object value) {
-        return valueSerializer.serializeToText(value);
-    }
-
-    public static <T> T deserializeValue(Class<T> clazz, String text) {
-        return valueSerializer.deserializeFromText(text, clazz);
     }
 }

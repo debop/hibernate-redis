@@ -1,7 +1,8 @@
-package redis.client.serializer;
+package org.hibernate.cache.redis.serializer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.springframework.data.redis.serializer.RedisSerializer;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +25,7 @@ public abstract class SerializationTool {
     @SuppressWarnings("unchecked")
     static <T extends Collection<?>> T deserializeValues(Collection<byte[]> rawValues,
                                                          Class<T> clazz,
-                                                         IRedisSerializer<?> redisSerializer) {
+                                                         RedisSerializer<?> redisSerializer) {
 
         if (rawValues == null)
             return null;
@@ -42,17 +43,17 @@ public abstract class SerializationTool {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> Set<T> deserialize(Set<byte[]> rawValues, IRedisSerializer<T> redisSerializer) {
+    public static <T> Set<T> deserialize(Set<byte[]> rawValues, RedisSerializer<T> redisSerializer) {
         return deserializeValues(rawValues, Set.class, redisSerializer);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> List<T> deserialize(List<byte[]> rawValues, IRedisSerializer<T> redisSerializer) {
+    public static <T> List<T> deserialize(List<byte[]> rawValues, RedisSerializer<T> redisSerializer) {
         return deserializeValues(rawValues, List.class, redisSerializer);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> Collection<T> deserialize(Collection<byte[]> rawValues, IRedisSerializer<T> redisSerializer) {
+    public static <T> Collection<T> deserialize(Collection<byte[]> rawValues, RedisSerializer<T> redisSerializer) {
         return deserializeValues(rawValues, List.class, redisSerializer);
     }
 }

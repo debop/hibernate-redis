@@ -1,11 +1,12 @@
 package org.hibernate.cache.redis.impl;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
+import org.hibernate.cache.redis.RedisClient;
 import org.hibernate.cache.spi.GeneralDataRegion;
 import org.hibernate.cache.spi.RegionFactory;
-import redis.clients.jedis.Jedis;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * org.hibernate.cache.redis.impl.BaseGeneralDataRegion
@@ -16,17 +17,13 @@ import redis.clients.jedis.Jedis;
 @Slf4j
 public abstract class BaseGeneralDataRegion extends BaseRegion implements GeneralDataRegion {
 
-    @Getter
-    private final Jedis jedis;
-
-    protected BaseGeneralDataRegion(Jedis jedis, String name, RegionFactory factory) {
-        super(jedis, name, factory);
-        this.jedis = jedis;
+    protected BaseGeneralDataRegion(RedisClient redis, String name, RegionFactory factory) {
+        super(redis, name, factory);
     }
 
     @Override
     public void evict(Object key) throws CacheException {
-        jedis.del((String) key);
+        getRedis().delete((String) key);
     }
 
     @Override
@@ -36,11 +33,11 @@ public abstract class BaseGeneralDataRegion extends BaseRegion implements Genera
 
     @Override
     public Object get(Object key) throws CacheException {
-        return jedis.get((String) key);
+        return getRedis().opsForValue().get(key);
     }
 
     @Override
     public void put(Object key, Object value) throws CacheException {
-        jedis.setex((String) key, getTimeout(), (String) value);
+        getRedis().opsForValue().set((String) key, value, getTimeout(), TimeUnit.SECONDS);
     }
 }

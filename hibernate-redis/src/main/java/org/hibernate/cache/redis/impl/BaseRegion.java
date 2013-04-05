@@ -4,10 +4,10 @@ import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
+import org.hibernate.cache.redis.RedisClient;
 import org.hibernate.cache.redis.util.RedisTool;
 import org.hibernate.cache.spi.Region;
 import org.hibernate.cache.spi.RegionFactory;
-import redis.clients.jedis.Jedis;
 
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
@@ -35,7 +35,7 @@ public abstract class BaseRegion implements Region {
     @Getter
     private final TransactionManager tm;
     @Getter
-    protected final Jedis jedis;
+    protected final RedisClient redis;
 
     private final Object syncObject = new Object();
 
@@ -44,16 +44,16 @@ public abstract class BaseRegion implements Region {
     private final AtomicReference<InvalidateState> invalidateState =
             new AtomicReference<InvalidateState>(InvalidateState.VALID);
 
-    protected BaseRegion(Jedis jedis, String name, RegionFactory factory) {
-        this(jedis, name, factory, null);
+    protected BaseRegion(RedisClient redis, String name, RegionFactory factory) {
+        this(redis, name, factory, null);
     }
 
-    protected BaseRegion(Jedis jedis, String name, RegionFactory factory, TransactionManager tm) {
+    protected BaseRegion(RedisClient redis, String name, RegionFactory factory, TransactionManager tm) {
         if (log.isTraceEnabled())
             log.trace("Region을 생성합니다. name=[{}], factory=[{}]", name, factory);
-        assert jedis != null : "Jedis should not null";
+        assert redis != null : "Jedis should not null";
 
-        this.jedis = jedis;
+        this.redis = redis;
         this.name = name;
         this.factory = factory;
         this.tm = tm;
@@ -66,7 +66,7 @@ public abstract class BaseRegion implements Region {
      */
     @Override
     public long getElementCountInMemory() {
-        return jedis.dbSize();
+        return redis.dbSize();
     }
 
     /**
@@ -112,12 +112,12 @@ public abstract class BaseRegion implements Region {
         return Collections.EMPTY_MAP;
     }
 
-    public Map<String, String> buildMap() {
+    public Map<String, Object> buildMap() {
         Set<String> keys = getKeys();
 
-        List<String> values = jedis.mget(RedisTool.toArray(keys));
+        List<Object> values = redis.mget(getKeys());
 
-        Map<String, String> map = Maps.newHashMap();
+        Map<String, Object> map = Maps.newHashMap();
         int i = 0;
         for (String key : keys) {
             map.put(key, values.get(i++));
@@ -129,14 +129,14 @@ public abstract class BaseRegion implements Region {
     public void destroy() throws CacheException {
         try {
             invalidateRegion();
-        } finally {
-            jedis.disconnect();
+        } catch (Exception e) {
+            throw new CacheException(e);
         }
     }
 
     @Override
     public boolean contains(Object key) {
-        return checkValid() && jedis.exists((String) key);
+        return checkValid() && redis.exists((String) key);
     }
 
     protected boolean isValid() {
@@ -152,7 +152,7 @@ public abstract class BaseRegion implements Region {
                     Transaction tx = suspend();
                     try {
                         // clear region in a redis transaction
-                        RedisTool.withinTx(jedis, new Callable<Void>() {
+                        RedisTool.withinTx(redis, new Callable<Void>() {
                             @Override
                             public Void call() throws Exception {
                                 invalidateRegion();
@@ -209,15 +209,11 @@ public abstract class BaseRegion implements Region {
         if (log.isDebugEnabled())
             log.debug("Invalidate region. region name=[{}]", name);
 
-        Set<String> keys = getKeys();
-        jedis.del(RedisTool.toArray(keys));
-
-        if (log.isDebugEnabled())
-            log.debug("Invalidate region. delete key count=[{}]", keys.size());
+        redis.delete(getKeys());
     }
 
     public Set<String> getKeys() {
-        return jedis.keys(name + ":*");
+        return redis.keys(name + ":*");
     }
 
     public boolean isTransactionAware() {

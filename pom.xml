@@ -10,8 +10,6 @@
     <version>0.1.0-SNAPSHOT</version>
 
     <modules>
-        <module>redis-client</module>
-        <module>redis-spring-cache</module>
         <module>hibernate-redis</module>
         <module>redis-lucene-directory</module>
         <module>hibernate-search-redis</module>
@@ -28,6 +26,7 @@
         <avro.version>1.6.3</avro.version>
         <jackson.version>2.0.6</jackson.version>
         <springframework.version>3.2.2.RELEASE</springframework.version>
+        <spring.data.redis.version>1.0.3.RELEASE</spring.data.redis.version>
 
         <slf4j.version>1.7.3</slf4j.version>
         <logback.version>1.0.10</logback.version>
@@ -145,6 +144,36 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
                 <version>${springframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+                <version>${springframework.version}</version>
+            </dependency>
+
+            <!-- Spring Data Redis -->
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-redis</artifactId>
+                <version>${spring.data.redis.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>spring-context-support</artifactId>
+                        <groupId>org.springframework</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>spring-tx</artifactId>
+                        <groupId>org.springframework</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>slf4j-api</artifactId>
+                        <groupId>org.slf4j</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>spring-core</artifactId>
+                        <groupId>org.springframework</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- Logging -->

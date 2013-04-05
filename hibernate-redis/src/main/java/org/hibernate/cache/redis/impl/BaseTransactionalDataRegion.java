@@ -1,9 +1,9 @@
 package org.hibernate.cache.redis.impl;
 
+import org.hibernate.cache.redis.RedisClient;
 import org.hibernate.cache.spi.CacheDataDescription;
 import org.hibernate.cache.spi.RegionFactory;
 import org.hibernate.cache.spi.TransactionalDataRegion;
-import redis.clients.jedis.Jedis;
 
 /**
  * org.hibernate.cache.redis.impl.BaseTransactionalDataRegion
@@ -15,8 +15,8 @@ public abstract class BaseTransactionalDataRegion extends BaseRegion implements 
 
     private final CacheDataDescription metadata;
 
-    protected BaseTransactionalDataRegion(Jedis jedis, String name, CacheDataDescription metadata, RegionFactory factory) {
-        super(jedis, name, factory);
+    protected BaseTransactionalDataRegion(RedisClient redis, String name, CacheDataDescription metadata, RegionFactory factory) {
+        super(redis, name, factory);
         this.metadata = metadata;
     }
 

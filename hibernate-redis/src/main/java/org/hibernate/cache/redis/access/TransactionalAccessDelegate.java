@@ -2,9 +2,10 @@ package org.hibernate.cache.redis.access;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
+import org.hibernate.cache.redis.RedisClient;
 import org.hibernate.cache.redis.impl.BaseRegion;
-import org.hibernate.cache.redis.util.RedisTool;
-import redis.clients.jedis.Jedis;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * org.hibernate.cache.redis.access.TransactionalAccessDelegate
@@ -15,13 +16,13 @@ import redis.clients.jedis.Jedis;
 @Slf4j
 public class TransactionalAccessDelegate {
 
-    private final Jedis jedis;
+    private final RedisClient redis;
     private final BaseRegion region;
     private final PutFromLoadValidator putValidator;
 
     public TransactionalAccessDelegate(BaseRegion region, PutFromLoadValidator validator) {
         this.region = region;
-        this.jedis = region.getJedis();
+        this.redis = region.getRedis();
         this.putValidator = validator;
     }
 
@@ -29,7 +30,7 @@ public class TransactionalAccessDelegate {
         if (!region.checkValid())
             return null;
 
-        Object val = RedisTool.deserializeValue(Object.class, jedis.get(key));
+        Object val = redis.get(key);
         if (val == null)
             putValidator.registerPendingPut(key);
         return val;
@@ -47,7 +48,7 @@ public class TransactionalAccessDelegate {
             return false;
         }
 
-        if (minimalPutOverride && jedis.exists(key))
+        if (minimalPutOverride && redis.exists(key))
             return false;
 
         if (!putValidator.acquirePutFromLoadLock(key)) {
@@ -57,7 +58,7 @@ public class TransactionalAccessDelegate {
         }
 
         try {
-            jedis.setex(key, region.getTimeout(), RedisTool.serializeValue(value));
+            redis.opsForValue().set(key, value, region.getTimeout(), TimeUnit.SECONDS);
         } finally {
             putValidator.releasePutFromLoadLock(key);
         }
