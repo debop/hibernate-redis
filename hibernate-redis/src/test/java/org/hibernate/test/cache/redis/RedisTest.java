@@ -1,13 +1,18 @@
 package org.hibernate.test.cache.redis;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.engine.transaction.internal.jdbc.JdbcTransactionFactory;
+import org.hibernate.stat.SecondLevelCacheStatistics;
 import org.hibernate.testing.junit4.BaseCoreFunctionalTestCase;
 import org.junit.Test;
 
 import java.util.Map;
+
+import static org.fest.assertions.Assertions.assertThat;
 
 /**
  * org.hibernate.test.cache.redis.RedisTest
@@ -37,13 +42,45 @@ public abstract class RedisTest extends BaseCoreFunctionalTestCase {
         cfg.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
         configCache(cfg);
         cfg.setProperty(Environment.TRANSACTION_STRATEGY, JdbcTransactionFactory.class.getName());
-
     }
 
     protected abstract void configCache(final Configuration cfg);
 
     protected abstract Map getMapFromCacheEntry(final Object entry);
 
+    @Test
+    public void queryCacheInvalidation() {
+        Session s = openSession();
+        Transaction t = s.beginTransaction();
+        Item i = new Item();
+        i.setName("widget");
+        i.setDescription("A really top-quality, full-featured widget");
+        s.persist(i);
+        t.commit();
+        s.clear();
+
+        SecondLevelCacheStatistics slcs = s.getSessionFactory().getStatistics()
+                .getSecondLevelCacheStatistics(Item.class.getName());
+        assertThat(slcs.getElementCountInMemory()).isEqualTo(1);
+
+        s = openSession();
+        t = s.beginTransaction();
+        i = (Item) s.get(Item.class, i.getId());
+
+        assertThat(i).isNotNull();
+        assertThat(i.getName()).isEqualTo("widget");
+
+        i.setDescription("A blog standard item");
+
+        t.commit();
+        s.close();
+
+        s = openSession();
+        t = s.beginTransaction();
+        s.delete(i);
+        t.commit();
+        s.close();
+    }
 
     @Test
     public void emptySecondLevelCacheEntry() throws Exception {

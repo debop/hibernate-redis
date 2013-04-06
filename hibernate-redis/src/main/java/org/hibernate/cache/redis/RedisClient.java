@@ -1,5 +1,7 @@
 package org.hibernate.cache.redis;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.util.RedisTool;
 import org.hibernate.cache.spi.Region;
@@ -30,11 +32,18 @@ public class RedisClient extends RedisTemplate<String, Object> {
     private static final boolean isTranceEnabled = log.isTraceEnabled();
     private static final boolean isDebugEnabled = log.isDebugEnabled();
 
-    public long dbSize() {
+    @Getter
+    @Setter
+    private int expiry = 120;
+
+    public Long dbSize() {
         return execute(new RedisCallback<Long>() {
             @Override
             public Long doInRedis(RedisConnection connection) throws DataAccessException {
-                return connection.dbSize();
+                Long dbSize = connection.dbSize();
+                if (isTranceEnabled)
+                    log.trace("db size 를 구했습니다. db size=[{}]", dbSize);
+                return dbSize;
             }
         });
     }
@@ -62,19 +71,18 @@ public class RedisClient extends RedisTemplate<String, Object> {
     public List<Object> mget(final Collection<String> keys) {
         if (isTranceEnabled)
             log.trace("multi get... keys=[{}]", keys);
+
         return opsForValue().multiGet(keys);
     }
 
     public void set(String key, Object value) {
-        if (isTranceEnabled)
-            log.trace("set key=[{}], value=[{}]", key, value);
-
-        opsForValue().set(key, value);
+        set(key, value, expiry, TimeUnit.SECONDS);
     }
 
     public void set(String key, Object value, long timeout, TimeUnit unit) {
         if (isTranceEnabled)
             log.trace("set key=[{}], value=[{}], timeout=[{}], unit=[{}]", key, value, timeout, unit);
+
         opsForValue().set(key, value, timeout, unit);
     }
 
@@ -91,17 +99,20 @@ public class RedisClient extends RedisTemplate<String, Object> {
      */
     public void deleteRegion(final String regionPrefix) throws CacheException {
         if (isDebugEnabled)
-            log.debug("Region을 Clear 합니다. Region=[{}]", regionPrefix);
+            log.debug("Region을 Clear 합니다... Region=[{}]", regionPrefix);
 
         try {
             RedisTool.withinTx(this, new SessionCallback<Void>() {
                 @Override
+                @SuppressWarnings("unchecked")
                 public Void execute(RedisOperations operations) throws DataAccessException {
-                    Set<String> keys = operations.keys(regionPrefix + "*");
+                    Set keys = operations.keys(regionPrefix + "*");
                     operations.delete(keys);
                     return null;
                 }
             });
+            if (isDebugEnabled)
+                log.debug("Region을 Clear 했습니다. Region=[{}]", regionPrefix);
         } catch (Exception e) {
             log.error("Region을 삭제하는데 실패했습니다.", e);
             throw new CacheException(e);
@@ -114,7 +125,7 @@ public class RedisClient extends RedisTemplate<String, Object> {
 
     public void flushDb() {
         if (isDebugEnabled)
-            log.debug("DB를 Flush 합니다...");
+            log.debug("DB 전체를 (영역에 상관없이) Flush 합니다...");
 
         execute(new RedisCallback<Object>() {
             @Override
@@ -124,7 +135,6 @@ public class RedisClient extends RedisTemplate<String, Object> {
             }
         });
     }
-
 
     @SuppressWarnings("unchecked")
     private byte[] rawKey(String key) {

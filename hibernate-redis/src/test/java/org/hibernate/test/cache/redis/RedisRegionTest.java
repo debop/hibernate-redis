@@ -20,7 +20,7 @@ public class RedisRegionTest extends RedisTest {
     @Override
     protected void configCache(Configuration cfg) {
         cfg.setProperty(Environment.CACHE_REGION_FACTORY, RedisRegionFactory.class.getName());
-        cfg.setProperty(Environment.CACHE_PROVIDER_CONFIG, "ehcache.xml");
+        cfg.setProperty(Environment.CACHE_PROVIDER_CONFIG, "redis.properties");
     }
 
     @Override
@@ -28,7 +28,7 @@ public class RedisRegionTest extends RedisTest {
         final Map map;
         if (entry.getClass()
                 .getName()
-                .equals("org.hibernate.cache.redis.strategy.AbstractReadWriteEhcacheAccessStrategy$Item")) {
+                .equals("org.hibernate.cache.redis.strategy.AbstractReadWriteRedisAccessStrategy$Item")) {
             map = ItemValueExtractor.getValue(entry);
         } else {
             map = (Map) entry;

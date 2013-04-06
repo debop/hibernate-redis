@@ -22,9 +22,6 @@ public abstract class RedisDataRegion implements Region {
     private static final String CACHE_LOCK_TIMEOUT_PROPERTY = "io.redis.hibernate.cache_lock_timeout";
     private static final int DEFAULT_CACHE_LOCK_TIMEOUT = 60 * 1000; // 60 seconds
 
-    private static final String CACHE_TIMEOUT_PROPERTY = "io.redis.hibernate.cache_timeout";
-    private static final int DEFAULT_CACHE_TIMEOUT = 5 * 60 * 1000; // 5 minutes
-
     public static final String REGION_SEPARATOR = ":-:";
 
     protected final IRedisAccessStrategyFactory accessStrategyFactory;
@@ -43,8 +40,6 @@ public abstract class RedisDataRegion implements Region {
 
     @Getter
     private final int cacheLockTimeout; // milliseconds
-    @Getter
-    private final int cacheTimeout;
 
     protected RedisDataRegion(IRedisAccessStrategyFactory accessStrategyFactory,
                               RedisClient redis,
@@ -57,8 +52,6 @@ public abstract class RedisDataRegion implements Region {
 
         this.cacheLockTimeout = Integer.decode(props.getProperty(CACHE_LOCK_TIMEOUT_PROPERTY,
                                                                  Integer.toString(DEFAULT_CACHE_LOCK_TIMEOUT)));
-        this.cacheTimeout = Integer.decode(props.getProperty(CACHE_TIMEOUT_PROPERTY,
-                                                             Integer.toString(DEFAULT_CACHE_TIMEOUT)));
     }
 
     public final String getRegionPrefix() {

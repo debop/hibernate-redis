@@ -1,6 +1,7 @@
 package org.hibernate.cache.redis.serializer;
 
 import lombok.Cleanup;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
 
@@ -15,6 +16,7 @@ import java.util.zip.GZIPOutputStream;
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 5. 오전 11:52
  */
+@Slf4j
 public class GzipRedisSerializer<T> implements RedisSerializer<T> {
 
     private RedisSerializer<T> innerSerializer;
@@ -28,6 +30,9 @@ public class GzipRedisSerializer<T> implements RedisSerializer<T> {
     @Override
     public byte[] serialize(T graph) throws SerializationException {
 
+        if (log.isTraceEnabled())
+            log.trace("객체를 직렬화 후에 압축을 수행합니다...");
+
         if (graph == null)
             return new byte[0];
 
@@ -38,8 +43,12 @@ public class GzipRedisSerializer<T> implements RedisSerializer<T> {
 
             gzip.write(bytes);
             gzip.close();
+            byte[] result = bos.toByteArray();
 
-            return bos.toByteArray();
+            if (log.isTraceEnabled())
+                log.trace("객체를 직렬화 후에 압축했습니다. 기존=[{}], 압축후=[{}]", bytes.length, result.length);
+
+            return result;
         } catch (Exception e) {
             throw new SerializationException("Gzip 압축 실패", e);
         }
@@ -47,6 +56,10 @@ public class GzipRedisSerializer<T> implements RedisSerializer<T> {
 
     @Override
     public T deserialize(byte[] bytes) throws SerializationException {
+
+        if (log.isTraceEnabled())
+            log.trace("압축된 데이터를 복원 후 객체로 역직렬화 합니다...");
+
         if (bytes == null || bytes.length == 0)
             return null;
 
@@ -60,7 +73,12 @@ public class GzipRedisSerializer<T> implements RedisSerializer<T> {
             while ((n = gzip.read(buff, 0, BUFFER_SIZE)) > 0) {
                 bos.write(buff, 0, n);
             }
-            return (T) innerSerializer.deserialize(bos.toByteArray());
+            T result = (T) innerSerializer.deserialize(bos.toByteArray());
+
+            if (log.isTraceEnabled())
+                log.trace("압축된 데이터를 복원 후 객체로 역직렬화 했습니다. result=[{}]", result);
+
+            return result;
         } catch (Exception e) {
             throw new SerializationException("Gzip 복원 실패", e);
         }
