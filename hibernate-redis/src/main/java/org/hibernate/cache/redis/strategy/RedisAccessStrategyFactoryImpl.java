@@ -47,7 +47,6 @@ public class RedisAccessStrategyFactoryImpl implements IRedisAccessStrategyFacto
     @Override
     public CollectionRegionAccessStrategy createCollectionRegionAccessStrategy(RedisCollectionRegion collectionRegion,
                                                                                AccessType accessType) {
-
         if (log.isDebugEnabled())
             log.debug("create CollectionRegionAccessStrategy. regionName=[{}], accessType=[{}]",
                       collectionRegion.getName(), accessType.getExternalName());

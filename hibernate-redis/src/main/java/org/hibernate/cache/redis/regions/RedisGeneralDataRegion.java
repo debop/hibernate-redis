@@ -7,7 +7,6 @@ import org.hibernate.cache.redis.strategy.IRedisAccessStrategyFactory;
 import org.hibernate.cache.spi.GeneralDataRegion;
 
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 /**
  * RedisGeneralDataRegion
@@ -27,33 +26,40 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
 
     @Override
     public Object get(Object key) throws CacheException {
-        if (RedisGeneralDataRegion.log.isTraceEnabled())
-            RedisGeneralDataRegion.log.trace("Get key=[{}]", key);
 
-        return redis.get(key.toString());
+        String regionedKey = getRegionedKey(key);
+
+        if (log.isTraceEnabled())
+            log.trace("Get key=[{}]", regionedKey);
+
+        return redis.get(regionedKey);
     }
 
     @Override
     public void put(Object key, Object value) throws CacheException {
-        if (RedisGeneralDataRegion.log.isTraceEnabled())
-            RedisGeneralDataRegion.log.trace("Put key=[{}], value=[{}]", key, value);
+        String regionedKey = getRegionedKey(key);
 
-        redis.set(key.toString(), value, getTimeout(), TimeUnit.SECONDS);
+        if (log.isTraceEnabled())
+            log.trace("Put key=[{}], value=[{}]", regionedKey, value);
+
+        redis.set(regionedKey, value);
     }
 
     @Override
     public void evict(Object key) throws CacheException {
-        if (RedisGeneralDataRegion.log.isTraceEnabled())
-            RedisGeneralDataRegion.log.trace("Evict key=[{}]", key);
+        String regionedKey = getRegionedKey(key);
 
-        redis.delete(key.toString());
+        if (log.isTraceEnabled())
+            log.trace("Evict key=[{}]", regionedKey);
+
+        redis.delete(regionedKey);
     }
 
     @Override
     public void evictAll() throws CacheException {
-        if (RedisGeneralDataRegion.log.isTraceEnabled())
-            RedisGeneralDataRegion.log.trace("EvictAll");
+        if (log.isTraceEnabled())
+            log.trace("EvictAll");
 
-        redis.deleteRegion(getName());
+        redis.deleteRegion(getRegionPrefix());
     }
 }

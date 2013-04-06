@@ -29,19 +29,21 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
         try {
-            return redis.get(key.toString());
+            return redis.get(region.getRegionedKey(key));
         } catch (Exception e) {
             throw new CacheException(e);
         }
     }
 
     @Override
-    public boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride) throws CacheException {
+    public boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride)
+            throws CacheException {
         try {
-            if (minimalPutOverride && redis.exists(key.toString()))
+            String regionedKey = region.getRegionedKey(key);
+            if (minimalPutOverride && redis.exists(regionedKey))
                 return false;
 
-            redis.set(key, value);
+            redis.set(regionedKey, value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -61,7 +63,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
     @Override
     public boolean insert(Object key, Object value) throws CacheException {
         try {
-            redis.set(key.toString(), value);
+            redis.set(region.getRegionedKey(key), value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -76,7 +78,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
     @Override
     public boolean update(Object key, Object value) throws CacheException {
         try {
-            redis.set(key, value);
+            redis.set(region.getRegionedKey(key), value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -90,8 +92,11 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public void remove(Object key) throws CacheException {
+        if (log.isTraceEnabled())
+            log.trace("remove key=[{}]", key);
+
         try {
-            redis.delete(key.toString());
+            redis.delete(region.getRegionedKey(key));
         } catch (Exception e) {
             throw new CacheException(e);
         }

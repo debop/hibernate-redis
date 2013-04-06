@@ -1,11 +1,15 @@
 package org.hibernate.cache.redis.util;
 
+import com.google.common.base.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.RedisClient;
 import org.hibernate.cache.redis.serializer.GzipRedisSerializer;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
-import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -15,7 +19,6 @@ import redis.clients.jedis.Transaction;
 
 import java.util.Collection;
 import java.util.Properties;
-import java.util.concurrent.Callable;
 
 /**
  * org.hibernate.cache.redis.util.RedisTool
@@ -27,10 +30,6 @@ import java.util.concurrent.Callable;
 public class RedisTool {
 
     private RedisTool() {}
-
-    private static final StringRedisSerializer keySerializer = new StringRedisSerializer();
-    private static final JacksonJsonRedisSerializer valueSerializer = new JacksonJsonRedisSerializer(Object.class);
-
 
     public static JedisShardInfo createShardInfo(Properties props) {
         String host = props.getProperty("redis.host", "localhost");
@@ -69,24 +68,24 @@ public class RedisTool {
         return redis;
     }
 
-
-    public static <T> T withinTx(RedisClient redis, Callable<T> callable) throws CacheException {
-
+    /**
+     * RedisTemplate 는 Connection Pool 을 사용하므로, Transaction을 사용하기 위해서는 한 Session에서 작업하도록 해야 합니다.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T withinTx(RedisTemplate redis,
+                                 final SessionCallback<T> callback) throws CacheException {
         if (log.isTraceEnabled())
             log.debug("RedisClient 작업을 Transaction 하에서 수행합니다.");
 
-        T result = null;
-        redis.multi();
-        try {
-            result = callable.call();
-            redis.exec();
-        } catch (Exception e) {
-            redis.discard();
-            if (log.isWarnEnabled())
-                log.warn("Transaction 하에서 작업 중에 실패했습니다.", e);
-            throw new CacheException(e);
-        }
-        return result;
+        return (T) redis.execute(new SessionCallback<T>() {
+            @Override
+            public T execute(RedisOperations operations) throws DataAccessException {
+                operations.multi();
+                T result = (T) callback.execute(operations);
+                operations.exec();
+                return result;
+            }
+        });
     }
 
     /**
@@ -114,11 +113,14 @@ public class RedisTool {
         return new Jedis(shard);
     }
 
-    public static <T> T withinTx(Jedis jedis, Callable<T> callable) throws Exception {
+    /**
+     * Transaction 하에서 작업을 수행합니다.
+     */
+    public static <T> T withinTx(Jedis jedis, Function<Jedis, T> function) throws Exception {
         T result = null;
         Transaction tx = jedis.multi();
         try {
-            result = callable.call();
+            result = function.apply(jedis);
             tx.exec();
         } catch (Exception e) {
             tx.discard();

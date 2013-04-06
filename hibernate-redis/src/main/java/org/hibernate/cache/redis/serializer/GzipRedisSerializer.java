@@ -10,7 +10,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * redis.client.serializer.GzipRedisSerializer
+ * GZip Serializer
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 5. 오전 11:52

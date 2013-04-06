@@ -9,7 +9,7 @@ import org.hibernate.cache.spi.access.SoftLock;
 import org.hibernate.cfg.Settings;
 
 /**
- * TransactionalRedisCollectionRegionAccessStrategy
+ * JTA CollectionRegionAccessStrategy.
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 5. 오후 11:14
@@ -31,19 +31,21 @@ public class TransactionalRedisCollectionRegionAccessStrategy
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
         try {
-            return redis.get(key.toString());
+            return redis.get(region.getRegionedKey(key));
         } catch (Exception e) {
             throw new CacheException(e);
         }
     }
 
     @Override
-    public boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride) throws CacheException {
+    public boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride)
+            throws CacheException {
         try {
-            if (minimalPutOverride && redis.exists(key.toString()))
+            String regionedKey = region.getRegionedKey(key);
+            if (minimalPutOverride && redis.exists(regionedKey))
                 return false;
 
-            redis.set(key, value);
+            redis.set(regionedKey, value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -63,7 +65,7 @@ public class TransactionalRedisCollectionRegionAccessStrategy
     @Override
     public void remove(Object key) throws CacheException {
         try {
-            redis.delete(key.toString());
+            redis.delete(region.getRegionedKey(key));
         } catch (Exception e) {
             throw new CacheException(e);
         }

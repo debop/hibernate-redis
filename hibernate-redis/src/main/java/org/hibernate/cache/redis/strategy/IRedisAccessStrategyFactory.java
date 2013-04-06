@@ -17,29 +17,26 @@ import org.hibernate.cache.spi.access.NaturalIdRegionAccessStrategy;
 public interface IRedisAccessStrategyFactory {
 
     /**
-     * Create {@link EntityRegionAccessStrategy} for the input {@link org.hibernate.cache.redis.regions.RedisEntityRegion} and {@link AccessType}
+     * Create {@link EntityRegionAccessStrategy}
+     * for the input {@link org.hibernate.cache.redis.regions.RedisEntityRegion} and {@link AccessType}
      *
-     * @param entityRegion
-     * @param accessType
      * @return the created {@link EntityRegionAccessStrategy}
      */
     public EntityRegionAccessStrategy createEntityRegionAccessStrategy(RedisEntityRegion entityRegion, AccessType accessType);
 
     /**
-     * Create {@link CollectionRegionAccessStrategy} for the input {@link org.hibernate.cache.redis.regions.RedisCollectionRegion} and {@link AccessType}
+     * Create {@link CollectionRegionAccessStrategy}
+     * for the input {@link org.hibernate.cache.redis.regions.RedisCollectionRegion} and {@link AccessType}
      *
-     * @param collectionRegion
-     * @param accessType
      * @return the created {@link org.hibernate.cache.redis.regions.RedisCollectionRegion}
      */
     public CollectionRegionAccessStrategy createCollectionRegionAccessStrategy(RedisCollectionRegion collectionRegion,
                                                                                AccessType accessType);
 
     /**
-     * Create {@link CollectionRegionAccessStrategy} for the input {@link org.hibernate.cache.redis.regions.RedisNaturalIdRegion} and {@link AccessType}
+     * Create {@link CollectionRegionAccessStrategy}
+     * for the input {@link org.hibernate.cache.redis.regions.RedisNaturalIdRegion} and {@link AccessType}
      *
-     * @param naturalIdRegion
-     * @param accessType
      * @return the created {@link org.hibernate.cache.redis.regions.RedisNaturalIdRegion}
      */
     public NaturalIdRegionAccessStrategy createNaturalIdRegionAccessStrategy(RedisNaturalIdRegion naturalIdRegion,

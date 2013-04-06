@@ -9,7 +9,6 @@ import org.hibernate.cache.spi.TransactionalDataRegion;
 import org.hibernate.cfg.Settings;
 
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 /**
  * RedisTransactionalDataRegion
@@ -56,33 +55,38 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     }
 
     public Object get(Object key) throws CacheException {
-        if (RedisTransactionalDataRegion.log.isTraceEnabled())
-            RedisTransactionalDataRegion.log.trace("Get key=[{}]", key);
+        String regionedKey = getRegionedKey(key);
+        if (log.isTraceEnabled())
+            log.trace("Get key=[{}]", regionedKey);
 
-        return redis.get(key.toString());
+        return redis.get(regionedKey);
     }
 
 
     public void put(Object key, Object value) throws CacheException {
-        if (RedisTransactionalDataRegion.log.isTraceEnabled())
-            RedisTransactionalDataRegion.log.trace("Put key=[{}], value=[{}]", key, value);
+        String regionedKey = getRegionedKey(key);
 
-        redis.set(key.toString(), value, getTimeout(), TimeUnit.SECONDS);
+        if (log.isTraceEnabled())
+            log.trace("Put key=[{}], value=[{}]", regionedKey, value);
+
+        redis.set(regionedKey, value);
     }
 
     public void remove(Object key) throws CacheException {
-        if (RedisTransactionalDataRegion.log.isTraceEnabled())
-            RedisTransactionalDataRegion.log.trace("Remove key=[{}]", key);
+        String regionedKey = getRegionedKey(key);
 
-        redis.delete(key.toString());
+        if (log.isTraceEnabled())
+            log.trace("Remove key=[{}]", key);
+
+        redis.delete(regionedKey);
     }
 
 
     public void clear() throws CacheException {
-        if (RedisTransactionalDataRegion.log.isTraceEnabled())
-            RedisTransactionalDataRegion.log.trace("Clear");
+        if (log.isTraceEnabled())
+            log.trace("Clear");
 
-        redis.deleteRegion(getName());
+        redis.deleteRegion(getRegionPrefix());
     }
 
     public void writeLock(Object key) { }
@@ -94,17 +98,20 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     public void readUnlock(Object key) { }
 
     public void evict(Object key) throws CacheException {
-        if (RedisTransactionalDataRegion.log.isTraceEnabled())
-            RedisTransactionalDataRegion.log.trace("Evict key=[{}]", key);
+        String regionedKey = getRegionedKey(key);
 
-        redis.delete(key.toString());
+        if (log.isTraceEnabled())
+            log.trace("Evict key=[{}]", regionedKey);
+
+        redis.delete(regionedKey);
     }
 
     public void evictAll() throws CacheException {
-        if (RedisTransactionalDataRegion.log.isTraceEnabled())
-            RedisTransactionalDataRegion.log.trace("EvictAll");
 
-        redis.deleteRegion(getName());
+        if (log.isTraceEnabled())
+            log.trace("EvictAll");
+
+        redis.deleteRegion(getRegionPrefix());
     }
 
     /**

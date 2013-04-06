@@ -25,12 +25,16 @@ public abstract class RedisDataRegion implements Region {
     private static final String CACHE_TIMEOUT_PROPERTY = "io.redis.hibernate.cache_timeout";
     private static final int DEFAULT_CACHE_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
+    public static final String REGION_SEPARATOR = ":-:";
+
     protected final IRedisAccessStrategyFactory accessStrategyFactory;
     /**
      * Region name
      */
     @Getter
     private final String name;
+
+    private final String regionPrefix;
     /**
      * Redis client instance deal hibernate data region.
      */
@@ -49,6 +53,7 @@ public abstract class RedisDataRegion implements Region {
         this.accessStrategyFactory = accessStrategyFactory;
         this.redis = redis;
         this.name = regionName;
+        this.regionPrefix = name + REGION_SEPARATOR;
 
         this.cacheLockTimeout = Integer.decode(props.getProperty(CACHE_LOCK_TIMEOUT_PROPERTY,
                                                                  Integer.toString(DEFAULT_CACHE_LOCK_TIMEOUT)));
@@ -56,23 +61,34 @@ public abstract class RedisDataRegion implements Region {
                                                              Integer.toString(DEFAULT_CACHE_TIMEOUT)));
     }
 
+    public final String getRegionPrefix() {
+        return regionPrefix;
+    }
+
+    public final String getRegionedKey(Object key) {
+        return regionPrefix + ((key != null) ? key.toString() : "");
+    }
+
+    public final String getKeyWithoutRegion(String regionedKey) {
+        int index = regionedKey.indexOf(regionPrefix);
+        if (index < 0)
+            return regionedKey;
+
+        return regionedKey.substring(index + regionPrefix.length());
+    }
+
     @Override
     public void destroy() throws CacheException {
-        if (RedisDataRegion.log.isDebugEnabled())
-            RedisDataRegion.log.debug("Region 을 삭제합니다... Region=[{}]", name);
-
         try {
-            redis.deleteRegion(getName());
+            redis.deleteRegion(getRegionPrefix());
         } catch (Exception e) {
             throw new CacheException(e);
         }
-        if (RedisDataRegion.log.isDebugEnabled())
-            RedisDataRegion.log.debug("Region 을 삭제했습니다. Region=[{}]", name);
     }
 
     @Override
     public boolean contains(Object key) {
-        return redis.exists(key.toString());
+        return redis.exists(getRegionedKey(key));
     }
 
     @Override
@@ -82,7 +98,7 @@ public abstract class RedisDataRegion implements Region {
 
     @Override
     public long getElementCountInMemory() {
-        return redis.keys(name + ":*").size();
+        return redis.keys(getRegionedKey("*")).size();
     }
 
     @Override
@@ -93,12 +109,12 @@ public abstract class RedisDataRegion implements Region {
     @Override
     public Map toMap() {
         Map<String, Object> result = new HashMap<String, Object>();
-        Set<String> keys = redis.keys(name + ":*");
+        Set<String> keys = redis.keys(getRegionedKey("*"));
         List<Object> values = redis.mget(keys);
 
         int i = 0;
         for (String key : keys) {
-            result.put(key, values.get(i++));
+            result.put(getRegionedKey(key), values.get(i++));
         }
         return result;
     }

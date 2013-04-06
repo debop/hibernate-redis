@@ -57,6 +57,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
     public final boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride)
             throws CacheException {
         region.writeLock(key);
+
         try {
             Lockable item = (Lockable) region.get(key);
             boolean writeable = (item == null) || item.isWriteable(txTimestamp, version, versionComparator);
@@ -96,6 +97,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      */
     public final void unlockItem(Object key, SoftLock lock) throws CacheException {
         region.writeLock(key);
+
         try {
             Lockable item = (Lockable) region.get(key);
             if ((item != null) && item.isUnlockable(lock)) {

@@ -29,7 +29,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
         try {
-            return redis.get(key.toString());
+            return redis.get(region.getRegionedKey(key));
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -38,10 +38,11 @@ public class TransactionalRedisEntityRegionAccessStrategy
     @Override
     public boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride) throws CacheException {
         try {
-            if (minimalPutOverride && redis.exists(key.toString()))
+            String regionedKey = region.getRegionedKey(key);
+            if (minimalPutOverride && redis.exists(regionedKey))
                 return false;
 
-            redis.set(key, value);
+            redis.set(regionedKey, value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -61,7 +62,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
     @Override
     public boolean insert(Object key, Object value, Object version) throws CacheException {
         try {
-            redis.set(key, value);
+            redis.set(region.getRegionedKey(key), value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -76,7 +77,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
     @Override
     public boolean update(Object key, Object value, Object currentVersion, Object previousVersion) throws CacheException {
         try {
-            redis.set(key.toString(), value);
+            redis.set(region.getRegionedKey(key), value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -84,14 +85,15 @@ public class TransactionalRedisEntityRegionAccessStrategy
     }
 
     @Override
-    public boolean afterUpdate(Object key, Object value, Object currentVersion, Object previousVersion, SoftLock lock) throws CacheException {
+    public boolean afterUpdate(Object key, Object value, Object currentVersion, Object previousVersion, SoftLock lock)
+            throws CacheException {
         return false;
     }
 
     @Override
     public void remove(Object key) throws CacheException {
         try {
-            redis.delete(key.toString());
+            redis.delete(region.getRegionedKey(key));
         } catch (Exception e) {
             throw new CacheException(e);
         }
