@@ -31,7 +31,7 @@ public class TransactionalRedisCollectionRegionAccessStrategy
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
         try {
-            return redis.get(region.getRegionedKey(key));
+            return redis.get(key);
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -41,11 +41,10 @@ public class TransactionalRedisCollectionRegionAccessStrategy
     public boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride)
             throws CacheException {
         try {
-            String regionedKey = region.getRegionedKey(key);
-            if (minimalPutOverride && redis.exists(regionedKey))
+            if (minimalPutOverride && redis.exists(key))
                 return false;
 
-            redis.set(regionedKey, value);
+            redis.set(key, value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -65,7 +64,7 @@ public class TransactionalRedisCollectionRegionAccessStrategy
     @Override
     public void remove(Object key) throws CacheException {
         try {
-            redis.delete(region.getRegionedKey(key));
+            redis.delete(key);
         } catch (Exception e) {
             throw new CacheException(e);
         }

@@ -55,30 +55,25 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     }
 
     public Object get(Object key) throws CacheException {
-        String regionedKey = getRegionedKey(key);
         if (log.isTraceEnabled())
-            log.trace("Get key=[{}]", regionedKey);
+            log.trace("Get key=[{}]", key);
 
-        return redis.get(regionedKey);
+        return redis.get(key);
     }
 
 
     public void put(Object key, Object value) throws CacheException {
-        String regionedKey = getRegionedKey(key);
-
         if (log.isTraceEnabled())
-            log.trace("Put key=[{}], value=[{}]", regionedKey, value);
+            log.trace("Put key=[{}], value=[{}]", key, value);
 
-        redis.set(regionedKey, value);
+        redis.set(key, value);
     }
 
     public void remove(Object key) throws CacheException {
-        String regionedKey = getRegionedKey(key);
-
         if (log.isTraceEnabled())
             log.trace("Remove key=[{}]", key);
 
-        redis.delete(regionedKey);
+        redis.delete(key);
     }
 
 
@@ -86,7 +81,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
         if (log.isTraceEnabled())
             log.trace("Clear");
 
-        redis.deleteRegion(getRegionPrefix());
+        redis.deleteRegion(getName());
     }
 
     public void writeLock(Object key) { }
@@ -98,12 +93,10 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     public void readUnlock(Object key) { }
 
     public void evict(Object key) throws CacheException {
-        String regionedKey = getRegionedKey(key);
-
         if (log.isTraceEnabled())
-            log.trace("Evict key=[{}]", regionedKey);
+            log.trace("Evict key=[{}]", key);
 
-        redis.delete(regionedKey);
+        redis.delete(key);
     }
 
     public void evictAll() throws CacheException {
@@ -111,7 +104,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
         if (log.isTraceEnabled())
             log.trace("EvictAll");
 
-        redis.deleteRegion(getRegionPrefix());
+        redis.deleteRegion(getName());
     }
 
     /**

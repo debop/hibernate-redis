@@ -9,7 +9,6 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SessionCallback;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisShardInfo;
 import redis.clients.jedis.Transaction;
@@ -65,9 +64,10 @@ public class RedisTool {
         redis.setExpiry(expiry);
         redis.setConnectionFactory(createConnectionFactory(props));
 
-        StringRedisSerializer keySerializer = new StringRedisSerializer();
-        redis.setKeySerializer(keySerializer);
-        redis.setHashKeySerializer(keySerializer);
+        // hibernate 의 key는 {@link CacheKey} 수형이다.
+//        StringRedisSerializer keySerializer = new StringRedisSerializer();
+//        redis.setKeySerializer(keySerializer);
+//        redis.setHashKeySerializer(keySerializer);
 
         // 이거 Gzip을 써야하나? ㅋ
         // RedisSerializer valueSerializer = new GzipRedisSerializer(new JdkSerializationRedisSerializer());

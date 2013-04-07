@@ -26,33 +26,26 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
 
     @Override
     public Object get(Object key) throws CacheException {
-
-        String regionedKey = getRegionedKey(key);
-
         if (log.isTraceEnabled())
-            log.trace("Get key=[{}]", regionedKey);
+            log.trace("Get key=[{}]", key);
 
-        return redis.get(regionedKey);
+        return redis.get(key);
     }
 
     @Override
     public void put(Object key, Object value) throws CacheException {
-        String regionedKey = getRegionedKey(key);
-
         if (log.isTraceEnabled())
-            log.trace("Put key=[{}], value=[{}]", regionedKey, value);
+            log.trace("Put key=[{}], value=[{}]", key, value);
 
-        redis.set(regionedKey, value);
+        redis.set(key, value);
     }
 
     @Override
     public void evict(Object key) throws CacheException {
-        String regionedKey = getRegionedKey(key);
-
         if (log.isTraceEnabled())
-            log.trace("Evict key=[{}]", regionedKey);
+            log.trace("Evict key=[{}]", key);
 
-        redis.delete(regionedKey);
+        redis.delete(key);
     }
 
     @Override
@@ -60,6 +53,6 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
         if (log.isTraceEnabled())
             log.trace("EvictAll");
 
-        redis.deleteRegion(getRegionPrefix());
+        redis.deleteRegion(getName());
     }
 }

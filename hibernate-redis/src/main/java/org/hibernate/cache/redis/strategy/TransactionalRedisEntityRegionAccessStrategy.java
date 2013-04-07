@@ -29,7 +29,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
         try {
-            return redis.get(region.getRegionedKey(key));
+            return redis.get(key);
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -38,11 +38,10 @@ public class TransactionalRedisEntityRegionAccessStrategy
     @Override
     public boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride) throws CacheException {
         try {
-            String regionedKey = region.getRegionedKey(key);
-            if (minimalPutOverride && redis.exists(regionedKey))
+            if (minimalPutOverride && redis.exists(key))
                 return false;
 
-            redis.set(regionedKey, value);
+            redis.set(key, value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -62,7 +61,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
     @Override
     public boolean insert(Object key, Object value, Object version) throws CacheException {
         try {
-            redis.set(region.getRegionedKey(key), value);
+            redis.set(key, value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -77,7 +76,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
     @Override
     public boolean update(Object key, Object value, Object currentVersion, Object previousVersion) throws CacheException {
         try {
-            redis.set(region.getRegionedKey(key), value);
+            redis.set(key, value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -93,7 +92,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
     @Override
     public void remove(Object key) throws CacheException {
         try {
-            redis.delete(region.getRegionedKey(key));
+            redis.delete(key);
         } catch (Exception e) {
             throw new CacheException(e);
         }

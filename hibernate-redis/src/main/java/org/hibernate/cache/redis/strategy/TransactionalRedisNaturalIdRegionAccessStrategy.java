@@ -29,7 +29,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
         try {
-            return redis.get(region.getRegionedKey(key));
+            return redis.get(key);
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -39,11 +39,10 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
     public boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride)
             throws CacheException {
         try {
-            String regionedKey = region.getRegionedKey(key);
-            if (minimalPutOverride && redis.exists(regionedKey))
+            if (minimalPutOverride && redis.exists(key))
                 return false;
 
-            redis.set(regionedKey, value);
+            redis.set(key, value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -63,7 +62,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
     @Override
     public boolean insert(Object key, Object value) throws CacheException {
         try {
-            redis.set(region.getRegionedKey(key), value);
+            redis.set(key, value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -78,7 +77,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
     @Override
     public boolean update(Object key, Object value) throws CacheException {
         try {
-            redis.set(region.getRegionedKey(key), value);
+            redis.set(key, value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -96,7 +95,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
             log.trace("remove key=[{}]", key);
 
         try {
-            redis.delete(region.getRegionedKey(key));
+            redis.delete(key);
         } catch (Exception e) {
             throw new CacheException(e);
         }

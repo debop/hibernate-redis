@@ -28,10 +28,7 @@ public abstract class RedisDataRegion implements Region {
     /**
      * Region name
      */
-    @Getter
     private final String name;
-
-    private final String regionPrefix;
     /**
      * Redis client instance deal hibernate data region.
      */
@@ -48,32 +45,19 @@ public abstract class RedisDataRegion implements Region {
         this.accessStrategyFactory = accessStrategyFactory;
         this.redis = redis;
         this.name = regionName;
-        this.regionPrefix = name + REGION_SEPARATOR;
 
         this.cacheLockTimeout = Integer.decode(props.getProperty(CACHE_LOCK_TIMEOUT_PROPERTY,
                                                                  Integer.toString(DEFAULT_CACHE_LOCK_TIMEOUT)));
     }
 
-    public final String getRegionPrefix() {
-        return regionPrefix;
-    }
-
-    public final String getRegionedKey(Object key) {
-        return regionPrefix + ((key != null) ? key.toString() : "");
-    }
-
-    public final String getKeyWithoutRegion(String regionedKey) {
-        int index = regionedKey.indexOf(regionPrefix);
-        if (index < 0)
-            return regionedKey;
-
-        return regionedKey.substring(index + regionPrefix.length());
+    public String getName() {
+        return name;
     }
 
     @Override
     public void destroy() throws CacheException {
         try {
-            redis.deleteRegion(getRegionPrefix());
+            redis.deleteRegion(getName());
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -81,7 +65,7 @@ public abstract class RedisDataRegion implements Region {
 
     @Override
     public boolean contains(Object key) {
-        return redis.exists(getRegionedKey(key));
+        return redis.exists(key);
     }
 
     @Override
@@ -91,7 +75,9 @@ public abstract class RedisDataRegion implements Region {
 
     @Override
     public long getElementCountInMemory() {
-        return redis.keys(getRegionedKey("*")).size();
+        if (log.isTraceEnabled())
+            log.trace("getElementCountInMemory... region=[{}]", name);
+        return redis.keysInRegion(name).size();
     }
 
     @Override
@@ -99,17 +85,23 @@ public abstract class RedisDataRegion implements Region {
         return -1;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Map toMap() {
-        Map<String, Object> result = new HashMap<String, Object>();
-        Set<String> keys = redis.keys(getRegionedKey("*"));
-        List<Object> values = redis.mget(keys);
+        try {
+            Map result = new HashMap();
+            Set keys = redis.keysInRegion(name);
+            List<Object> values = redis.mget(keys);
 
-        int i = 0;
-        for (String key : keys) {
-            result.put(getRegionedKey(key), values.get(i++));
+            int i = 0;
+            for (Object key : keys) {
+                result.put(key, values.get(i++));
+            }
+            return result;
+        } catch (Exception e) {
+            log.error("CacheEntry를 만드는데 실패했습니다.", e);
+            throw new CacheException(e);
         }
-        return result;
     }
 
     @Override
