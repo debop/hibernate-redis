@@ -34,7 +34,7 @@ public class RedisClient extends RedisTemplate<Object, Object> {
 
     @Getter
     @Setter
-    private int expiry = 120;
+    private int expiryInSeconds = 120;
 
     protected String getEntityName(Object key) {
         return ((CacheKey) key).getEntityOrRoleName();
@@ -53,11 +53,11 @@ public class RedisClient extends RedisTemplate<Object, Object> {
     }
 
     public boolean exists(final Object key) {
-        boolean result = boundSetOps(getEntityName(key)).isMember(key);
+        Long rank = boundZSetOps(getEntityName(key)).rank(key);
         // boolean result = hasKey(key);
         if (isTranceEnabled)
-            log.trace("exists key=[{}], result=[{}]", key, result);
-        return result;
+            log.trace("exists key=[{}], result=[{}]", key, rank);
+        return rank != null;
     }
 
     /**
@@ -73,7 +73,7 @@ public class RedisClient extends RedisTemplate<Object, Object> {
     public Set keysInRegion(String regionName) {
         if (isTranceEnabled)
             log.trace("get all keysInRegion in region [{}]", regionName);
-        return boundSetOps(regionName).members();
+        return boundZSetOps(regionName).range(0, -1);
     }
 
     /**
@@ -87,7 +87,7 @@ public class RedisClient extends RedisTemplate<Object, Object> {
     }
 
     public void set(final Object key, final Object value) {
-        set(key, value, expiry, TimeUnit.SECONDS);
+        set(key, value, expiryInSeconds, TimeUnit.SECONDS);
     }
 
     public void set(final Object key, final Object value, final long timeout, final TimeUnit unit) {
@@ -98,8 +98,9 @@ public class RedisClient extends RedisTemplate<Object, Object> {
             @Override
             @SuppressWarnings("unchecked")
             public Void execute(RedisOperations operations) throws DataAccessException {
-                boundSetOps(getEntityName(key)).add(key);
                 boundValueOps(key).set(value, timeout, unit);
+                boundZSetOps(getEntityName(key)).add(key, 0);
+                boundZSetOps(getEntityName(key)).expire(timeout, unit);
                 return null;
             }
         });
@@ -115,8 +116,8 @@ public class RedisClient extends RedisTemplate<Object, Object> {
             @Override
             @SuppressWarnings("unchecked")
             public Void execute(RedisOperations operations) throws DataAccessException {
-                operations.boundSetOps(getEntityName(key)).remove(key);
                 operations.delete(key);
+                operations.boundZSetOps(getEntityName(key)).remove(key);
                 return null;
             }
         });
@@ -134,8 +135,9 @@ public class RedisClient extends RedisTemplate<Object, Object> {
                 @Override
                 @SuppressWarnings("unchecked")
                 public Void execute(RedisOperations operations) throws DataAccessException {
-                    Set keys = operations.boundSetOps(regionName).members();
+                    Set keys = operations.boundZSetOps(regionName).range(0, -1);
                     operations.delete(keys);
+                    operations.boundZSetOps(regionName).removeRange(0, -1);
                     return null;
                 }
             });

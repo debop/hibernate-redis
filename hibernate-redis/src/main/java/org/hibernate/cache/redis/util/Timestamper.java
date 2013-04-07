@@ -6,9 +6,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * Generates increasing identifiers (in a single VM only).
  * Not valid across multiple VMs. Yet, the identifier is based on time, so that the drifting
  * across a cluster should not ever be large...
- *
- * @author sunghyouk.bae@gmail.com
- * @since 13. 4. 5. 오후 9:15
  */
 public final class Timestamper {
     /**

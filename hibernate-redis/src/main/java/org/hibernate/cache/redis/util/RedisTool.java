@@ -57,11 +57,11 @@ public class RedisTool {
         if (log.isInfoEnabled())
             log.info("RedisClient 를 생성합니다...");
 
-        Integer expiry = Integer.decode(props.getProperty("redis.expiry", "120"));  // 120 seconds
+        Integer expiryInSeconds = Integer.decode(props.getProperty("redis.expiryInSeconds", "120"));  // 120 seconds
 
         RedisClient redis = new RedisClient();
 
-        redis.setExpiry(expiry);
+        redis.setExpiryInSeconds(expiryInSeconds);
         redis.setConnectionFactory(createConnectionFactory(props));
 
         // hibernate 의 key는 {@link CacheKey} 수형이다.
