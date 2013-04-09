@@ -13,7 +13,6 @@
         <module>hibernate-redis</module>
         <module>redis-lucene-directory</module>
         <module>hibernate-search-redis</module>
-        <module>hibernate-ogm-redis</module>
     </modules>
 
     <properties>

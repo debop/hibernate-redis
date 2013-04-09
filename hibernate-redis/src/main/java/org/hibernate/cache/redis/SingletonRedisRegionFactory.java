@@ -56,9 +56,11 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
         try {
             if (ReferenceCount.decrementAndGet() == 0) {
                 redis.flushDb();
-                log.debug("flush db");
+
+                if (isDebugEnabled)
+                    log.debug("flush db");
             }
-            log.debug("Stop region factory!!!");
+            log.debug("Stop region factory is success");
             redis = null;
         } catch (Exception e) {
             log.error("redis region factory fail to stop.", e);
