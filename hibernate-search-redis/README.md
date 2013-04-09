@@ -1,4 +1,4 @@
 hibernate-search-redis
 ===============
 
-hibernate search fir index data store in Redis
+hibernate search for index data store in Redis
