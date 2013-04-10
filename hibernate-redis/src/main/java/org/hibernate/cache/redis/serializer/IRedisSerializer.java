@@ -11,10 +11,10 @@ public interface IRedisSerializer<T> {
     /**
      * Serialize Object
      */
-    byte[] serialize(T graph) throws Exception;
+    byte[] serialize(T graph);
 
     /**
      * Deserialize to object
      */
-    T deserialize(byte[] bytes) throws Exception;
+    T deserialize(byte[] bytes);
 }

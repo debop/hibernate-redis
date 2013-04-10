@@ -9,12 +9,12 @@ package org.hibernate.cache.redis.serializer;
 public class BinaryRedisSerializer<T> implements IRedisSerializer<T> {
 
     @Override
-    public byte[] serialize(T graph) throws Exception {
+    public byte[] serialize(T graph) {
         return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public T deserialize(byte[] bytes) throws Exception {
+    public T deserialize(byte[] bytes) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }
