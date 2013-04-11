@@ -41,9 +41,10 @@ public class JedisClient implements IRedisClient {
     }
 
     public Object get(Object key) {
+        if (isTranceEnabled)
+            log.trace("get value... key=[{}]", key);
 
         final byte[] rawKey = rawKey(key);
-
         final byte[] rawValue = execute(new IJedisCallback<byte[]>() {
             @Override
             public byte[] execute(Jedis jedis) {
@@ -102,8 +103,8 @@ public class JedisClient implements IRedisClient {
      */
     private <T> T withTx(final IJedisCallback<T> callback) {
         Jedis jedis = jedisPool.getResource();
-        Transaction tx = jedis.multi();
         try {
+            Transaction tx = jedis.multi();
             T result = callback.execute(jedis);
             tx.exec();
             return result;
