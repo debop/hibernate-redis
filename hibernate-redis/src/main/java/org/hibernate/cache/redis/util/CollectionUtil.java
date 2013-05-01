@@ -17,6 +17,7 @@
 package org.hibernate.cache.redis.util;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Collection 관련 Utility 클래스
@@ -42,5 +43,11 @@ public abstract class CollectionUtil {
             sb.append(item).append(",");
         }
         return sb.toString();
+    }
+
+    public static byte[][] toArray(Set<byte[]> set) {
+        if (set == null || set.size() == 0)
+            return new byte[0][];
+        return set.toArray(new byte[set.size()][]);
     }
 }

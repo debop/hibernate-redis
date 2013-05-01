@@ -18,10 +18,12 @@ package org.hibernate.cache.redis.jedis;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.IRedisClient;
 import org.hibernate.cache.redis.serializer.BinaryRedisSerializer;
 import org.hibernate.cache.redis.serializer.RedisSerializer;
 import org.hibernate.cache.redis.serializer.SerializationTool;
+import org.hibernate.cache.redis.util.CollectionUtil;
 import org.hibernate.cache.spi.CacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +31,6 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Transaction;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -48,9 +49,12 @@ public class JedisClient implements IRedisClient {
     private static final boolean isDebugEnabled = log.isDebugEnabled();
 
     private static final int DEFAULT_EXPIRY_IN_SECONDS = 120;
+    private static final String DEFAULT_REGION_NAME = "hibernate";
 
     public static String getEntityName(Object key) {
-        return ((CacheKey) key).getEntityOrRoleName();
+        if (key instanceof CacheKey)
+            return ((CacheKey) key).getEntityOrRoleName();
+        return DEFAULT_REGION_NAME;
     }
 
     @Getter
@@ -71,8 +75,12 @@ public class JedisClient implements IRedisClient {
     @Setter
     private RedisSerializer valueSerializer = new BinaryRedisSerializer<Object>();
 
+    public JedisClient() {
+        this(DEFAULT_REGION_NAME, new JedisPool("localhost"));
+    }
+
     public JedisClient(JedisPool jedisPool) {
-        this("hibernate", jedisPool);
+        this(DEFAULT_REGION_NAME, jedisPool);
     }
 
     public JedisClient(String regionName, JedisPool jedisPool) {
@@ -84,6 +92,16 @@ public class JedisClient implements IRedisClient {
 
         this.rawRegion = rawKey(regionName);
         this.jedisPool = jedisPool;
+    }
+
+    /** 서버와의 통신 테스트, "PONG" 을 반환한다 */
+    public String ping() {
+        return run(new JedisCallback<String>() {
+            @Override
+            public String execute(Jedis jedis) {
+                return jedis.ping();
+            }
+        });
     }
 
     /** db size를 구합니다. */
@@ -98,12 +116,12 @@ public class JedisClient implements IRedisClient {
 
     /** 키에 해당하는 캐시 값이 존재하는지 확인합니다. */
     public boolean exists(Object key) {
-        final byte[] rawKey = rawKey(getEntityName(key));
-        final byte[] rawMember = rawValue(key);
+        final byte[] rawRegion = rawRegion(key);
+        final byte[] rawKey = rawValue(key);
         Long rank = run(new JedisCallback<Long>() {
             @Override
             public Long execute(Jedis jedis) {
-                return jedis.zrank(rawKey, rawMember);
+                return jedis.zrank(rawRegion, rawKey);
             }
         });
         if (isTraceEnabled) log.trace("캐시 값이 존재하는지 확인합니다. key=[{}], exists=[{}]", key, (rank != null));
@@ -156,14 +174,9 @@ public class JedisClient implements IRedisClient {
      * @return 캐시 값의 컬렉션
      */
     public List<Object> mget(Collection<Object> keys) {
-        if (isTraceEnabled) log.trace("multi get... keys=[{}]", Arrays.toString(keys.toArray()));
+        if (isTraceEnabled) log.trace("multi get... keys=[{}]", CollectionUtil.toString(keys));
 
-        final byte[][] rawKeys = new byte[keys.size()][];
-        int i = 0;
-        for (Object key : keys) {
-            rawKeys[i] = rawKey(key);
-        }
-
+        final byte[][] rawKeys = rawKeys(keys);
         List<byte[]> rawValues = run(new JedisCallback<List<byte[]>>() {
             @Override
             public List<byte[]> execute(Jedis jedis) {
@@ -198,16 +211,64 @@ public class JedisClient implements IRedisClient {
 
         final byte[] rawKey = rawKey(key);
         final byte[] rawValue = rawValue(value);
+        final byte[] rawRegion = rawRegion(key);
         final int seconds = (int) unit.toSeconds(timeout);
 
-        runWithTx(new JedisCallback<Void>() {
+        runWithTx(new JedisTransactionalCallback() {
             @Override
-            public Void execute(Jedis jedis) {
-                jedis.set(rawKey, rawValue);
-                jedis.expire(rawKey, seconds);
-                jedis.zadd(rawRegion, 0, rawKey);
-                jedis.expire(rawRegion, seconds);
-                return null;
+            public void execute(Transaction tx) {
+                tx.set(rawKey, rawValue);
+                tx.expire(rawKey, seconds);
+                tx.zadd(rawRegion, 0, rawKey);
+                tx.expire(rawRegion, seconds);
+            }
+        });
+    }
+
+    public void del(Object key) {
+        if (isTraceEnabled) log.trace("캐시를 삭제합니다. key=[{}]", key);
+
+        final byte[] rawKey = rawKey(key);
+        final byte[] rawRegion = rawRegion(key);
+
+        runWithTx(new JedisTransactionalCallback() {
+            @Override
+            public void execute(Transaction tx) {
+                tx.del(rawKey);
+                tx.zrem(rawRegion, rawKey);
+            }
+        });
+    }
+
+    public void deleteRegion(final String regionName) throws CacheException {
+        log.info("Region 전체를 삭제합니다... regionName=[{}]", regionName);
+
+        try {
+            final byte[] rawRegion = rawRegion(regionName);
+            runWithTx(new JedisTransactionalCallback() {
+                @Override
+                public void execute(Transaction tx) {
+                    Set<byte[]> keys = tx.zrange(rawRegion, 0, -1).get();
+                    byte[][] keyArr = CollectionUtil.toArray(keys);
+                    if (keyArr.length > 0) {
+                        tx.del(keyArr);
+                        tx.zremrangeByRank(rawRegion, 0, -1);
+                    }
+                }
+            });
+        } catch (Throwable t) {
+            log.error("Region을 삭제하는데 실패했습니다.", t);
+            throw new CacheException(t);
+        }
+    }
+
+    public String flushDb() {
+        log.info("Redis DB 전체를 flush 합니다...");
+
+        return run(new JedisCallback<String>() {
+            @Override
+            public String execute(Jedis jedis) {
+                return jedis.flushDB();
             }
         });
     }
@@ -216,6 +277,21 @@ public class JedisClient implements IRedisClient {
     @SuppressWarnings( "unchecked" )
     private byte[] rawKey(Object key) {
         return getKeySerializer().serialize(key);
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private byte[][] rawKeys(Object... keys) {
+        byte[][] rawKeys = new byte[keys.length][];
+        for (int i = 0; i < keys.length; i++) {
+            rawKeys[i] = getKeySerializer().serialize(keys[i]);
+        }
+        return rawKeys;
+    }
+
+    /** 키를 이용해 region 값을 직렬화합니다. */
+    @SuppressWarnings( "unchecked" )
+    private byte[] rawRegion(Object key) {
+        return getKeySerializer().serialize(getEntityName(key));
     }
 
     /** byte[] 를 key 값으로 역직렬화 합니다 */
@@ -255,13 +331,13 @@ public class JedisClient implements IRedisClient {
      * 복수의 작업을 하나의 Transaction 하에서 수행하도록 합니다.<br />
      * {@link JedisPool} 을 이용하여, {@link Jedis}를 풀링하여 사용하도록 합니다.
      */
-    private <T> T runWithTx(final JedisCallback<T> callback) {
-        Jedis jedis = jedisPool.getResource();
+    private List<Object> runWithTx(final JedisTransactionalCallback callback) {
+        final Jedis jedis = jedisPool.getResource();
+
         try {
             Transaction tx = jedis.multi();
-            T result = callback.execute(jedis);
-            tx.exec();
-            return result;
+            callback.execute(tx);
+            return tx.exec();
         } catch (Throwable t) {
             log.error("Redis 작업 중 예외가 발생했습니다.", t);
             throw new RuntimeException(t);
