@@ -18,7 +18,7 @@ package org.hibernate.cache.redis.regions;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
-import org.hibernate.cache.redis.RedisClient;
+import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.strategy.IRedisAccessStrategyFactory;
 import org.hibernate.cache.spi.GeneralDataRegion;
 
@@ -34,41 +34,29 @@ import java.util.Properties;
 public abstract class RedisGeneralDataRegion extends RedisDataRegion implements GeneralDataRegion {
 
     protected RedisGeneralDataRegion(IRedisAccessStrategyFactory accessStrategyFactory,
-                                     RedisClient redis,
+                                     JedisClient jedisClient,
                                      String regionName,
                                      Properties props) {
-        super(accessStrategyFactory, redis, regionName, props);
+        super(accessStrategyFactory, jedisClient, regionName, props);
     }
 
     @Override
     public Object get(Object key) throws CacheException {
-        if (log.isTraceEnabled())
-            log.trace("Get key=[{}]", key);
-
-        return redis.get(key);
+        return jedisClient.get(key);
     }
 
     @Override
     public void put(Object key, Object value) throws CacheException {
-        if (log.isTraceEnabled())
-            log.trace("Put key=[{}], value=[{}]", key, value);
-
-        redis.set(key, value);
+        jedisClient.set(key, value);
     }
 
     @Override
     public void evict(Object key) throws CacheException {
-        if (log.isTraceEnabled())
-            log.trace("Evict key=[{}]", key);
-
-        redis.delete(key);
+        jedisClient.delete(key);
     }
 
     @Override
     public void evictAll() throws CacheException {
-        if (log.isTraceEnabled())
-            log.trace("EvictAll");
-
-        redis.deleteRegion(getName());
+        jedisClient.deleteRegion(getName());
     }
 }

@@ -16,7 +16,7 @@
 
 package org.hibernate.cache.redis.regions;
 
-import org.hibernate.cache.redis.RedisClient;
+import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.strategy.IRedisAccessStrategyFactory;
 import org.hibernate.cache.spi.TimestampsRegion;
 
@@ -31,9 +31,9 @@ import java.util.Properties;
 public class RedisTimestampsRegion extends RedisGeneralDataRegion implements TimestampsRegion {
 
     public RedisTimestampsRegion(IRedisAccessStrategyFactory accessStrategyFactory,
-                                 RedisClient redis,
+                                 JedisClient jedisClient,
                                  String regionName,
                                  Properties props) {
-        super(accessStrategyFactory, redis, regionName, props);
+        super(accessStrategyFactory, jedisClient, regionName, props);
     }
 }

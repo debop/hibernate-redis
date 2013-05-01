@@ -20,7 +20,7 @@ import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.regions.*;
 import org.hibernate.cache.redis.strategy.IRedisAccessStrategyFactory;
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactoryImpl;
-import org.hibernate.cache.redis.util.RedisTool;
+import org.hibernate.cache.redis.util.JedisTool;
 import org.hibernate.cache.spi.*;
 import org.hibernate.cache.spi.access.AccessType;
 import org.hibernate.cfg.Settings;
@@ -91,11 +91,11 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     public EntityRegion buildEntityRegion(String regionName,
                                           Properties properties,
                                           CacheDataDescription metadata) throws CacheException {
-        if (log.isDebugEnabled())
+        if (isDebugEnabled)
             log.debug("EntityRegion을 빌드합니다. Region=[{}]", regionName);
 
         return new RedisEntityRegion(accessStrategyFactory,
-                                     RedisTool.createRedisClient(properties),
+                                     JedisTool.createJedisClient(regionName, properties),
                                      regionName,
                                      settings,
                                      metadata,
@@ -106,11 +106,11 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     public NaturalIdRegion buildNaturalIdRegion(String regionName,
                                                 Properties properties,
                                                 CacheDataDescription metadata) throws CacheException {
-        if (log.isDebugEnabled())
+        if (isDebugEnabled)
             log.debug("NaturalIdRegion을 빌드합니다. Region=[{}]", regionName);
 
         return new RedisNaturalIdRegion(accessStrategyFactory,
-                                        RedisTool.createRedisClient(properties),
+                                        JedisTool.createJedisClient(regionName, properties),
                                         regionName,
                                         settings,
                                         metadata,
@@ -121,11 +121,11 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     public CollectionRegion buildCollectionRegion(String regionName,
                                                   Properties properties,
                                                   CacheDataDescription metadata) throws CacheException {
-        if (log.isDebugEnabled())
+        if (isDebugEnabled)
             log.debug("CollectionRegion을 빌드합니다. Region=[{}]", regionName);
 
         return new RedisCollectionRegion(accessStrategyFactory,
-                                         RedisTool.createRedisClient(properties),
+                                         JedisTool.createJedisClient(regionName, properties),
                                          regionName,
                                          settings,
                                          metadata,
@@ -134,22 +134,22 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
 
     @Override
     public QueryResultsRegion buildQueryResultsRegion(String regionName, Properties properties) throws CacheException {
-        if (log.isDebugEnabled())
+        if (isDebugEnabled)
             log.debug("QueryResultsRegion을 빌드합니다. Region=[{}]", regionName);
 
         return new RedisQueryResultsRegion(accessStrategyFactory,
-                                           RedisTool.createRedisClient(properties),
+                                           JedisTool.createJedisClient(regionName, properties),
                                            regionName,
                                            properties);
     }
 
     @Override
     public TimestampsRegion buildTimestampsRegion(String regionName, Properties properties) throws CacheException {
-        if (log.isDebugEnabled())
+        if (isDebugEnabled)
             log.debug("TimestampsRegion을 빌드합니다. Region=[{}]", regionName);
 
         return new RedisTimestampsRegion(accessStrategyFactory,
-                                         RedisTool.createRedisClient(properties),
+                                         JedisTool.createJedisClient(regionName, properties),
                                          regionName,
                                          properties);
     }

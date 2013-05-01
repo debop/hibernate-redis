@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.redis.lucene;
+package io.redis.lucene;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.store.Directory;
@@ -24,7 +24,7 @@ import org.apache.lucene.store.IndexOutput;
 import java.io.IOException;
 
 /**
- * org.redis.lucene.RedisDirectory
+ * RedisDirectory
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 3. 오후 8:58

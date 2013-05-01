@@ -30,6 +30,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Transaction;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -87,7 +88,8 @@ public class JedisClient {
     }
 
     public JedisClient(String regionName, JedisPool jedisPool, int expiryInSeconds) {
-        log.debug("JedisClient created. regionName=[{}]", regionName);
+        log.debug("JedisClient created. regionName=[{}], jedisPool=[{}], expiryInSeconds=[{}]",
+                  regionName, jedisPool, expiryInSeconds);
 
         this.regionName = regionName;
         this.jedisPool = jedisPool;
@@ -176,6 +178,9 @@ public class JedisClient {
     public List<Object> mget(Collection<? extends Object> keys) {
         if (isTraceEnabled) log.trace("multi get... keys=[{}]", CollectionUtil.toString(keys));
 
+        if (keys == null || keys.size() == 0)
+            return new ArrayList<Object>();
+
         final byte[][] rawKeys = rawKeys(keys);
         List<byte[]> rawValues = run(new JedisCallback<List<byte[]>>() {
             @Override
@@ -235,6 +240,10 @@ public class JedisClient {
                 }
             }
         });
+    }
+
+    public void delete(Object key) {
+        del(key);
     }
 
     /** 지정된 키의 항목으로 삭제합니다. */

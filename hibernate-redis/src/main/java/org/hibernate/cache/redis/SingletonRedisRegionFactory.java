@@ -17,7 +17,8 @@
 package org.hibernate.cache.redis;
 
 import org.hibernate.cache.CacheException;
-import org.hibernate.cache.redis.util.RedisTool;
+import org.hibernate.cache.redis.jedis.JedisClient;
+import org.hibernate.cache.redis.util.JedisTool;
 import org.hibernate.cfg.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +40,11 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
 
     private static final AtomicInteger ReferenceCount = new AtomicInteger();
 
-    private RedisClient redis;
+    private JedisClient jedisClient;
 
     public SingletonRedisRegionFactory(Properties props) {
         super(props);
-        this.redis = RedisTool.createRedisClient(props);
+        this.jedisClient = JedisTool.createJedisClient(props);
     }
 
     @Override
@@ -54,7 +55,7 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
         this.settings = settings;
 
         try {
-            this.redis = RedisTool.createRedisClient(props);
+            this.jedisClient = JedisTool.createJedisClient(props);
             ReferenceCount.incrementAndGet();
 
             if (isDebugEnabled)
@@ -71,15 +72,15 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
 
         try {
             if (ReferenceCount.decrementAndGet() == 0) {
-                redis.flushDb();
+                jedisClient.flushDb();
 
                 if (isDebugEnabled)
                     log.debug("flush db");
             }
             log.debug("Stop region factory is success");
-            redis = null;
+            jedisClient = null;
         } catch (Exception e) {
-            log.error("redis region factory fail to stop.", e);
+            log.error("jedisClient region factory fail to stop.", e);
         }
     }
 }

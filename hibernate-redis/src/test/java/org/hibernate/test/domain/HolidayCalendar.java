@@ -1,6 +1,5 @@
 package org.hibernate.test.domain;
 
-import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +10,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,7 +28,7 @@ public class HolidayCalendar {
     @GeneratedValue
     private Long id;
 
-    private Map<Date, String> holidays = Maps.newHashMap();
+    private Map<Date, String> holidays = new HashMap<Date, String>();
 
     public HolidayCalendar init() {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");

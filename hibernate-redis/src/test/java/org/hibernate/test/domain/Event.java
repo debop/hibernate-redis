@@ -1,11 +1,11 @@
 package org.hibernate.test.domain;
 
-import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -25,13 +25,13 @@ public class Event {
 
     private String title;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal( TemporalType.TIMESTAMP )
     private Date date;
 
-    private Set<Person> participants = Sets.newHashSet();
+    private Set<Person> participants = new HashSet<Person>();
 
     @ManyToOne
-    @JoinColumn(name = "Organizer_Id")
+    @JoinColumn( name = "Organizer_Id" )
     private Person organizer;
 
     public void addParticipant(Person person) {

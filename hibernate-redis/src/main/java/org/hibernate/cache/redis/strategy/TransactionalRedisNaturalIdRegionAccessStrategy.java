@@ -16,9 +16,10 @@
 
 package org.hibernate.cache.redis.strategy;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
-import org.hibernate.cache.redis.RedisClient;
+import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.regions.RedisNaturalIdRegion;
 import org.hibernate.cache.spi.access.NaturalIdRegionAccessStrategy;
 import org.hibernate.cache.spi.access.SoftLock;
@@ -35,17 +36,20 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
         extends AbstractRedisAccessStrategy<RedisNaturalIdRegion>
         implements NaturalIdRegionAccessStrategy {
 
-    private final RedisClient redis;
+    @Getter
+    private final JedisClient jedisClient;
 
-    public TransactionalRedisNaturalIdRegionAccessStrategy(RedisNaturalIdRegion region, RedisClient redis, Settings settings) {
+    public TransactionalRedisNaturalIdRegionAccessStrategy(RedisNaturalIdRegion region,
+                                                           JedisClient jedis,
+                                                           Settings settings) {
         super(region, settings);
-        this.redis = redis;
+        this.jedisClient = jedis;
     }
 
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
         try {
-            return redis.get(key);
+            return jedisClient.get(key);
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -55,10 +59,10 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
     public boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride)
             throws CacheException {
         try {
-            if (minimalPutOverride && redis.exists(key))
+            if (minimalPutOverride && jedisClient.exists(key))
                 return false;
 
-            redis.set(key, value);
+            jedisClient.set(key, value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -78,7 +82,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
     @Override
     public boolean insert(Object key, Object value) throws CacheException {
         try {
-            redis.set(key, value);
+            jedisClient.set(key, value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -93,7 +97,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
     @Override
     public boolean update(Object key, Object value) throws CacheException {
         try {
-            redis.set(key, value);
+            jedisClient.set(key, value);
             return true;
         } catch (Exception e) {
             throw new CacheException(e);
@@ -111,7 +115,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
             log.trace("remove key=[{}]", key);
 
         try {
-            redis.delete(key);
+            jedisClient.delete(key);
         } catch (Exception e) {
             throw new CacheException(e);
         }

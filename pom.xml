@@ -7,7 +7,7 @@
     <groupId>hibernate-redis</groupId>
     <artifactId>hibernate-redis-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.9.0-SNAPSHOT</version>
 
     <modules>
         <module>hibernate-redis</module>
@@ -23,10 +23,8 @@
 
         <jedis.version>2.1.0</jedis.version>
         <lucene.version>3.6.2</lucene.version>
-        <avro.version>1.6.3</avro.version>
+        <avro.version>1.7.4</avro.version>
         <jackson.version>2.0.6</jackson.version>
-        <springframework.version>3.2.2.RELEASE</springframework.version>
-        <spring.data.redis.version>1.0.3.RELEASE</spring.data.redis.version>
 
         <logback.version>1.0.11</logback.version>
         <slf4j.version>1.7.3</slf4j.version>
@@ -109,84 +107,6 @@
                 <version>${google.guava.version}</version>
             </dependency>
 
-            <!-- Jodd -->
-            <dependency>
-                <groupId>org.jodd</groupId>
-                <artifactId>jodd-core</artifactId>
-                <version>${jodd.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jodd</groupId>
-                <artifactId>jodd-bean</artifactId>
-                <version>${jodd.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jodd</groupId>
-                <artifactId>jodd-props</artifactId>
-                <version>${jodd.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jodd</groupId>
-                <artifactId>jodd-jtx</artifactId>
-                <version>${jodd.version}</version>
-            </dependency>
-
-            <!-- Google Gson -->
-            <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>${google.gson.version}</version>
-            </dependency>
-
-            <!-- Jackson JSON Serializer -->
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-
-            <!-- Spring framework -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-                <version>${springframework.version}</version>
-            </dependency>
-
-            <!-- Spring Data Redis -->
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-redis</artifactId>
-                <version>${spring.data.redis.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>spring-context-support</artifactId>
-                        <groupId>org.springframework</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>spring-tx</artifactId>
-                        <groupId>org.springframework</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>slf4j-api</artifactId>
-                        <groupId>org.slf4j</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>spring-core</artifactId>
-                        <groupId>org.springframework</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
             <!-- Logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -262,13 +182,6 @@
     </dependencyManagement>
 
     <dependencies>
-
-        <!-- Google Guava -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -360,7 +273,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-idea-plugin</artifactId>
-                <version>2.1</version>
+                <version>2.2</version>
                 <configuration>
                     <downloadSources>true</downloadSources>
                     <downloadJavadocs>true</downloadJavadocs>
@@ -372,7 +285,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
+                <version>3.1</version>
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
@@ -383,6 +296,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -396,6 +310,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <executions>
                     <execution>
                         <goals>

@@ -53,7 +53,7 @@ public class RedisAccessStrategyFactoryImpl implements IRedisAccessStrategyFacto
                 return new NonStrictReadWriteRedisEntityRegionAccessStrategy(entityRegion, entityRegion.getSettings());
             case TRANSACTIONAL:
                 return new TransactionalRedisEntityRegionAccessStrategy(entityRegion,
-                                                                        entityRegion.getRedis(),
+                                                                        entityRegion.getJedisClient(),
                                                                         entityRegion.getSettings());
             default:
                 throw new IllegalArgumentException("unrecognized access strategy type [" + accessType + "]");
@@ -79,7 +79,7 @@ public class RedisAccessStrategyFactoryImpl implements IRedisAccessStrategyFacto
                 return new NonStrictReadWriteRedisCollectionRegionAccessStrategy(collectionRegion, collectionRegion.getSettings());
             case TRANSACTIONAL:
                 return new TransactionalRedisCollectionRegionAccessStrategy(collectionRegion,
-                                                                            collectionRegion.getRedis(),
+                                                                            collectionRegion.getJedisClient(),
                                                                             collectionRegion.getSettings());
             default:
                 throw new IllegalArgumentException("unrecognized access strategy type [" + accessType + "]");
@@ -106,7 +106,7 @@ public class RedisAccessStrategyFactoryImpl implements IRedisAccessStrategyFacto
                 return new NonStrictReadWriteRedisNaturalIdRegionAccessStrategy(naturalIdRegion, naturalIdRegion.getSettings());
             case TRANSACTIONAL:
                 return new TransactionalRedisNaturalIdRegionAccessStrategy(naturalIdRegion,
-                                                                           naturalIdRegion.getRedis(),
+                                                                           naturalIdRegion.getJedisClient(),
                                                                            naturalIdRegion.getSettings());
             default:
                 throw new IllegalArgumentException("unrecognized access strategy type [" + accessType + "]");

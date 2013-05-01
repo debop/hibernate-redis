@@ -18,7 +18,7 @@ package org.hibernate.cache.redis.regions;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
-import org.hibernate.cache.redis.RedisClient;
+import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.strategy.IRedisAccessStrategyFactory;
 import org.hibernate.cache.spi.CacheDataDescription;
 import org.hibernate.cache.spi.TransactionalDataRegion;
@@ -41,12 +41,12 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     protected final CacheDataDescription metadata;
 
     public RedisTransactionalDataRegion(IRedisAccessStrategyFactory accessStrategyFactory,
-                                        RedisClient redis,
+                                        JedisClient jedisClient,
                                         String regionName,
                                         Settings settings,
                                         CacheDataDescription metadata,
                                         Properties props) {
-        super(accessStrategyFactory, redis, regionName, props);
+        super(accessStrategyFactory, jedisClient, regionName, props);
 
         this.settings = settings;
         this.metadata = metadata;
@@ -67,33 +67,21 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     }
 
     public Object get(Object key) throws CacheException {
-        if (log.isTraceEnabled())
-            log.trace("Get key=[{}]", key);
-
-        return redis.get(key);
+        return jedisClient.get(key);
     }
 
 
     public void put(Object key, Object value) throws CacheException {
-        if (log.isTraceEnabled())
-            log.trace("Put key=[{}], value=[{}]", key, value);
-
-        redis.set(key, value);
+        jedisClient.set(key, value);
     }
 
     public void remove(Object key) throws CacheException {
-        if (log.isTraceEnabled())
-            log.trace("Remove key=[{}]", key);
-
-        redis.delete(key);
+        jedisClient.delete(key);
     }
 
 
     public void clear() throws CacheException {
-        if (log.isTraceEnabled())
-            log.trace("Clear");
-
-        redis.deleteRegion(getName());
+        jedisClient.deleteRegion(getName());
     }
 
     public void writeLock(Object key) {
@@ -113,18 +101,11 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     }
 
     public void evict(Object key) throws CacheException {
-        if (log.isTraceEnabled())
-            log.trace("Evict key=[{}]", key);
-
-        redis.delete(key);
+        jedisClient.delete(key);
     }
 
     public void evictAll() throws CacheException {
-
-        if (log.isTraceEnabled())
-            log.trace("EvictAll");
-
-        redis.deleteRegion(getName());
+        jedisClient.deleteRegion(getName());
     }
 
     /**

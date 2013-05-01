@@ -17,7 +17,8 @@
 package org.hibernate.cache.redis;
 
 import org.hibernate.cache.CacheException;
-import org.hibernate.cache.redis.util.RedisTool;
+import org.hibernate.cache.redis.jedis.JedisClient;
+import org.hibernate.cache.redis.util.JedisTool;
 import org.hibernate.cfg.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
     private static final boolean isTraceEnabled = log.isTraceEnabled();
     private static final boolean isDebugEnabled = log.isDebugEnabled();
 
-    private RedisClient redis;
+    private JedisClient jedisClient;
 
     public RedisRegionFactory(Properties props) {
         super(props);
@@ -50,7 +51,7 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
         this.settings = settings;
 
         try {
-            this.redis = RedisTool.createRedisClient(props);
+            this.jedisClient = JedisTool.createJedisClient(props);
             if (isDebugEnabled)
                 log.debug("Start region factory!!!");
         } catch (Exception e) {
@@ -60,17 +61,17 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
 
     @Override
     public void stop() {
-        if (redis == null) return;
+        if (jedisClient == null) return;
         if (isDebugEnabled)
             log.debug("Stop regoin factory...");
 
         try {
-            redis.flushDb();
-            redis = null;
+            jedisClient.flushDb();
+            jedisClient = null;
             if (isDebugEnabled)
                 log.debug("Stop region factory!!!");
         } catch (Exception e) {
-            log.error("redis region factory fail to stop.", e);
+            log.error("jedisClient region factory fail to stop.", e);
         }
     }
 }

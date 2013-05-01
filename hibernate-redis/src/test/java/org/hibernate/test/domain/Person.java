@@ -1,13 +1,13 @@
 package org.hibernate.test.domain;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,10 +30,10 @@ public class Person {
     private String firstname;
     private String lastname;
 
-    private List<Event> events = Lists.newArrayList();
-    private Set<String> emailAddresses = Sets.newHashSet();
-    private Set<PhoneNumber> phoneNumbers = Sets.newHashSet();
-    private List<String> tailsmans = Lists.newArrayList();
+    private List<Event> events = new ArrayList<Event>();
+    private Set<String> emailAddresses = new HashSet<String>();
+    private Set<PhoneNumber> phoneNumbers = new HashSet<PhoneNumber>();
+    private List<String> tailsmans = new ArrayList<String>();
 
     public String toString() {
         return getFirstname() + " " + getLastname();
