@@ -29,14 +29,6 @@ public abstract class CollectionUtil {
 
     private CollectionUtil() {}
 
-    public static String toString(Object... objs) {
-        StringBuilder sb = new StringBuilder(objs.length * 2);
-        for (Object item : objs) {
-            sb.append(item).append(",");
-        }
-        return sb.toString();
-    }
-
     public static String toString(Collection<?> collection) {
         StringBuilder sb = new StringBuilder(collection.size() * 2);
         for (Object item : collection) {
