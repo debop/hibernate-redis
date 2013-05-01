@@ -92,6 +92,7 @@ public class JedisClient implements IRedisClient {
 
         this.rawRegion = rawKey(regionName);
         this.jedisPool = jedisPool;
+        this.expiryInSeconds = expiryInSeconds;
     }
 
     /** 서버와의 통신 테스트, "PONG" 을 반환한다 */
@@ -334,6 +335,7 @@ public class JedisClient implements IRedisClient {
     private List<Object> runWithTx(final JedisTransactionalCallback callback) {
         final Jedis jedis = jedisPool.getResource();
 
+        // Jedis의 Transaction을 이용해야 한다.
         try {
             Transaction tx = jedis.multi();
             callback.execute(tx);
