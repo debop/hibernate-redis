@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package org.hibernate.cache.redis.serializer;
+package org.hibernate.cache.redis.jedis;
+
+import redis.clients.jedis.Jedis;
 
 /**
- * Serializer for Redis Key or Value
+ * Jedis 를 입력받아 jedis에 대해 작업을 수행합니다.
  *
  * @author sunghyouk.bae@gmail.com
- * @since 13. 4. 9 오후 10:20
+ * @since 13. 4. 10. 오전 10:22
  */
-public interface IRedisSerializer<T> {
-
-    /**
-     * Serialize Object
-     */
-    byte[] serialize(T graph);
-
-    /**
-     * Deserialize to object
-     */
-    T deserialize(byte[] bytes);
+public interface JedisCallback<T> {
+  /**
+   * 작업을 수행합니다.
+   *
+   * @param jedis Jedis 인스턴스
+   * @return 수행 결과
+   */
+  public T execute(Jedis jedis);
 }

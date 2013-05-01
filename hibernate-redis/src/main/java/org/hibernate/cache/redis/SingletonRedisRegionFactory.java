@@ -33,53 +33,53 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
 
-    private static final Logger log = LoggerFactory.getLogger(SingletonRedisRegionFactory.class);
-    private static final boolean isTranceEnabled = log.isTraceEnabled();
-    private static final boolean isDebugEnabled = log.isDebugEnabled();
+  private static final Logger log = LoggerFactory.getLogger(SingletonRedisRegionFactory.class);
+  private static final boolean isTraceEnabled = log.isTraceEnabled();
+  private static final boolean isDebugEnabled = log.isDebugEnabled();
 
-    private static final AtomicInteger ReferenceCount = new AtomicInteger();
+  private static final AtomicInteger ReferenceCount = new AtomicInteger();
 
-    private RedisClient redis;
+  private RedisClient redis;
 
-    public SingletonRedisRegionFactory(Properties props) {
-        super(props);
-        this.redis = RedisTool.createRedisClient(props);
+  public SingletonRedisRegionFactory(Properties props) {
+    super(props);
+    this.redis = RedisTool.createRedisClient(props);
+  }
+
+  @Override
+  public void start(Settings settings, Properties properties) throws CacheException {
+    if (isDebugEnabled)
+      log.debug("Starting region factory...");
+
+    this.settings = settings;
+
+    try {
+      this.redis = RedisTool.createRedisClient(props);
+      ReferenceCount.incrementAndGet();
+
+      if (isDebugEnabled)
+        log.debug("Start region factory");
+    } catch (Exception e) {
+      throw new CacheException(e);
     }
+  }
 
-    @Override
-    public void start(Settings settings, Properties properties) throws CacheException {
+  @Override
+  public void stop() {
+    if (isDebugEnabled)
+      log.debug("Stop regoin factory...");
+
+    try {
+      if (ReferenceCount.decrementAndGet() == 0) {
+        redis.flushDb();
+
         if (isDebugEnabled)
-            log.debug("Starting region factory...");
-
-        this.settings = settings;
-
-        try {
-            this.redis = RedisTool.createRedisClient(props);
-            ReferenceCount.incrementAndGet();
-
-            if (isDebugEnabled)
-                log.debug("Start region factory");
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
+          log.debug("flush db");
+      }
+      log.debug("Stop region factory is success");
+      redis = null;
+    } catch (Exception e) {
+      log.error("redis region factory fail to stop.", e);
     }
-
-    @Override
-    public void stop() {
-        if (isDebugEnabled)
-            log.debug("Stop regoin factory...");
-
-        try {
-            if (ReferenceCount.decrementAndGet() == 0) {
-                redis.flushDb();
-
-                if (isDebugEnabled)
-                    log.debug("flush db");
-            }
-            log.debug("Stop region factory is success");
-            redis = null;
-        } catch (Exception e) {
-            log.error("redis region factory fail to stop.", e);
-        }
-    }
+  }
 }

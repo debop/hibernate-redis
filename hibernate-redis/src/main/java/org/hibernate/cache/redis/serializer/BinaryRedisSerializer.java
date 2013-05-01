@@ -16,21 +16,47 @@
 
 package org.hibernate.cache.redis.serializer;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 /**
  * Serializer for Redis Key or Value
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 9 오후 10:20
  */
-public class BinaryRedisSerializer<T> implements IRedisSerializer<T> {
+public class BinaryRedisSerializer<T> implements RedisSerializer<T> {
 
-    @Override
-    public byte[] serialize(T graph) {
-        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
-    }
+  private static final byte[] EMPTY_BYTES = new byte[0];
 
-    @Override
-    public T deserialize(byte[] bytes) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+  @Override
+  public byte[] serialize(T graph) {
+    if (graph == null) return EMPTY_BYTES;
+
+    try (ByteArrayOutputStream os = new ByteArrayOutputStream();
+         ObjectOutputStream oos = new ObjectOutputStream(os)) {
+      oos.writeObject(graph);
+      oos.flush();
+
+      return os.toByteArray();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public T deserialize(byte[] bytes) {
+    if (SerializationTool.isEmpty(bytes))
+      return null;
+
+    try (ByteArrayInputStream is = new ByteArrayInputStream(bytes);
+         ObjectInputStream ois = new ObjectInputStream(is)) {
+      return (T) ois.readObject();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
 }
