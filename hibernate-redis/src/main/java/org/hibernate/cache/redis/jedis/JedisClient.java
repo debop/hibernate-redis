@@ -265,6 +265,7 @@ public class JedisClient {
     /** 지정된 키의 항목으로 삭제합니다. */
     public void mdel(Collection<? extends Object> keys) {
         if (isTraceEnabled) log.trace("캐시를 삭제합니다. keys=[{}]", CollectionUtil.toString(keys));
+        if (keys == null || keys.size() == 0) return;
 
         final byte[][] rawKeys = rawKeys(keys);
         final byte[][] rawRegions = rawRegions(keys);
@@ -322,12 +323,12 @@ public class JedisClient {
     }
 
     /** 키를 byte[] 로 직렬화합니다 * */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     private byte[] rawKey(Object key) {
         return getKeySerializer().serialize(key);
     }
 
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     private byte[][] rawKeys(Collection<? extends Object> keys) {
         byte[][] rawKeys = new byte[keys.size()][];
         int i = 0;
@@ -338,12 +339,12 @@ public class JedisClient {
     }
 
     /** 키를 이용해 region 값을 직렬화합니다. */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     private byte[] rawRegion(Object key) {
         return getKeySerializer().serialize(getEntityName(key));
     }
 
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     private byte[][] rawRegions(Collection<? extends Object> keys) {
         byte[][] rawRegions = new byte[keys.size()][];
         int i = 0;
@@ -365,7 +366,7 @@ public class JedisClient {
     }
 
     /** 캐시 값을 byte[]로 직렬화를 수행합니다. */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     private byte[] rawValue(Object value) {
         return getValueSerializer().serialize(value);
     }
@@ -416,13 +417,13 @@ public class JedisClient {
     }
 
     /** Raw Key 값들을 역직렬화하여 Key Set을 반환합니다. */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     private Set<Object> deserializeKeys(Set<byte[]> rawKeys) {
         return SerializationTool.deserialize(rawKeys, getKeySerializer());
     }
 
     /** Raw Value 값들을 역직렬화하여 Value List를 반환합니다. */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     private List<Object> deserializeValues(List<byte[]> rawValues) {
         return SerializationTool.deserialize(rawValues, getValueSerializer());
     }
