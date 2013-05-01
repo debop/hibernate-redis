@@ -27,7 +27,7 @@ public abstract class RedisTest extends BaseCoreFunctionalTestCase {
 
     @Override
     protected Class<?>[] getAnnotatedClasses() {
-        return new Class<?>[]{
+        return new Class<?>[] {
                 Item.class,
                 VersionedItem.class
         };
@@ -100,7 +100,7 @@ public abstract class RedisTest extends BaseCoreFunctionalTestCase {
         assertThat(cacheEntries.size()).isEqualTo(0);
     }
 
-    @SuppressWarnings({ "UnnecessaryBoxing", "UnnecessaryUnboxing", "UnusedAssignment" })
+    @SuppressWarnings( { "UnnecessaryBoxing", "UnnecessaryUnboxing", "UnusedAssignment" } )
     @Test
     public void staleWritesLeaveCacheConsistent() {
         Session s = openSession();

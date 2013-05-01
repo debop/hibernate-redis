@@ -41,13 +41,9 @@ public abstract class RedisDataRegion implements Region {
     public static final String REGION_SEPARATOR = ":-:";
 
     protected final IRedisAccessStrategyFactory accessStrategyFactory;
-    /**
-     * Region name
-     */
+    /** Region name */
     private final String name;
-    /**
-     * Redis client instance deal hibernate data region.
-     */
+    /** Redis client instance deal hibernate data region. */
     @Getter
     protected final RedisClient redis;
 
@@ -101,7 +97,7 @@ public abstract class RedisDataRegion implements Region {
         return -1;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     @Override
     public Map toMap() {
         try {

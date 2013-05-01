@@ -26,43 +26,43 @@ import java.util.*;
  */
 public abstract class SerializationTool {
 
-  static final byte[] EMPTY_ARRAY = new byte[0];
+    static final byte[] EMPTY_ARRAY = new byte[0];
 
-  static boolean isEmpty(byte[] data) {
-    return (data == null || data.length == 0);
-  }
-
-  @SuppressWarnings("unchecked")
-  private static <T extends Collection<?>> T deserializeValues(Collection<byte[]> rawValues,
-                                                               Class<T> clazz,
-                                                               RedisSerializer<?> redisSerializer) {
-    if (rawValues == null)
-      return null;
-
-    int valueCount = rawValues.size();
-    Collection<Object> values =
-        List.class.isAssignableFrom(clazz)
-            ? new ArrayList<Object>(valueCount)
-            : new HashSet<Object>(valueCount);
-
-    for (byte[] bs : rawValues) {
-      values.add(redisSerializer.deserialize(bs));
+    static boolean isEmpty(byte[] data) {
+        return (data == null || data.length == 0);
     }
-    return (T) values;
-  }
 
-  @SuppressWarnings("unchecked")
-  public static <T> Set<T> deserialize(Set<byte[]> rawValues, RedisSerializer<T> redisSerializer) {
-    return deserializeValues(rawValues, Set.class, redisSerializer);
-  }
+    @SuppressWarnings("unchecked")
+    private static <T extends Collection<?>> T deserializeValues(Collection<byte[]> rawValues,
+                                                                 Class<T> clazz,
+                                                                 RedisSerializer<?> redisSerializer) {
+        if (rawValues == null)
+            return null;
 
-  @SuppressWarnings("unchecked")
-  public static <T> List<T> deserialize(List<byte[]> rawValues, RedisSerializer<T> redisSerializer) {
-    return deserializeValues(rawValues, List.class, redisSerializer);
-  }
+        int valueCount = rawValues.size();
+        Collection<Object> values =
+                List.class.isAssignableFrom(clazz)
+                        ? new ArrayList<Object>(valueCount)
+                        : new HashSet<Object>(valueCount);
 
-  @SuppressWarnings("unchecked")
-  public static <T> Collection<T> deserialize(Collection<byte[]> rawValues, RedisSerializer<T> redisSerializer) {
-    return deserializeValues(rawValues, List.class, redisSerializer);
-  }
+        for (byte[] bs : rawValues) {
+            values.add(redisSerializer.deserialize(bs));
+        }
+        return (T) values;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Set<T> deserialize(Set<byte[]> rawValues, RedisSerializer<T> redisSerializer) {
+        return deserializeValues(rawValues, Set.class, redisSerializer);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> deserialize(List<byte[]> rawValues, RedisSerializer<T> redisSerializer) {
+        return deserializeValues(rawValues, List.class, redisSerializer);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Collection<T> deserialize(Collection<byte[]> rawValues, RedisSerializer<T> redisSerializer) {
+        return deserializeValues(rawValues, List.class, redisSerializer);
+    }
 }

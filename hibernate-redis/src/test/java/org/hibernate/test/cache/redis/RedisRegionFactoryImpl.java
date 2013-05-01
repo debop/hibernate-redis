@@ -1,6 +1,7 @@
 package org.hibernate.test.cache.redis;
 
 import org.hibernate.cache.redis.RedisRegionFactory;
+import org.hibernate.cache.redis.strategy.AbstractReadWriteRedisAccessStrategy;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 
@@ -21,12 +22,15 @@ public class RedisRegionFactoryImpl extends RedisTest {
         cfg.setProperty(Environment.CACHE_PROVIDER_CONFIG, "redis.properties");
     }
 
+    private static final String ABSTRACT_READ_WRITE_REDIS_ACCESS_STRATEGY_CLASS_NAME =
+            AbstractReadWriteRedisAccessStrategy.class.getName();
+
     @Override
     protected Map getMapFromCacheEntry(final Object entry) {
         final Map map;
         if (entry.getClass()
                 .getName()
-                .equals("org.hibernate.cache.redis.strategy.AbstractReadWriteRedisAccessStrategy$Item")) {
+                .equals(ABSTRACT_READ_WRITE_REDIS_ACCESS_STRATEGY_CLASS_NAME + "$Item")) {
             try {
                 Field field = entry.getClass().getDeclaredField("value");
                 field.setAccessible(true);

@@ -44,133 +44,133 @@ import java.util.concurrent.TimeUnit;
  */
 public class RedisClient extends RedisTemplate<Object, Object> {
 
-  private static final Logger log = LoggerFactory.getLogger(RedisClient.class);
-  private static final boolean isTraceEnabled = log.isTraceEnabled();
-  private static final boolean isDebugEnabled = log.isDebugEnabled();
+    private static final Logger log = LoggerFactory.getLogger(RedisClient.class);
+    private static final boolean isTraceEnabled = log.isTraceEnabled();
+    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
-  @Getter
-  @Setter
-  private int expiryInSeconds = 120;
+    @Getter
+    @Setter
+    private int expiryInSeconds = 120;
 
-  protected String getEntityName(Object key) {
-    return ((CacheKey) key).getEntityOrRoleName();
-  }
-
-  public Long dbSize() {
-    return execute(new RedisCallback<Long>() {
-      @Override
-      public Long doInRedis(RedisConnection connection) throws DataAccessException {
-        Long dbSize = connection.dbSize();
-        if (isTraceEnabled)
-          log.trace("db size를 구했습니다. db size=[{}]", dbSize);
-        return dbSize;
-      }
-    });
-  }
-
-  public boolean exists(final Object key) {
-    Long rank = boundZSetOps(getEntityName(key)).rank(key);
-    // boolean result = hasKey(key);
-    if (isTraceEnabled)
-      log.trace("exists key=[{}], result=[{}]", key, rank);
-    return rank != null;
-  }
-
-  /** Get value */
-  public Object get(final Object key) {
-    Object value = opsForValue().get(key);
-    if (isTraceEnabled)
-      log.trace("get key=[{}] ... return value=[{}]", key, value);
-    return value;
-  }
-
-  public Set keysInRegion(String regionName) {
-    if (isTraceEnabled)
-      log.trace("get all keysInRegion in region [{}]", regionName);
-    return boundZSetOps(regionName).range(0, -1);
-  }
-
-  /** Multi Get */
-  public List<Object> mget(final Collection<Object> keys) {
-    if (isTraceEnabled)
-      log.trace("multi get... keys=[{}]", keys);
-
-    return opsForValue().multiGet(keys);
-  }
-
-  public void set(final Object key, final Object value) {
-    set(key, value, expiryInSeconds, TimeUnit.SECONDS);
-  }
-
-  public void set(final Object key, final Object value, final long timeout, final TimeUnit unit) {
-    if (isTraceEnabled)
-      log.trace("set key=[{}], value=[{}], timeout=[{}], unit=[{}]", key, value, timeout, unit);
-
-    RedisTool.withinTx(this, new SessionCallback<Void>() {
-      @Override
-      @SuppressWarnings( "unchecked" )
-      public Void execute(RedisOperations operations) throws DataAccessException {
-        boundValueOps(key).set(value, timeout, unit);
-        boundZSetOps(getEntityName(key)).add(key, 0);
-        boundZSetOps(getEntityName(key)).expire(timeout, unit);
-        return null;
-      }
-    });
-
-  }
-
-  @Override
-  public void delete(final Object key) {
-    if (isTraceEnabled)
-      log.trace("delete... key=[{}]", key);
-
-    RedisTool.withinTx(this, new SessionCallback<Void>() {
-      @Override
-      @SuppressWarnings( "unchecked" )
-      public Void execute(RedisOperations operations) throws DataAccessException {
-        operations.delete(key);
-        operations.boundZSetOps(getEntityName(key)).remove(key);
-        return null;
-      }
-    });
-  }
-
-  /** Region 에 해당하는 모든 항목을 삭제합니다. */
-  public void deleteRegion(final String regionName) throws CacheException {
-    if (isDebugEnabled)
-      log.debug("Region을 Clear 합니다... Region=[{}]", regionName);
-
-    try {
-      RedisTool.withinTx(this, new SessionCallback<Void>() {
-        @Override
-        @SuppressWarnings( "unchecked" )
-        public Void execute(RedisOperations operations) throws DataAccessException {
-          Set keys = operations.boundZSetOps(regionName).range(0, -1);
-          operations.delete(keys);
-          operations.boundZSetOps(regionName).removeRange(0, -1);
-          return null;
-        }
-      });
-      if (isDebugEnabled)
-        log.debug("Region을 Clear 했습니다. Region=[{}]", regionName);
-    } catch (Exception e) {
-      log.error("Region을 삭제하는데 실패했습니다.", e);
-      throw new CacheException(e);
+    protected String getEntityName(Object key) {
+        return ((CacheKey) key).getEntityOrRoleName();
     }
-  }
 
-  public void flushDb() {
-    if (isDebugEnabled)
-      log.debug("DB 전체를 (영역에 상관없이) Flush 합니다...");
+    public Long dbSize() {
+        return execute(new RedisCallback<Long>() {
+            @Override
+            public Long doInRedis(RedisConnection connection) throws DataAccessException {
+                Long dbSize = connection.dbSize();
+                if (isTraceEnabled)
+                    log.trace("db size를 구했습니다. db size=[{}]", dbSize);
+                return dbSize;
+            }
+        });
+    }
 
-    execute(new RedisCallback<Object>() {
-      @Override
-      public Object doInRedis(RedisConnection connection) throws DataAccessException {
-        connection.flushDb();
+    public boolean exists(final Object key) {
+        Long rank = boundZSetOps(getEntityName(key)).rank(key);
+        // boolean result = hasKey(key);
+        if (isTraceEnabled)
+            log.trace("exists key=[{}], result=[{}]", key, rank);
+        return rank != null;
+    }
+
+    /** Get value */
+    public Object get(final Object key) {
+        Object value = opsForValue().get(key);
+        if (isTraceEnabled)
+            log.trace("get key=[{}] ... return value=[{}]", key, value);
+        return value;
+    }
+
+    public Set keysInRegion(String regionName) {
+        if (isTraceEnabled)
+            log.trace("get all keysInRegion in region [{}]", regionName);
+        return boundZSetOps(regionName).range(0, -1);
+    }
+
+    /** Multi Get */
+    public List<Object> mget(final Collection<Object> keys) {
+        if (isTraceEnabled)
+            log.trace("multi get... keys=[{}]", keys);
+
+        return opsForValue().multiGet(keys);
+    }
+
+    public void set(final Object key, final Object value) {
+        set(key, value, expiryInSeconds, TimeUnit.SECONDS);
+    }
+
+    public void set(final Object key, final Object value, final long timeout, final TimeUnit unit) {
+        if (isTraceEnabled)
+            log.trace("set key=[{}], value=[{}], timeout=[{}], unit=[{}]", key, value, timeout, unit);
+
+        RedisTool.withinTx(this, new SessionCallback<Void>() {
+            @Override
+            @SuppressWarnings( "unchecked" )
+            public Void execute(RedisOperations operations) throws DataAccessException {
+                boundValueOps(key).set(value, timeout, unit);
+                boundZSetOps(getEntityName(key)).add(key, 0);
+                boundZSetOps(getEntityName(key)).expire(timeout, unit);
+                return null;
+            }
+        });
+
+    }
+
+    @Override
+    public void delete(final Object key) {
+        if (isTraceEnabled)
+            log.trace("delete... key=[{}]", key);
+
+        RedisTool.withinTx(this, new SessionCallback<Void>() {
+            @Override
+            @SuppressWarnings( "unchecked" )
+            public Void execute(RedisOperations operations) throws DataAccessException {
+                operations.delete(key);
+                operations.boundZSetOps(getEntityName(key)).remove(key);
+                return null;
+            }
+        });
+    }
+
+    /** Region 에 해당하는 모든 항목을 삭제합니다. */
+    public void deleteRegion(final String regionName) throws CacheException {
+        if (isDebugEnabled)
+            log.debug("Region을 Clear 합니다... Region=[{}]", regionName);
+
+        try {
+            RedisTool.withinTx(this, new SessionCallback<Void>() {
+                @Override
+                @SuppressWarnings( "unchecked" )
+                public Void execute(RedisOperations operations) throws DataAccessException {
+                    Set keys = operations.boundZSetOps(regionName).range(0, -1);
+                    operations.delete(keys);
+                    operations.boundZSetOps(regionName).removeRange(0, -1);
+                    return null;
+                }
+            });
+            if (isDebugEnabled)
+                log.debug("Region을 Clear 했습니다. Region=[{}]", regionName);
+        } catch (Exception e) {
+            log.error("Region을 삭제하는데 실패했습니다.", e);
+            throw new CacheException(e);
+        }
+    }
+
+    public void flushDb() {
+        if (isDebugEnabled)
+            log.debug("DB 전체를 (영역에 상관없이) Flush 합니다...");
+
+        execute(new RedisCallback<Object>() {
+            @Override
+            public Object doInRedis(RedisConnection connection) throws DataAccessException {
+                connection.flushDb();
 //                Jedis jedis = (Jedis) connection.getNativeConnection();
 //                jedis.flushDB();
-        return null;
-      }
-    });
-  }
+                return null;
+            }
+        });
+    }
 }

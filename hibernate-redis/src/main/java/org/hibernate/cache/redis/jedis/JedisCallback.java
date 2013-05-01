@@ -25,11 +25,11 @@ import redis.clients.jedis.Jedis;
  * @since 13. 4. 10. 오전 10:22
  */
 public interface JedisCallback<T> {
-  /**
-   * 작업을 수행합니다.
-   *
-   * @param jedis Jedis 인스턴스
-   * @return 수행 결과
-   */
-  public T execute(Jedis jedis);
+    /**
+     * 작업을 수행합니다.
+     *
+     * @param jedis Jedis 인스턴스
+     * @return 수행 결과
+     */
+    public T execute(Jedis jedis);
 }

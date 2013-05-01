@@ -34,9 +34,7 @@ public class ReadWriteRedisNaturalIdRegionAccessStrategy
         extends AbstractReadWriteRedisAccessStrategy<RedisNaturalIdRegion>
         implements NaturalIdRegionAccessStrategy {
 
-    /**
-     * Creates a read/write cache access strategy around the given cache region.
-     */
+    /** Creates a read/write cache access strategy around the given cache region. */
     public ReadWriteRedisNaturalIdRegionAccessStrategy(RedisNaturalIdRegion region, Settings settings) {
         super(region, settings);
     }

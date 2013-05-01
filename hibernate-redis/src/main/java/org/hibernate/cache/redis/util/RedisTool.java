@@ -98,10 +98,8 @@ public class RedisTool {
         return redis;
     }
 
-    /**
-     * RedisTemplate 는 Connection Pool 을 사용하므로, Transaction을 사용하기 위해서는 한 Session에서 작업하도록 해야 합니다.
-     */
-    @SuppressWarnings("unchecked")
+    /** RedisTemplate 는 Connection Pool 을 사용하므로, Transaction을 사용하기 위해서는 한 Session에서 작업하도록 해야 합니다. */
+    @SuppressWarnings( "unchecked" )
     public static <T> T withinTx(RedisTemplate redis,
                                  final SessionCallback<T> callback) throws CacheException {
         if (log.isDebugEnabled())
@@ -143,9 +141,7 @@ public class RedisTool {
         return new Jedis(shard);
     }
 
-    /**
-     * Transaction 하에서 작업을 수행합니다.
-     */
+    /** Transaction 하에서 작업을 수행합니다. */
     public static <T> T withinTx(Jedis jedis, Function<Jedis, T> function) throws Exception {
 
         if (log.isDebugEnabled())

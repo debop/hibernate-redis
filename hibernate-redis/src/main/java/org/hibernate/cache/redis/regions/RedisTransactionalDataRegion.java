@@ -35,13 +35,9 @@ import java.util.Properties;
 @Slf4j
 public class RedisTransactionalDataRegion extends RedisDataRegion implements TransactionalDataRegion {
 
-    /**
-     * Hibernate settings associated with the persistence unit.
-     */
+    /** Hibernate settings associated with the persistence unit. */
     protected final Settings settings;
-    /**
-     * Metadata associated with the objects sorted in the region
-     */
+    /** Metadata associated with the objects sorted in the region */
     protected final CacheDataDescription metadata;
 
     public RedisTransactionalDataRegion(IRedisAccessStrategyFactory accessStrategyFactory,

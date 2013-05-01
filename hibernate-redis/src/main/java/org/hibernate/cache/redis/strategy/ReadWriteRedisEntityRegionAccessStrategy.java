@@ -32,9 +32,7 @@ public class ReadWriteRedisEntityRegionAccessStrategy
         extends AbstractReadWriteRedisAccessStrategy<RedisEntityRegion>
         implements EntityRegionAccessStrategy {
 
-    /**
-     * Creates a read/write cache access strategy around the given cache region.
-     */
+    /** Creates a read/write cache access strategy around the given cache region. */
     public ReadWriteRedisEntityRegionAccessStrategy(RedisEntityRegion region, Settings settings) {
         super(region, settings);
     }

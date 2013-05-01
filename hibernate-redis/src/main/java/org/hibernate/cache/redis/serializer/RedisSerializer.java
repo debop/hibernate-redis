@@ -24,9 +24,9 @@ package org.hibernate.cache.redis.serializer;
  */
 public interface RedisSerializer<T> {
 
-  /** Serialize Object */
-  byte[] serialize(T graph);
+    /** Serialize Object */
+    byte[] serialize(T graph);
 
-  /** Deserialize to object */
-  T deserialize(byte[] bytes);
+    /** Deserialize to object */
+    T deserialize(byte[] bytes);
 }

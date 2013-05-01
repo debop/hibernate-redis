@@ -32,9 +32,7 @@ public class NonStrictReadWriteRedisNaturalIdRegionAccessStrategy
         extends AbstractRedisAccessStrategy<RedisNaturalIdRegion>
         implements NaturalIdRegionAccessStrategy {
 
-    /**
-     * Create a non-strict read/write access strategy accessing the given NaturalId region.
-     */
+    /** Create a non-strict read/write access strategy accessing the given NaturalId region. */
     public NonStrictReadWriteRedisNaturalIdRegionAccessStrategy(RedisNaturalIdRegion region, Settings settings) {
         super(region, settings);
     }

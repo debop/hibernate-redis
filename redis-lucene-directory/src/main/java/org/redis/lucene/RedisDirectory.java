@@ -32,48 +32,48 @@ import java.io.IOException;
 @Slf4j
 public class RedisDirectory extends Directory {
 
-  @Override
-  public String[] listAll() throws IOException {
-    return new String[0];  //To change body of implemented methods use File | Settings | File Templates.
-  }
+    @Override
+    public String[] listAll() throws IOException {
+        return new String[0];  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-  @Override
-  public boolean fileExists(String name) throws IOException {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
-  }
+    @Override
+    public boolean fileExists(String name) throws IOException {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-  @Override
-  public long fileModified(String name) throws IOException {
-    return 0;  //To change body of implemented methods use File | Settings | File Templates.
-  }
+    @Override
+    public long fileModified(String name) throws IOException {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-  @Override
-  public void touchFile(String name) throws IOException {
-    //To change body of implemented methods use File | Settings | File Templates.
-  }
+    @Override
+    public void touchFile(String name) throws IOException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-  @Override
-  public void deleteFile(String name) throws IOException {
-    //To change body of implemented methods use File | Settings | File Templates.
-  }
+    @Override
+    public void deleteFile(String name) throws IOException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-  @Override
-  public long fileLength(String name) throws IOException {
-    return 0;  //To change body of implemented methods use File | Settings | File Templates.
-  }
+    @Override
+    public long fileLength(String name) throws IOException {
+        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-  @Override
-  public IndexOutput createOutput(String name) throws IOException {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
-  }
+    @Override
+    public IndexOutput createOutput(String name) throws IOException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-  @Override
-  public IndexInput openInput(String name) throws IOException {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
-  }
+    @Override
+    public IndexInput openInput(String name) throws IOException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-  @Override
-  public void close() throws IOException {
-    //To change body of implemented methods use File | Settings | File Templates.
-  }
+    @Override
+    public void close() throws IOException {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
