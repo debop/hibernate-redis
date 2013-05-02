@@ -232,6 +232,7 @@ public class JedisClient {
         runWithTx(new JedisTransactionalCallback() {
             @Override
             public void execute(Transaction tx) {
+                // TODO: setex 를 사용하면 좋은데, zaddex 가 없다. 향후 jedis에서 psetex 명령어 (timeout을 millis 단위로 설정)를 지원하면, 변경한다.
                 tx.set(rawKey, rawValue);
                 tx.zadd(rawRegion, 0, rawKey);
                 if (seconds > 0) {
@@ -279,6 +280,7 @@ public class JedisClient {
         });
     }
 
+    /** 해당 영역의 모든 캐시 항목을 삭제합니다. */
     public void deleteRegion(final String regionName) throws CacheException {
         log.info("Region 전체를 삭제합니다... regionName=[{}]", regionName);
 
@@ -288,6 +290,7 @@ public class JedisClient {
         try {
             final byte[] rawRegion = rawRegion(regionName);
 
+            if (isTraceEnabled) log.trace("영역의 모든 키를 조회합니다... region=[{}]", regionName);
             Set<byte[]> keySet = run(new JedisCallback<Set<byte[]>>() {
                 @Override
                 public Set<byte[]> execute(Jedis jedis) {
@@ -295,6 +298,7 @@ public class JedisClient {
                 }
             });
             if (keySet.size() > 0) {
+                if (isTraceEnabled) log.trace("영역의 모든 키를 삭제합니다... key 갯수=[{}]", keySet.size());
 
                 final byte[][] rawKeys = keySet.toArray(new byte[keySet.size()][]);
                 runWithTx(new JedisTransactionalCallback() {
@@ -311,6 +315,7 @@ public class JedisClient {
         }
     }
 
+    /** DB의 모든 내용을 삭제합니다. */
     public String flushDb() {
         log.info("Redis DB 전체를 flush 합니다...");
 
@@ -323,12 +328,12 @@ public class JedisClient {
     }
 
     /** 키를 byte[] 로 직렬화합니다 * */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     private byte[] rawKey(Object key) {
         return getKeySerializer().serialize(key);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     private byte[][] rawKeys(Collection<? extends Object> keys) {
         byte[][] rawKeys = new byte[keys.size()][];
         int i = 0;
@@ -339,11 +344,12 @@ public class JedisClient {
     }
 
     /** 키를 이용해 region 값을 직렬화합니다. */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings( "unchecked" )
     private byte[] rawRegion(Object key) {
         return getKeySerializer().serialize(getEntityName(key));
     }
 
+    /** 키를 이용해 raw region 값을 빌드합니다. */
     @SuppressWarnings("unchecked")
     private byte[][] rawRegions(Collection<? extends Object> keys) {
         byte[][] rawRegions = new byte[keys.size()][];
@@ -354,6 +360,7 @@ public class JedisClient {
         return rawRegions;
     }
 
+    /** hibernate cache key인 경우 region name을 추출합니다. */
     private String getEntityName(Object key) {
         if (key instanceof CacheKey)
             return ((CacheKey) key).getEntityOrRoleName();
@@ -385,7 +392,7 @@ public class JedisClient {
         final Jedis jedis = jedisPool.getResource();
 
         try {
-            if (database != 0) jedis.select(database);
+            jedis.select(database);
             return callback.execute(jedis);
         } catch (Throwable t) {
             log.error("Redis 작업 중 예외가 발생했습니다.", t);
@@ -404,8 +411,8 @@ public class JedisClient {
         final Jedis jedis = jedisPool.getResource();
 
         try {
-            if (database != 0) jedis.select(database);
             Transaction tx = jedis.multi();
+            tx.select(database);
             callback.execute(tx);
             return tx.exec();
         } catch (Throwable t) {

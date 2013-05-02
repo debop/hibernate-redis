@@ -44,6 +44,7 @@ public class JedisClientTest {
     public void before() {
         jedisPool = new JedisPool("localhost");
         client = new JedisClient(jedisPool);
+        client.setDatabase(1);
     }
 
     @After
