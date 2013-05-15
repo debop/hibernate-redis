@@ -6,3 +6,6 @@
 *.jar
 *.war
 *.ear
+
+hibernate-redis/target/
+hibernate3-redis/target/

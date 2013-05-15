@@ -11,6 +11,7 @@
 
     <modules>
         <module>hibernate-redis</module>
+        <module>hibernate3-redis</module>
         <module>redis-lucene-directory</module>
         <module>hibernate-search-redis</module>
     </modules>
