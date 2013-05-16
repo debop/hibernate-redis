@@ -14,8 +14,6 @@ import org.hibernate.testing.cache.VersionedItem;
 
 import java.util.Map;
 
-import static org.fest.assertions.Assertions.assertThat;
-
 /**
  * Created with IntelliJ IDEA.
  * User: stadia
@@ -52,7 +50,8 @@ public abstract class RedisTest extends BaseCacheTestCase {
 
     @Override
     protected String getConfigResourceKey() {
-        return Environment.CACHE_PROVIDER_CONFIG;
+        //return Environment.CACHE_PROVIDER_CONFIG;
+        return "io.redis.cache.configurationResourceName";
     }
 
     @Override

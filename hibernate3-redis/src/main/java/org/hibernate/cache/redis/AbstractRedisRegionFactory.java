@@ -24,6 +24,7 @@ import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactoryImpl;
 import org.hibernate.cache.redis.util.JedisTool;
 import org.hibernate.cache.*;
 import org.hibernate.cache.access.AccessType;
+import org.hibernate.cfg.Environment;
 import org.hibernate.cfg.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,15 +42,6 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     private static final Logger log = LoggerFactory.getLogger(AbstractRedisRegionFactory.class);
     private static final boolean isTraceEnabled = log.isTraceEnabled();
     private static final boolean isDebugEnabled = log.isDebugEnabled();
-
-    /**
-     * The Hibernate system property specifying the location of the redis configuration file name.
-     * <p/>
-     * If not set, redis.xml will be looked for in the root of the classpath.
-     * <p/>
-     * If set to say redis-1.xml, redis-1.xml will be looked for in the root of the classpath.
-     */
-    public static final String IO_REDIS_CACHE_CONFIGURATION_RESOURCE_NAME = "io.redis.cache.configurationResourceName";
 
     /** Settings object for the Hibernate persistence unit. */
     protected Settings settings;
