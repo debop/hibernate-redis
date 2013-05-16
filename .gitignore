@@ -6,3 +6,9 @@
 *.jar
 *.war
 *.ear
+
+target/
+hibernate-redis/target/
+hibernate3-redis/target/
+hibernate-search-redis/target/
+redis-lucene-directory/target/

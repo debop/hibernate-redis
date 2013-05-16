@@ -11,12 +11,14 @@
 
     <modules>
         <module>hibernate-redis</module>
+        <module>hibernate3-redis</module>
         <module>redis-lucene-directory</module>
         <module>hibernate-search-redis</module>
     </modules>
 
     <properties>
         <jdk.version>1.7</jdk.version>
+	<java.path>/usr/lib/jvm/java-7-oracle</java.path>
 
         <hibernate.version>4.2.0.Final</hibernate.version>
         <hibernate.search.version>4.2.0.Final</hibernate.search.version>
@@ -290,6 +292,9 @@
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
                     <encoding>UTF-8</encoding>
+			<fork>true</fork>
+			<showDeprecation>true</showDeprecation>
+			<executable>${java.path}/bin/javac</executable>
                 </configuration>
             </plugin>
 

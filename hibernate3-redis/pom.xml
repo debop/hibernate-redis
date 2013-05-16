@@ -9,12 +9,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.hibernate</groupId>
-    <artifactId>hibernate-redis</artifactId>
+    <artifactId>hibernate3-redis</artifactId>
     <packaging>jar</packaging>
 
-    <name>hibernate-redis</name>
+    <name>hibernate3-redis</name>
 
     <properties>
+        <jdk.version>1.6</jdk.version>
+        <java.path>/usr/lib/jvm/java-6-oracle</java.path>
+        <hibernate.version>3.6.10.Final</hibernate.version>
+        <h2.version>1.3.171</h2.version>
+        <tomcat.jdbc.version>7.0.39</tomcat.jdbc.version>
+        <slf4j.version>1.7.5</slf4j.version>
+        <logback.version>1.0.12</logback.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -54,6 +61,13 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.12.1.GA</version>
             <scope>test</scope>
         </dependency>
 
