@@ -1,8 +1,14 @@
 *.class
-.idea
+*.log
 *.iml
+.idea
+.lucene
+.DS_Store
+.classpath
+target
+bin
 
 # Package Files #
-*.jar
+# *.jar
 *.war
 *.ear
