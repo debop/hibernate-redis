@@ -6,7 +6,7 @@
 
     <groupId>hibernate-redis</groupId>
     <artifactId>hibernate-redis-parent</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -18,8 +18,8 @@
     <properties>
         <jdk.version>1.7</jdk.version>
 
-        <hibernate.version>4.2.2.Final</hibernate.version>
-        <hibernate.search.version>4.2.0.Final</hibernate.search.version>
+        <hibernate.version>4.2.3.Final</hibernate.version>
+        <hibernate.search.version>4.3.0.Final</hibernate.search.version>
 
         <jedis.version>2.1.0</jedis.version>
         <lucene.version>3.6.2</lucene.version>
