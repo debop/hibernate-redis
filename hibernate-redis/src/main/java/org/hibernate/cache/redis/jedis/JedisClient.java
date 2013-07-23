@@ -126,7 +126,8 @@ public class JedisClient {
                 return jedis.zrank(rawRegion, rawKey);
             }
         });
-        if (isTraceEnabled) log.trace("캐시 값이 존재하는지 확인합니다. key=[{}], exists=[{}]", key, (rank != null));
+        if (isTraceEnabled)
+            log.trace("캐시 값이 존재하는지 확인합니다. key=[{}], exists=[{}]", key, (rank != null));
         return rank != null;
     }
 
@@ -175,11 +176,14 @@ public class JedisClient {
      * @param keys 캐시 키 컬렉션
      * @return 캐시 값의 컬렉션
      */
-    public List<Object> mget(Collection<? extends Object> keys) {
-        if (isTraceEnabled) log.trace("multi get... keys=[{}]", CollectionUtil.toString(keys));
+    public List mget(Collection<?> keys) {
+        if (isTraceEnabled) {
+            log.trace("multi get... keys=[{}]", CollectionUtil.toString(keys));
+        }
 
-        if (keys == null || keys.size() == 0)
-            return new ArrayList<Object>();
+        if (keys == null || keys.size() == 0) {
+            return new ArrayList();
+        }
 
         final byte[][] rawKeys = rawKeys(keys);
         List<byte[]> rawValues = run(new JedisCallback<List<byte[]>>() {
@@ -264,7 +268,7 @@ public class JedisClient {
     }
 
     /** 지정된 키의 항목으로 삭제합니다. */
-    public void mdel(Collection<? extends Object> keys) {
+    public void mdel(Collection<?> keys) {
         if (isTraceEnabled) log.trace("캐시를 삭제합니다. keys=[{}]", CollectionUtil.toString(keys));
         if (keys == null || keys.size() == 0) return;
 
@@ -282,7 +286,8 @@ public class JedisClient {
 
     /** 해당 영역의 모든 캐시 항목을 삭제합니다. */
     public void deleteRegion(final String regionName) throws CacheException {
-        log.info("Region 전체를 삭제합니다... regionName=[{}]", regionName);
+        if (isDebugEnabled)
+            log.debug("Region 전체를 삭제합니다... regionName=[{}]", regionName);
 
         // Redis에서 한 Transaction 하에서 get / set 을 동시에 실행 할 수 없습니다. (복합 함수인 setnx 같은 것을 제외하고)
         //
@@ -290,7 +295,9 @@ public class JedisClient {
         try {
             final byte[] rawRegion = rawRegion(regionName);
 
-            if (isTraceEnabled) log.trace("영역의 모든 키를 조회합니다... region=[{}]", regionName);
+            if (isTraceEnabled)
+                log.trace("영역의 모든 키를 조회합니다... region=[{}]", regionName);
+
             Set<byte[]> keySet = run(new JedisCallback<Set<byte[]>>() {
                 @Override
                 public Set<byte[]> execute(Jedis jedis) {
@@ -298,7 +305,8 @@ public class JedisClient {
                 }
             });
             if (keySet.size() > 0) {
-                if (isTraceEnabled) log.trace("영역의 모든 키를 삭제합니다... key 갯수=[{}]", keySet.size());
+                if (isTraceEnabled)
+                    log.trace("영역의 모든 키를 삭제합니다... key 갯수=[{}]", keySet.size());
 
                 final byte[][] rawKeys = keySet.toArray(new byte[keySet.size()][]);
                 runWithTx(new JedisTransactionalCallback() {
@@ -328,13 +336,13 @@ public class JedisClient {
     }
 
     /** 키를 byte[] 로 직렬화합니다 * */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     private byte[] rawKey(Object key) {
         return getKeySerializer().serialize(key);
     }
 
-    @SuppressWarnings( "unchecked" )
-    private byte[][] rawKeys(Collection<? extends Object> keys) {
+    @SuppressWarnings("unchecked")
+    private byte[][] rawKeys(Collection<?> keys) {
         byte[][] rawKeys = new byte[keys.size()][];
         int i = 0;
         for (Object key : keys) {
@@ -344,14 +352,14 @@ public class JedisClient {
     }
 
     /** 키를 이용해 region 값을 직렬화합니다. */
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     private byte[] rawRegion(Object key) {
         return getKeySerializer().serialize(getEntityName(key));
     }
 
     /** 키를 이용해 raw region 값을 빌드합니다. */
     @SuppressWarnings("unchecked")
-    private byte[][] rawRegions(Collection<? extends Object> keys) {
+    private byte[][] rawRegions(Collection<?> keys) {
         byte[][] rawRegions = new byte[keys.size()][];
         int i = 0;
         for (Object key : keys) {

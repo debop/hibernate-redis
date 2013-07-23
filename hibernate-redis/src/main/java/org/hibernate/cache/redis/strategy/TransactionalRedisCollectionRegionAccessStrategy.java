@@ -43,6 +43,7 @@ public class TransactionalRedisCollectionRegionAccessStrategy
                                                             JedisClient jedisClient,
                                                             Settings settings) {
         super(region, settings);
+        assert jedisClient != null;
         this.jedisClient = jedisClient;
     }
 
@@ -56,8 +57,11 @@ public class TransactionalRedisCollectionRegionAccessStrategy
     }
 
     @Override
-    public boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride)
-            throws CacheException {
+    public boolean putFromLoad(Object key,
+                               Object value,
+                               long txTimestamp,
+                               Object version,
+                               boolean minimalPutOverride) throws CacheException {
         try {
             if (minimalPutOverride && jedisClient.exists(key))
                 return false;

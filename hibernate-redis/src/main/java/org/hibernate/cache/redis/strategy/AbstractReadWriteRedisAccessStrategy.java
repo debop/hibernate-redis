@@ -131,8 +131,8 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
 
     /** Handle the timeout of a previous lock mapped to this key */
     protected void handleLockExpiry(Object key, Lockable lock) {
-        if (AbstractReadWriteRedisAccessStrategy.log.isDebugEnabled())
-            AbstractReadWriteRedisAccessStrategy.log.debug("Cache Key=[{}] Lockable=[{}}]", key, lock);
+        if (log.isDebugEnabled())
+            log.debug("Cache Key=[{}] Lockable=[{}}]", key, lock);
 
         long ts = region.nextTimestamp() + region.getTimeout();
         // create new lock that times out immediately
@@ -201,6 +201,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("unchecked")
         public boolean isWriteable(long txTimestamp, Object newVersion, Comparator versionComparator) {
             return version != null && versionComparator.compare(version, newVersion) < 0;
         }
@@ -249,6 +250,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
         }
 
         /** {@inheritDoc} */
+        @SuppressWarnings("unchecked")
         public boolean isWriteable(long txTimestamp, Object newVersion, Comparator versionComparator) {
             if (txTimestamp > timeout) {
                 // if timedout then allow write
@@ -258,10 +260,10 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
                 // if still locked then disallow write
                 return false;
             }
-            return version == null ? txTimestamp > unlockTimestamp : versionComparator.compare(
-                    version,
-                    newVersion
-            ) < 0;
+
+            return version == null
+                    ? txTimestamp > unlockTimestamp
+                    : versionComparator.compare(version, newVersion) < 0;
         }
 
         /** {@inheritDoc} */
@@ -320,8 +322,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
         /** {@inheritDoc} */
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder("Lock Source-UUID:" + sourceUuid + " Lock-ID:" + lockId);
-            return sb.toString();
+            return "Lock Source-UUID:" + sourceUuid + " Lock-ID:" + lockId;
         }
     }
 }

@@ -58,12 +58,19 @@ public class ReadWriteRedisEntityRegionAccessStrategy
     }
 
     @Override
-    public boolean update(Object key, Object value, Object currentVersion, Object previousVersion) throws CacheException {
+    public boolean update(Object key,
+                          Object value,
+                          Object currentVersion,
+                          Object previousVersion) throws CacheException {
         return false;
     }
 
     @Override
-    public boolean afterUpdate(Object key, Object value, Object currentVersion, Object previousVersion, SoftLock lock) throws CacheException {
+    public boolean afterUpdate(Object key,
+                               Object value,
+                               Object currentVersion,
+                               Object previousVersion,
+                               SoftLock lock) throws CacheException {
         region.writeLock(key);
         try {
             Lockable item = (Lockable) region.get(key);

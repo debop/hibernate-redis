@@ -38,7 +38,8 @@ public interface IRedisAccessStrategyFactory {
      *
      * @return the created {@link EntityRegionAccessStrategy}
      */
-    public EntityRegionAccessStrategy createEntityRegionAccessStrategy(RedisEntityRegion entityRegion, AccessType accessType);
+    public EntityRegionAccessStrategy createEntityRegionAccessStrategy(RedisEntityRegion entityRegion,
+                                                                       AccessType accessType);
 
     /**
      * Create {@link CollectionRegionAccessStrategy}

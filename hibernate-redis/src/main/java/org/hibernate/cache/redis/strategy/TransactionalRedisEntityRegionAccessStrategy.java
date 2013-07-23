@@ -56,11 +56,14 @@ public class TransactionalRedisEntityRegionAccessStrategy
     }
 
     @Override
-    public boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride) throws CacheException {
+    public boolean putFromLoad(Object key,
+                               Object value,
+                               long txTimestamp,
+                               Object version,
+                               boolean minimalPutOverride) throws CacheException {
+        if (minimalPutOverride && jedisClient.exists(key))
+            return false;
         try {
-            if (minimalPutOverride && jedisClient.exists(key))
-                return false;
-
             jedisClient.set(key, value);
             return true;
         } catch (Exception e) {

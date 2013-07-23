@@ -42,7 +42,11 @@ public class NonStrictReadWriteRedisEntityRegionAccessStrategy
     }
 
     @Override
-    public boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride) throws CacheException {
+    public boolean putFromLoad(Object key,
+                               Object value,
+                               long txTimestamp,
+                               Object version,
+                               boolean minimalPutOverride) throws CacheException {
         if (minimalPutOverride && region.contains(key))
             return false;
 
@@ -71,13 +75,20 @@ public class NonStrictReadWriteRedisEntityRegionAccessStrategy
     }
 
     @Override
-    public boolean update(Object key, Object value, Object currentVersion, Object previousVersion) throws CacheException {
+    public boolean update(Object key,
+                          Object value,
+                          Object currentVersion,
+                          Object previousVersion) throws CacheException {
         remove(key);
         return false;
     }
 
     @Override
-    public boolean afterUpdate(Object key, Object value, Object currentVersion, Object previousVersion, SoftLock lock) throws CacheException {
+    public boolean afterUpdate(Object key,
+                               Object value,
+                               Object currentVersion,
+                               Object previousVersion,
+                               SoftLock lock) throws CacheException {
         unlockItem(key, lock);
         return false;
     }

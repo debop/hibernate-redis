@@ -49,11 +49,7 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
 
     public abstract boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride) throws CacheException;
 
-    /**
-     * Region locks are not supported
-     *
-     * @return
-     */
+    /** Region locks are not supported */
     public final SoftLock lockRegion() {
         return null;
     }
@@ -61,7 +57,7 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
     /**
      * Region locks are not supported - perform a cache clear as a precaution.
      *
-     * @param lock
+     * @param lock soft lock instance
      * @throws CacheException
      */
     public final void unlockRegion(SoftLock lock) throws CacheException {
@@ -71,7 +67,7 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
     /**
      * A no-op since this is an asynchronous cache access strategy.
      *
-     * @param key
+     * @param key key
      * @throws CacheException
      */
     public void remove(Object key) throws CacheException { }
@@ -88,7 +84,7 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
     /**
      * Remove the given mapping without regard to transactional safety
      *
-     * @param key
+     * @param key key
      * @throws CacheException
      */
     public final void evict(Object key) throws CacheException {

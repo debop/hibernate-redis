@@ -44,7 +44,11 @@ public class ReadOnlyRedisEntityRegionAccessStrategy
     }
 
     @Override
-    public boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride) throws CacheException {
+    public boolean putFromLoad(Object key,
+                               Object value,
+                               long txTimestamp,
+                               Object version,
+                               boolean minimalPutOverride) throws CacheException {
         if (minimalPutOverride && region.contains(key))
             return false;
 
@@ -80,7 +84,11 @@ public class ReadOnlyRedisEntityRegionAccessStrategy
     }
 
     @Override
-    public boolean afterUpdate(Object key, Object value, Object currentVersion, Object previousVersion, SoftLock lock) throws CacheException {
+    public boolean afterUpdate(Object key,
+                               Object value,
+                               Object currentVersion,
+                               Object previousVersion,
+                               SoftLock lock) throws CacheException {
         throw new UnsupportedOperationException("Can't write to a readonly object");
     }
 }
