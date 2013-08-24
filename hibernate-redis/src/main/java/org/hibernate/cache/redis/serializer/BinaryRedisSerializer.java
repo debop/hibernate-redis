@@ -16,6 +16,8 @@
 
 package org.hibernate.cache.redis.serializer;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -27,36 +29,39 @@ import java.io.ObjectOutputStream;
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 9 오후 10:20
  */
+@Slf4j
 public class BinaryRedisSerializer<T> implements RedisSerializer<T> {
 
-    private static final byte[] EMPTY_BYTES = new byte[0];
+	private static final byte[] EMPTY_BYTES = new byte[0];
 
-    @Override
-    public byte[] serialize(T graph) {
-        if (graph == null) return EMPTY_BYTES;
+	@Override
+	public byte[] serialize(T graph) {
+		if (graph == null) return EMPTY_BYTES;
 
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream();
-             ObjectOutputStream oos = new ObjectOutputStream(os)) {
-            oos.writeObject(graph);
-            oos.flush();
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream();
+		     ObjectOutputStream oos = new ObjectOutputStream(os)) {
+			oos.writeObject(graph);
+			oos.flush();
 
-            return os.toByteArray();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+			return os.toByteArray();
+		} catch (Exception e) {
+			log.warn("Serialize 하는데 실패했습니다. graph=" + graph, e);
+			return EMPTY_BYTES;
+		}
+	}
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public T deserialize(byte[] bytes) {
-        if (SerializationTool.isEmpty(bytes))
-            return null;
+	@Override
+	@SuppressWarnings("unchecked")
+	public T deserialize(byte[] bytes) {
+		if (SerializationTool.isEmpty(bytes))
+			return null;
 
-        try (ByteArrayInputStream is = new ByteArrayInputStream(bytes);
-             ObjectInputStream ois = new ObjectInputStream(is)) {
-            return (T) ois.readObject();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+		try (ByteArrayInputStream is = new ByteArrayInputStream(bytes);
+		     ObjectInputStream ois = new ObjectInputStream(is)) {
+			return (T) ois.readObject();
+		} catch (Exception e) {
+			log.debug("Deseialize 하는데 실패했습니다.", e);
+			return (T) null;
+		}
+	}
 }
