@@ -60,7 +60,7 @@ public class BinaryRedisSerializer<T> implements RedisSerializer<T> {
 		     ObjectInputStream ois = new ObjectInputStream(is)) {
 			return (T) ois.readObject();
 		} catch (Exception e) {
-			log.debug("Deseialize 하는데 실패했습니다.", e);
+			log.warn("Deseialize 하는데 실패했습니다.", e);
 			return (T) null;
 		}
 	}
