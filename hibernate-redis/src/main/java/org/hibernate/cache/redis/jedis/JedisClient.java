@@ -406,7 +406,7 @@ public class JedisClient {
 			log.error("Redis 작업 중 예외가 발생했습니다.", t);
 			jedisPool.returnBrokenResource(jedis);
 			jedis = null;
-			throw new RuntimeException(t);
+			return (T) null;
 		} finally {
 			jedisPool.returnResource(jedis);
 		}
@@ -429,7 +429,7 @@ public class JedisClient {
 			log.error("Redis 작업 중 예외가 발생했습니다.", t);
 			jedisPool.returnBrokenResource(jedis);
 			jedis = null;
-			throw new RuntimeException(t);
+			return null;
 		} finally {
 			jedisPool.returnResource(jedis);
 		}
