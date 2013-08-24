@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,22 +21,24 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-public class Person {
+public class Person implements Serializable {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+	private static final long serialVersionUID = -8245742950718661800L;
 
-    private int age;
-    private String firstname;
-    private String lastname;
+	@Id
+	@GeneratedValue
+	private Long id;
 
-    private List<Event> events = new ArrayList<Event>();
-    private Set<String> emailAddresses = new HashSet<String>();
-    private Set<PhoneNumber> phoneNumbers = new HashSet<PhoneNumber>();
-    private List<String> tailsmans = new ArrayList<String>();
+	private int age;
+	private String firstname;
+	private String lastname;
 
-    public String toString() {
-        return getFirstname() + " " + getLastname();
-    }
+	private List<Event> events = new ArrayList<Event>();
+	private Set<String> emailAddresses = new HashSet<String>();
+	private Set<PhoneNumber> phoneNumbers = new HashSet<PhoneNumber>();
+	private List<String> tailsmans = new ArrayList<String>();
+
+	public String toString() {
+		return getFirstname() + " " + getLastname();
+	}
 }

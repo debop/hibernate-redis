@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 /**
  * org.hibernate.test.domain.UuidItem
@@ -16,13 +17,15 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @Setter
-public class UuidItem {
+public class UuidItem implements Serializable {
 
-    @Id
-    @GeneratedValue
-    private String id;
+	private static final long serialVersionUID = 855411710458442104L;
 
-    private String name;
+	@Id
+	@GeneratedValue
+	private String id;
 
-    private String description;
+	private String name;
+
+	private String description;
 }

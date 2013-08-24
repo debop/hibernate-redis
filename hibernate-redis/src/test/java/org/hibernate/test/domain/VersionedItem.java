@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Version;
+import java.io.Serializable;
 
 /**
  * org.hibernate.test.domain.VersionedItem
@@ -17,16 +18,18 @@ import javax.persistence.Version;
 @Entity
 @Getter
 @Setter
-public class VersionedItem {
+public class VersionedItem implements Serializable {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+	private static final long serialVersionUID = -1799457963599978471L;
 
-    @Version
-    private Long version;
+	@Id
+	@GeneratedValue
+	private Long id;
 
-    private String name;
+	@Version
+	private Long version;
 
-    private String description;
+	private String name;
+
+	private String description;
 }

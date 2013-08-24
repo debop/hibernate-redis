@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * org.hibernate.test.domain.Account
@@ -14,13 +15,14 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-public class Account {
+public class Account implements Serializable {
+	private static final long serialVersionUID = 6662300674854084326L;
 
-    @Id
-    @GeneratedValue
-    private Long id;
+	@Id
+	@GeneratedValue
+	private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "PersonId")
-    private Person person;
+	@ManyToOne
+	@JoinColumn(name = "PersonId")
+	private Person person;
 }

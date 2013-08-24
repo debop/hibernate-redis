@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 /**
  * org.hibernate.test.cache.redis.Item
@@ -16,13 +17,13 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @Setter
-public class Item {
+public class Item implements Serializable {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+	@Id
+	@GeneratedValue
+	private Long id;
 
-    private String name;
+	private String name;
 
-    private String description;
+	private String description;
 }

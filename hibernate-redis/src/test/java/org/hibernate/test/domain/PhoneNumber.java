@@ -16,21 +16,23 @@ import java.util.Objects;
 @Setter
 public class PhoneNumber implements Serializable {
 
-    private long personId = 0;
-    private String numberType = "home";
-    private long phone = 0;
+	private static final long serialVersionUID = 8568232753916897060L;
 
-    public boolean equals(Object obj) {
-        if ((obj != null) && (obj instanceof PhoneNumber))
-            return hashCode() == obj.hashCode();
-        return false;
-    }
+	private long personId = 0;
+	private String numberType = "home";
+	private long phone = 0;
 
-    public int hashCode() {
-        return Objects.hash(numberType, personId, phone);
-    }
+	public boolean equals(Object obj) {
+		if ((obj != null) && (obj instanceof PhoneNumber))
+			return hashCode() == obj.hashCode();
+		return false;
+	}
 
-    public String toString() {
-        return numberType + ":" + phone;
-    }
+	public int hashCode() {
+		return Objects.hash(numberType, personId, phone);
+	}
+
+	public String toString() {
+		return numberType + ":" + phone;
+	}
 }

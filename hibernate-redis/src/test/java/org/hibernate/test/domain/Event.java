@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,34 +18,36 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-public class Event {
+public class Event implements Serializable {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+	private static final long serialVersionUID = 4714760453860670689L;
 
-    private String title;
+	@Id
+	@GeneratedValue
+	private Long id;
 
-    @Temporal( TemporalType.TIMESTAMP )
-    private Date date;
+	private String title;
 
-    private Set<Person> participants = new HashSet<Person>();
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date date;
 
-    @ManyToOne
-    @JoinColumn( name = "Organizer_Id" )
-    private Person organizer;
+	private Set<Person> participants = new HashSet<Person>();
 
-    public void addParticipant(Person person) {
-        participants.add(person);
-        person.getEvents().add(this);
-    }
+	@ManyToOne
+	@JoinColumn(name = "Organizer_Id")
+	private Person organizer;
 
-    public void removeParticipant(Person person) {
-        participants.remove(person);
-        person.getEvents().remove(this);
-    }
+	public void addParticipant(Person person) {
+		participants.add(person);
+		person.getEvents().add(this);
+	}
 
-    public String toString() {
-        return getTitle() + ": " + getDate();
-    }
+	public void removeParticipant(Person person) {
+		participants.remove(person);
+		person.getEvents().remove(this);
+	}
+
+	public String toString() {
+		return getTitle() + ": " + getDate();
+	}
 }
