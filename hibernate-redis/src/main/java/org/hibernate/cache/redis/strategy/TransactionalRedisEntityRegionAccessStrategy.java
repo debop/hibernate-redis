@@ -81,6 +81,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
 	@Override
 	public boolean insert(Object key, Object value, Object version) throws CacheException {
 		log.trace("insert cache item... key=[{}]", key);
+
 		jedisClient.set(key, value);
 		return true;
 	}

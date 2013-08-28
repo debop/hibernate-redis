@@ -55,13 +55,15 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
 	public final Object get(Object key, long txTimestamp) throws CacheException {
 		readLockIfNeeded(key);
 		try {
-			Lockable item = (Lockable) region.get(key);
-			boolean readable = item != null && item.isReadable(txTimestamp);
+			Object loaded = region.get(key);
+			Lockable item = null;
+			if (loaded instanceof Lockable)
+				item = (Lockable) loaded;
+			else
+				return loaded;
 
+			boolean readable = item != null && item.isReadable(txTimestamp);
 			return (readable) ? item.getValue() : null;
-		} catch (Exception e) {
-			log.warn("캐시 로드에 실패했습니다.", e);
-			return null;
 		} finally {
 			readUnlockIfNeeded(key);
 		}
@@ -74,56 +76,61 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
 	                                 long txTimestamp,
 	                                 Object version,
 	                                 boolean minimalPutOverride) throws CacheException {
-		return true;
-//		region.writeLock(key);
-//
-//		try {
-//			Lockable item = (Lockable) region.get(key);
-//			boolean writeable = (item == null) || item.isWriteable(txTimestamp, version, versionComparator);
-//			if (writeable) {
-//				region.put(key, new Item(value, version, region.nextTimestamp()));
-//				return true;
-//			} else {
-//				return false;
-//			}
-//		} finally {
-//			region.writeUnlock(key);
-//		}
+		region.writeLock(key);
+
+		try {
+			Object loaded = region.get(key);
+			Lockable item = null;
+			if (loaded instanceof Lockable)
+				item = (Lockable) loaded;
+
+			boolean writeable = (item == null) || item.isWriteable(txTimestamp, version, versionComparator);
+			if (writeable) {
+				region.put(key, new Item(value, version, region.nextTimestamp()));
+				return true;
+			} else {
+				return false;
+			}
+		} finally {
+			region.writeUnlock(key);
+		}
 	}
 
 	/** Soft-lock a cache item. */
 	public final SoftLock lockItem(Object key, Object version) throws CacheException {
-//		region.writeLock(key);
-//
-//		try {
-//			Lockable item = (Lockable) region.get(key);
-//			long timeout = region.nextTimestamp() + region.getTimeout();
-//			final Lock lock = (item == null)
-//					? new Lock(timeout, uuid, nextLockId(), version)
-//					: item.lock(timeout, uuid, nextLockId());
-//
-//			region.put(key, lock);
-//			return lock;
-//		} finally {
-//			region.writeUnlock(key);
-//		}
-		return null;
+		region.writeLock(key);
+
+		try {
+			Lockable item = (Lockable) region.get(key);
+			long timeout = region.nextTimestamp() + region.getTimeout();
+			final Lock lock = (item == null)
+					? new Lock(timeout, uuid, nextLockId(), version)
+					: item.lock(timeout, uuid, nextLockId());
+
+			region.put(key, lock);
+			return lock;
+		} finally {
+			region.writeUnlock(key);
+		}
 	}
 
 	/** Soft-unlock a cache item. */
 	public final void unlockItem(Object key, SoftLock lock) throws CacheException {
-//		region.writeLock(key);
-//
-//		try {
-//			Lockable item = (Lockable) region.get(key);
-//			if ((item != null) && item.isUnlockable(lock)) {
-//				decrementLock(key, (Lock) item);
-//			} else {
-//				handleLockExpiry(key, item);
-//			}
-//		} finally {
-//			region.writeUnlock(key);
-//		}
+		region.writeLock(key);
+
+		try {
+			Object value = region.get(key);
+			if (value instanceof Lockable) {
+				Lockable item = (Lockable) value;
+				if ((item != null) && item.isUnlockable(lock)) {
+					decrementLock(key, (Lock) item);
+				} else {
+					handleLockExpiry(key, item);
+				}
+			}
+		} finally {
+			region.writeUnlock(key);
+		}
 	}
 
 

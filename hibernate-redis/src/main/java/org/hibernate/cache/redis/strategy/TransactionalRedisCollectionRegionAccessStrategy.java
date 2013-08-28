@@ -60,9 +60,8 @@ public class TransactionalRedisCollectionRegionAccessStrategy
 	                           long txTimestamp,
 	                           Object version,
 	                           boolean minimalPutOverride) throws CacheException {
+		log.trace("putFromLoad... key=[{}]", key);
 		try {
-			log.trace("putFromLoad... key=[{}]", key);
-
 			if (minimalPutOverride && jedisClient.exists(key))
 				return false;
 

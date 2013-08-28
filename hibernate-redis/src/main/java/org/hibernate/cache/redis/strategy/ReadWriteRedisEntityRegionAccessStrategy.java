@@ -41,26 +41,27 @@ public class ReadWriteRedisEntityRegionAccessStrategy
 
 	@Override
 	public boolean insert(Object key, Object value, Object version) throws CacheException {
-		log.trace("insert cache item... key=[{}]", key);
-		region.put(key, value);
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean afterInsert(Object key, Object value, Object version) throws CacheException {
-//	    log.trace("afterInsert key=[{}]", key);
-//        region.writeLock(key);
-//        try {
-//            Lockable item = (Lockable) region.get(key);
-//            if (item == null) {
-//                region.put(key, new Item(value, version, region.nextTimestamp()));
-//                return true;
-//            }
-//            return false;
-//        } finally {
-//            region.writeUnlock(key);
-//        }
-		return true;
+		log.trace("afterInsert key=[{}]", key);
+		region.writeLock(key);
+		try {
+			Object loaded = region.get(key);
+			Lockable item = null;
+			if (loaded instanceof Lockable)
+				item = (Lockable) loaded;
+
+			if (item == null) {
+				region.put(key, new Item(value, version, region.nextTimestamp()));
+				return true;
+			}
+			return false;
+		} finally {
+			region.writeUnlock(key);
+		}
 	}
 
 	@Override
@@ -68,9 +69,9 @@ public class ReadWriteRedisEntityRegionAccessStrategy
 	                      Object value,
 	                      Object currentVersion,
 	                      Object previousVersion) throws CacheException {
-		log.trace("update cache item... key=[{}]", key);
+		log.trace("Update Cache Item... key=[{}], value=[{}]", key, value);
 		region.put(key, value);
-		return true;
+		return false;
 	}
 
 	@Override
@@ -79,28 +80,30 @@ public class ReadWriteRedisEntityRegionAccessStrategy
 	                           Object currentVersion,
 	                           Object previousVersion,
 	                           SoftLock lock) throws CacheException {
-//	    log.trace("afterUpdate key=[{}]", key);
-//
-//        region.writeLock(key);
-//        try {
-//            Lockable item = (Lockable) region.get(key);
-//
-//            if (item != null && item.isUnlockable(lock)) {
-//                Lock lockItem = (Lock) item;
-//                if (lockItem.wasLockedConcurrently()) {
-//                    decrementLock(key, lockItem);
-//                    return false;
-//                } else {
-//                    region.put(key, new Item(value, currentVersion, region.nextTimestamp()));
-//                    return true;
-//                }
-//            } else {
-//                handleLockExpiry(key, item);
-//                return false;
-//            }
-//        } finally {
-//            region.writeUnlock(key);
-//        }
-		return true;
+		log.trace("afterUpdate key=[{}]", key);
+
+		region.writeLock(key);
+		try {
+			Object loaded = region.get(key);
+			Lockable item = null;
+			if (loaded instanceof Lockable)
+				item = (Lockable) loaded;
+
+			if (item != null && item.isUnlockable(lock)) {
+				Lock lockItem = (Lock) item;
+				if (lockItem.wasLockedConcurrently()) {
+					decrementLock(key, lockItem);
+					return false;
+				} else {
+					region.put(key, new Item(value, currentVersion, region.nextTimestamp()));
+					return true;
+				}
+			} else {
+				handleLockExpiry(key, item);
+				return false;
+			}
+		} finally {
+			region.writeUnlock(key);
+		}
 	}
 }

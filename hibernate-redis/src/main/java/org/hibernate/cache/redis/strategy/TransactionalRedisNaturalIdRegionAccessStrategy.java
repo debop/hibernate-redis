@@ -85,8 +85,8 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
 	@Override
 	public boolean insert(Object key, Object value) throws CacheException {
+		log.trace("insert cache item... key=[{}], value=[{}]", key, value);
 		try {
-			log.trace("insert key=[{}]", key);
 			jedisClient.set(key, value);
 			return true;
 		} catch (Exception e) {
@@ -101,8 +101,9 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
 	@Override
 	public boolean update(Object key, Object value) throws CacheException {
+		log.trace("update cache item... key=[{}], value=[{}]", key, value);
 		try {
-			log.trace("update key=[{}]", key);
+
 			jedisClient.set(key, value);
 			return true;
 		} catch (Exception e) {

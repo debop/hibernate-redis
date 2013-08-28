@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.hibernate.cache.redis.SingletonRedisRegionFactory;
 import org.hibernate.cfg.Environment;
+import org.hibernate.engine.transaction.internal.jdbc.JdbcTransactionFactory;
 import org.hibernate.test.domain.Account;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,6 +50,9 @@ public class HibernateConfiguration {
 		props.put(Environment.USE_QUERY_CACHE, true);
 		props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
 		props.put(Environment.CACHE_REGION_PREFIX, "");
+		props.setProperty(Environment.GENERATE_STATISTICS, "true");
+		props.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
+		props.setProperty(Environment.TRANSACTION_STRATEGY, JdbcTransactionFactory.class.getName());
 		props.put(Environment.CACHE_PROVIDER_CONFIG, "classpath:redis.properties");
 
 		return props;

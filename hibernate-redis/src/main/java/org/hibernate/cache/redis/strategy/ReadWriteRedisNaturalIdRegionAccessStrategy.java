@@ -42,15 +42,18 @@ public class ReadWriteRedisNaturalIdRegionAccessStrategy
 	@Override
 	public boolean insert(Object key, Object value) throws CacheException {
 		log.trace("insert cache item... key=[{}]", key);
-		region.put(key, value);
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean afterInsert(Object key, Object value) throws CacheException {
 		region.writeLock(key);
 		try {
-			Lockable item = (Lockable) region.get(key);
+			Object loaded = region.get(key);
+			Lockable item = null;
+			if (loaded instanceof Lockable)
+				item = (Lockable) loaded;
+
 			if (item == null) {
 				region.put(key, new Item(value, null, region.nextTimestamp()));
 				return true;
@@ -65,15 +68,17 @@ public class ReadWriteRedisNaturalIdRegionAccessStrategy
 	@Override
 	public boolean update(Object key, Object value) throws CacheException {
 		log.trace("update cache item... key=[{}]", key);
-		region.put(key, value);
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean afterUpdate(Object key, Object value, SoftLock lock) throws CacheException {
 		region.writeLock(key);
 		try {
-			Lockable item = (Lockable) region.get(key);
+			Object loaded = region.get(key);
+			Lockable item = null;
+			if (loaded instanceof Lockable)
+				item = (Lockable) loaded;
 
 			if (item != null && item.isUnlockable(lock)) {
 				Lock lockItem = (Lock) item;

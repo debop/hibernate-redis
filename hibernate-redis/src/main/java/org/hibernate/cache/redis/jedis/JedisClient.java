@@ -147,7 +147,10 @@ public class JedisClient {
 				return jedis.get(rawKey);
 			}
 		});
-		return deserializeValue(rawValue);
+		Object value = deserializeValue(rawValue);
+
+		if (isTraceEnabled) log.trace("캐시 값을 조회했습니다. key=[{}], value=[{}]", key, value);
+		return value;
 	}
 
 	/**

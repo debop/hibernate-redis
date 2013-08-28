@@ -25,146 +25,147 @@ import static org.fest.assertions.Assertions.assertThat;
 @Slf4j
 public abstract class RedisTest extends BaseCoreFunctionalTestCase {
 
-    @Override
-    protected Class<?>[] getAnnotatedClasses() {
-        return new Class<?>[] {
-                Item.class,
-                VersionedItem.class
-        };
-    }
+	@Override
+	protected Class<?>[] getAnnotatedClasses() {
+		return new Class<?>[] {
+				Item.class,
+				VersionedItem.class
+		};
+	}
 
-    @Override
-    public String getCacheConcurrencyStrategy() {
-        return "read-write";
-    }
+	@Override
+	public String getCacheConcurrencyStrategy() {
+		return "read-write";
+	}
 
-    @Override
-    protected void configure(Configuration cfg) {
-        super.configure(cfg);
-        cfg.setProperty(Environment.CACHE_REGION_PREFIX, "");
-        cfg.setProperty(Environment.USE_SECOND_LEVEL_CACHE, "true");
-        cfg.setProperty(Environment.GENERATE_STATISTICS, "true");
-        cfg.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
-        configCache(cfg);
-        cfg.setProperty(Environment.TRANSACTION_STRATEGY, JdbcTransactionFactory.class.getName());
-    }
+	@Override
+	protected void configure(Configuration cfg) {
+		super.configure(cfg);
+		cfg.setProperty(Environment.CACHE_REGION_PREFIX, "");
+		cfg.setProperty(Environment.USE_SECOND_LEVEL_CACHE, "true");
+		cfg.setProperty(Environment.GENERATE_STATISTICS, "true");
+		cfg.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
+		cfg.setProperty(Environment.TRANSACTION_STRATEGY, JdbcTransactionFactory.class.getName());
 
-    protected abstract void configCache(final Configuration cfg);
+		configCache(cfg);
+	}
 
-    protected abstract Map getMapFromCacheEntry(final Object entry);
+	protected abstract void configCache(final Configuration cfg);
 
-    @Test
-    public void queryCacheInvalidation() {
-        Session s = openSession();
-        Transaction t = s.beginTransaction();
-        Item i = new Item();
-        i.setName("widget");
-        i.setDescription("A really top-quality, full-featured widget");
-        s.persist(i);
-        t.commit();
-        s.clear();
+	protected abstract Map getMapFromCacheEntry(final Object entry);
 
-        SecondLevelCacheStatistics slcs = s.getSessionFactory().getStatistics()
-                .getSecondLevelCacheStatistics(Item.class.getName());
+	@Test
+	public void queryCacheInvalidation() {
+		Session s = openSession();
+		Transaction t = s.beginTransaction();
+		Item i = new Item();
+		i.setName("widget");
+		i.setDescription("A really top-quality, full-featured widget");
+		s.persist(i);
+		t.commit();
+		s.clear();
 
-        assertThat(slcs.getElementCountInMemory()).isEqualTo(1);
+		SecondLevelCacheStatistics slcs = s.getSessionFactory().getStatistics()
+		                                   .getSecondLevelCacheStatistics(Item.class.getName());
 
-        s = openSession();
-        t = s.beginTransaction();
-        i = (Item) s.get(Item.class, i.getId());
+		assertThat(slcs.getElementCountInMemory()).isEqualTo(1);
 
-        assertThat(i).isNotNull();
-        assertThat(i.getName()).isEqualTo("widget");
+		s = openSession();
+		t = s.beginTransaction();
+		i = (Item) s.get(Item.class, i.getId());
 
-        i.setDescription("A blog standard item");
+		assertThat(i).isNotNull();
+		assertThat(i.getName()).isEqualTo("widget");
 
-        t.commit();
-        s.close();
+		i.setDescription("A blog standard item");
 
-        s = openSession();
-        t = s.beginTransaction();
-        s.delete(i);
-        t.commit();
-        s.close();
-    }
+		t.commit();
+		s.close();
 
-    @Test
-    public void emptySecondLevelCacheEntry() throws Exception {
-        sessionFactory().getCache().evictEntityRegion(Item.class.getName());
-        Statistics stats = sessionFactory().getStatistics();
-        stats.clear();
-        SecondLevelCacheStatistics statistics = stats.getSecondLevelCacheStatistics(Item.class.getName());
-        Map cacheEntries = statistics.getEntries();
+		s = openSession();
+		t = s.beginTransaction();
+		s.delete(i);
+		t.commit();
+		s.close();
+	}
 
-        assertThat(cacheEntries).isNotNull();
-        assertThat(cacheEntries.size()).isEqualTo(0);
-    }
+	@Test
+	public void emptySecondLevelCacheEntry() throws Exception {
+		sessionFactory().getCache().evictEntityRegion(Item.class.getName());
+		Statistics stats = sessionFactory().getStatistics();
+		stats.clear();
+		SecondLevelCacheStatistics statistics = stats.getSecondLevelCacheStatistics(Item.class.getName());
+		Map cacheEntries = statistics.getEntries();
 
-    @SuppressWarnings( { "UnnecessaryBoxing", "UnnecessaryUnboxing", "UnusedAssignment" } )
-    @Test
-    public void staleWritesLeaveCacheConsistent() {
-        Session s = openSession();
-        Transaction txn = s.beginTransaction();
-        VersionedItem item = new VersionedItem();
-        item.setName("steve");
-        item.setDescription("steve's item");
-        s.save(item);
-        txn.commit();
-        s.close();
+		assertThat(cacheEntries).isNotNull();
+		assertThat(cacheEntries.size()).isEqualTo(0);
+	}
 
-        Long initialVersion = item.getVersion();
+	@SuppressWarnings({ "UnnecessaryBoxing", "UnnecessaryUnboxing", "UnusedAssignment" })
+	@Test
+	public void staleWritesLeaveCacheConsistent() {
+		Session s = openSession();
+		Transaction txn = s.beginTransaction();
+		VersionedItem item = new VersionedItem();
+		item.setName("steve");
+		item.setDescription("steve's item");
+		s.save(item);
+		txn.commit();
+		s.close();
 
-        // manually revert the version property
-        item.setVersion(Long.valueOf(item.getVersion().longValue() - 1));
+		Long initialVersion = item.getVersion();
 
-        try {
-            s = openSession();
-            txn = s.beginTransaction();
-            s.update(item);
-            txn.commit();
-            s.close();
-            Assert.fail("expected stale write to fail");
-        } catch (Throwable expected) {
-            if (txn != null) {
-                try {
-                    txn.rollback();
-                } catch (Throwable ignore) {}
-            }
-        } finally {
-            if (s != null && s.isOpen()) {
-                try {
-                    s.close();
-                } catch (Throwable ignore) {}
-            }
-        }
+		// manually revert the version property
+		item.setVersion(Long.valueOf(item.getVersion().longValue() - 1));
 
-        // check the version value in the cache...
-        SecondLevelCacheStatistics slcs = sessionFactory().getStatistics()
-                .getSecondLevelCacheStatistics(VersionedItem.class.getName());
+		try {
+			s = openSession();
+			txn = s.beginTransaction();
+			s.update(item);
+			txn.commit();
+			s.close();
+			Assert.fail("expected stale write to fail");
+		} catch (Throwable expected) {
+			if (txn != null) {
+				try {
+					txn.rollback();
+				} catch (Throwable ignore) {}
+			}
+		} finally {
+			if (s != null && s.isOpen()) {
+				try {
+					s.close();
+				} catch (Throwable ignore) {}
+			}
+		}
 
-        Map cacheEntries = slcs.getEntries();
-        Object entry = cacheEntries.get(item.getId());
+		// check the version value in the cache...
+		SecondLevelCacheStatistics slcs = sessionFactory().getStatistics()
+				.getSecondLevelCacheStatistics(VersionedItem.class.getName());
 
-        log.debug("entry=[{}]", entry);
+		Map cacheEntries = slcs.getEntries();
+		Object entry = cacheEntries.get(item.getId());
 
-        Long cachedVersionValue;
+		log.debug("entry=[{}]", entry);
 
-        boolean isLock = entry.getClass()
-                .getName()
-                .equals("org.hibernate.cache.redis.strategy.AbstractReadWriteRedisAccessStrategy$Lock");
-        if (isLock) {
-            //
-        } else {
-            cachedVersionValue = (Long) getMapFromCacheEntry(entry).get("_version");
-            assertThat(cachedVersionValue.longValue()).isEqualTo(initialVersion.longValue());
-        }
+		Long cachedVersionValue;
 
-        // cleanup
-        s = openSession();
-        txn = s.beginTransaction();
-        item = (VersionedItem) s.load(VersionedItem.class, item.getId());
-        s.delete(item);
-        txn.commit();
-        s.close();
-    }
+		boolean isLock = entry.getClass()
+		                      .getName()
+		                      .equals("org.hibernate.cache.redis.strategy.AbstractReadWriteRedisAccessStrategy$Lock");
+		if (isLock) {
+			//
+		} else {
+			cachedVersionValue = (Long) getMapFromCacheEntry(entry).get("_version");
+			assertThat(cachedVersionValue.longValue()).isEqualTo(initialVersion.longValue());
+		}
+
+		// cleanup
+		s = openSession();
+		txn = s.beginTransaction();
+		item = (VersionedItem) s.load(VersionedItem.class, item.getId());
+		s.delete(item);
+		txn.commit();
+		s.close();
+	}
 }

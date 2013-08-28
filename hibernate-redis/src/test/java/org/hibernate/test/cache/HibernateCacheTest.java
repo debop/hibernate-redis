@@ -45,6 +45,5 @@ public class HibernateCacheTest extends AbstractHibernateTest {
 		loaded = (Item) session.get(Item.class, item.getId());
 		assertThat(loaded).isNotNull();
 		assertThat(sessionFactory.getCache().containsEntity(Item.class, item.getId())).isTrue();
-
 	}
 }

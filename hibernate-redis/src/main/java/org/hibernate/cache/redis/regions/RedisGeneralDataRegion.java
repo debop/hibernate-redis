@@ -33,30 +33,32 @@ import java.util.Properties;
 @Slf4j
 public abstract class RedisGeneralDataRegion extends RedisDataRegion implements GeneralDataRegion {
 
-    protected RedisGeneralDataRegion(IRedisAccessStrategyFactory accessStrategyFactory,
-                                     JedisClient jedisClient,
-                                     String regionName,
-                                     Properties props) {
-        super(accessStrategyFactory, jedisClient, regionName, props);
-    }
+	protected RedisGeneralDataRegion(IRedisAccessStrategyFactory accessStrategyFactory,
+	                                 JedisClient jedisClient,
+	                                 String regionName,
+	                                 Properties props) {
+		super(accessStrategyFactory, jedisClient, regionName, props);
+	}
 
-    @Override
-    public Object get(Object key) throws CacheException {
-        return jedisClient.get(key);
-    }
+	@Override
+	public Object get(Object key) throws CacheException {
+		log.trace("캐시를 로드합니다... key=[{}]", key);
+		return jedisClient.get(key);
+	}
 
-    @Override
-    public void put(Object key, Object value) throws CacheException {
-        jedisClient.set(key, value);
-    }
+	@Override
+	public void put(Object key, Object value) throws CacheException {
+		log.trace("캐시를 저장합니다... key=[{}], value=[{}]", key, value);
+		jedisClient.set(key, value);
+	}
 
-    @Override
-    public void evict(Object key) throws CacheException {
-        jedisClient.delete(key);
-    }
+	@Override
+	public void evict(Object key) throws CacheException {
+		jedisClient.delete(key);
+	}
 
-    @Override
-    public void evictAll() throws CacheException {
-        jedisClient.deleteRegion(getName());
-    }
+	@Override
+	public void evictAll() throws CacheException {
+		jedisClient.deleteRegion(getName());
+	}
 }
