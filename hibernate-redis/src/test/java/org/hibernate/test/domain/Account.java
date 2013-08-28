@@ -2,6 +2,7 @@ package org.hibernate.test.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * @since 13. 4. 6. 오전 12:53
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "hibernate-redis", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Account implements Serializable {

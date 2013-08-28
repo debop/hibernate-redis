@@ -2,10 +2,9 @@ package org.hibernate.test.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,6 +18,7 @@ import java.util.Set;
  * @since 13. 4. 6. 오전 12:54
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "hibernate-redis", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Person implements Serializable {
@@ -33,9 +33,22 @@ public class Person implements Serializable {
 	private String firstname;
 	private String lastname;
 
+	@ManyToMany(mappedBy = "participants")
 	private List<Event> events = new ArrayList<Event>();
+
+	@CollectionTable(name = "EmailAddressSet", joinColumns = @JoinColumn(name = "PersonId"))
+	@ElementCollection(targetClass = String.class)
+	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private Set<String> emailAddresses = new HashSet<String>();
+
+	@CollectionTable(name = "PhoneNumberSet", joinColumns = @JoinColumn(name = "ProductItemId"))
+	@ElementCollection(targetClass = PhoneNumber.class)
+	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private Set<PhoneNumber> phoneNumbers = new HashSet<PhoneNumber>();
+
+	@CollectionTable(name = "TailsManList", joinColumns = @JoinColumn(name = "PersonId"))
+	@ElementCollection(targetClass = String.class)
+	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
 	private List<String> tailsmans = new ArrayList<String>();
 
 	public String toString() {

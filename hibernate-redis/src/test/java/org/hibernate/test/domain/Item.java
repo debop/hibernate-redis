@@ -2,6 +2,7 @@ package org.hibernate.test.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,7 @@ import java.io.Serializable;
  * @since 13. 4. 6. 오전 12:54
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "hibernate-redis", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Item implements Serializable {
@@ -26,4 +28,6 @@ public class Item implements Serializable {
 	private String name;
 
 	private String description;
+
+	private static final long serialVersionUID = 5597936606448211014L;
 }

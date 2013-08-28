@@ -33,94 +33,98 @@ import org.hibernate.cfg.Settings;
  */
 @Slf4j
 public class TransactionalRedisNaturalIdRegionAccessStrategy
-        extends AbstractRedisAccessStrategy<RedisNaturalIdRegion>
-        implements NaturalIdRegionAccessStrategy {
+		extends AbstractRedisAccessStrategy<RedisNaturalIdRegion>
+		implements NaturalIdRegionAccessStrategy {
 
-    @Getter
-    private final JedisClient jedisClient;
+	@Getter
+	private final JedisClient jedisClient;
 
-    public TransactionalRedisNaturalIdRegionAccessStrategy(RedisNaturalIdRegion region,
-                                                           JedisClient jedis,
-                                                           Settings settings) {
-        super(region, settings);
-        this.jedisClient = jedis;
-    }
+	public TransactionalRedisNaturalIdRegionAccessStrategy(RedisNaturalIdRegion region,
+	                                                       JedisClient jedis,
+	                                                       Settings settings) {
+		super(region, settings);
+		this.jedisClient = jedis;
+	}
 
-    @Override
-    public Object get(Object key, long txTimestamp) throws CacheException {
-        try {
-            return jedisClient.get(key);
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
-    }
+	@Override
+	public Object get(Object key, long txTimestamp) throws CacheException {
+		try {
+			return jedisClient.get(key);
+		} catch (Exception e) {
+			throw new CacheException(e);
+		}
+	}
 
-    @Override
-    public boolean putFromLoad(Object key,
-                               Object value,
-                               long txTimestamp,
-                               Object version,
-                               boolean minimalPutOverride) throws CacheException {
-        if (minimalPutOverride && jedisClient.exists(key))
-            return false;
-        try {
-            jedisClient.set(key, value);
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
-        return true;
-    }
+	@Override
+	public boolean putFromLoad(Object key,
+	                           Object value,
+	                           long txTimestamp,
+	                           Object version,
+	                           boolean minimalPutOverride) throws CacheException {
+		log.trace("putFromLoad... key=[{}]", key);
 
-    @Override
-    public SoftLock lockItem(Object key, Object version) throws CacheException {
-        return null;
-    }
+		if (minimalPutOverride && jedisClient.exists(key))
+			return false;
+		try {
+			jedisClient.set(key, value);
+		} catch (Exception e) {
+			throw new CacheException(e);
+		}
+		return true;
+	}
 
-    @Override
-    public void unlockItem(Object key, SoftLock lock) throws CacheException {
-        // nothing to do
-    }
+	@Override
+	public SoftLock lockItem(Object key, Object version) throws CacheException {
+		return null;
+	}
 
-    @Override
-    public boolean insert(Object key, Object value) throws CacheException {
-        try {
-            jedisClient.set(key, value);
-            return true;
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
-    }
+	@Override
+	public void unlockItem(Object key, SoftLock lock) throws CacheException {
+		// nothing to do
+	}
 
-    @Override
-    public boolean afterInsert(Object key, Object value) throws CacheException {
-        return false;
-    }
+	@Override
+	public boolean insert(Object key, Object value) throws CacheException {
+		try {
+			log.trace("insert key=[{}]", key);
+			jedisClient.set(key, value);
+			return true;
+		} catch (Exception e) {
+			throw new CacheException(e);
+		}
+	}
 
-    @Override
-    public boolean update(Object key, Object value) throws CacheException {
-        try {
-            jedisClient.set(key, value);
-            return true;
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
-    }
+	@Override
+	public boolean afterInsert(Object key, Object value) throws CacheException {
+		return false;
+	}
 
-    @Override
-    public boolean afterUpdate(Object key, Object value, SoftLock lock) throws CacheException {
-        return false;
-    }
+	@Override
+	public boolean update(Object key, Object value) throws CacheException {
+		try {
+			log.trace("update key=[{}]", key);
+			jedisClient.set(key, value);
+			return true;
+		} catch (Exception e) {
+			throw new CacheException(e);
+		}
+	}
 
-    @Override
-    public void remove(Object key) throws CacheException {
-        if (log.isTraceEnabled())
-            log.trace("remove key=[{}]", key);
+	@Override
+	public boolean afterUpdate(Object key, Object value, SoftLock lock) throws CacheException {
+		return false;
+	}
 
-        try {
-            jedisClient.delete(key);
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
-    }
+	@Override
+	public void remove(Object key) throws CacheException {
+		if (log.isTraceEnabled())
+			log.trace("remove key=[{}]", key);
+
+		try {
+			jedisClient.delete(key);
+		} catch (Exception e) {
+			throw new CacheException(e);
+		}
+	}
 
 }

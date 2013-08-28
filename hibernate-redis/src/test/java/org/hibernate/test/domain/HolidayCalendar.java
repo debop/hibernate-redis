@@ -3,9 +3,7 @@ package org.hibernate.test.domain;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -31,6 +29,9 @@ public class HolidayCalendar implements Serializable {
 	@GeneratedValue
 	private Long id;
 
+	@CollectionTable(name = "HolidayMap", joinColumns = @JoinColumn(name = "CalendarId"))
+	@MapKeyClass(Date.class) // Map의 Key 의 수형
+	@ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)  // Map의 Value의 수형
 	private Map<Date, String> holidays = new HashMap<Date, String>();
 
 	public HolidayCalendar init() {

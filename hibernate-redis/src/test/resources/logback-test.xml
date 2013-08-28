@@ -3,7 +3,7 @@
     <!-- help : http://logback.qos.ch/manual/appenders.html -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36}.%method : %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{48}.%method : %msg%n</pattern>
             <immediateFlush>true</immediateFlush>
             <charset>UTF-8</charset>
         </encoder>

@@ -31,61 +31,65 @@ import org.hibernate.cfg.Settings;
  */
 @Slf4j
 public class ReadWriteRedisNaturalIdRegionAccessStrategy
-        extends AbstractReadWriteRedisAccessStrategy<RedisNaturalIdRegion>
-        implements NaturalIdRegionAccessStrategy {
+		extends AbstractReadWriteRedisAccessStrategy<RedisNaturalIdRegion>
+		implements NaturalIdRegionAccessStrategy {
 
-    /** Creates a read/write cache access strategy around the given cache region. */
-    public ReadWriteRedisNaturalIdRegionAccessStrategy(RedisNaturalIdRegion region, Settings settings) {
-        super(region, settings);
-    }
+	/** Creates a read/write cache access strategy around the given cache region. */
+	public ReadWriteRedisNaturalIdRegionAccessStrategy(RedisNaturalIdRegion region, Settings settings) {
+		super(region, settings);
+	}
 
-    @Override
-    public boolean insert(Object key, Object value) throws CacheException {
-        return false;
-    }
+	@Override
+	public boolean insert(Object key, Object value) throws CacheException {
+		log.trace("insert cache item... key=[{}]", key);
+		region.put(key, value);
+		return true;
+	}
 
-    @Override
-    public boolean afterInsert(Object key, Object value) throws CacheException {
-        region.writeLock(key);
-        try {
-            Lockable item = (Lockable) region.get(key);
-            if (item == null) {
-                region.put(key, new Item(value, null, region.nextTimestamp()));
-                return true;
-            } else {
-                return false;
-            }
-        } finally {
-            region.writeUnlock(key);
-        }
-    }
+	@Override
+	public boolean afterInsert(Object key, Object value) throws CacheException {
+		region.writeLock(key);
+		try {
+			Lockable item = (Lockable) region.get(key);
+			if (item == null) {
+				region.put(key, new Item(value, null, region.nextTimestamp()));
+				return true;
+			} else {
+				return false;
+			}
+		} finally {
+			region.writeUnlock(key);
+		}
+	}
 
-    @Override
-    public boolean update(Object key, Object value) throws CacheException {
-        return false;
-    }
+	@Override
+	public boolean update(Object key, Object value) throws CacheException {
+		log.trace("update cache item... key=[{}]", key);
+		region.put(key, value);
+		return true;
+	}
 
-    @Override
-    public boolean afterUpdate(Object key, Object value, SoftLock lock) throws CacheException {
-        region.writeLock(key);
-        try {
-            Lockable item = (Lockable) region.get(key);
+	@Override
+	public boolean afterUpdate(Object key, Object value, SoftLock lock) throws CacheException {
+		region.writeLock(key);
+		try {
+			Lockable item = (Lockable) region.get(key);
 
-            if (item != null && item.isUnlockable(lock)) {
-                Lock lockItem = (Lock) item;
-                if (lockItem.wasLockedConcurrently()) {
-                    decrementLock(key, lockItem);
-                    return false;
-                } else {
-                    region.put(key, new Item(value, null, region.nextTimestamp()));
-                    return true;
-                }
-            } else {
-                handleLockExpiry(key, item);
-                return false;
-            }
-        } finally {
-            region.writeUnlock(key);
-        }
-    }
+			if (item != null && item.isUnlockable(lock)) {
+				Lock lockItem = (Lock) item;
+				if (lockItem.wasLockedConcurrently()) {
+					decrementLock(key, lockItem);
+					return false;
+				} else {
+					region.put(key, new Item(value, null, region.nextTimestamp()));
+					return true;
+				}
+			} else {
+				handleLockExpiry(key, item);
+				return false;
+			}
+		} finally {
+			region.writeUnlock(key);
+		}
+	}
 }

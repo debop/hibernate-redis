@@ -2,6 +2,7 @@ package org.hibernate.test.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,6 +17,7 @@ import java.util.Set;
  * @since 13. 4. 6. 오전 12:53
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "hibernate-redis", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Event implements Serializable {
@@ -31,6 +33,7 @@ public class Event implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 
+	@ManyToMany(cascade = { CascadeType.ALL })
 	private Set<Person> participants = new HashSet<Person>();
 
 	@ManyToOne
