@@ -9,6 +9,7 @@ import org.hibernate.test.AbstractHibernateTest;
 import org.hibernate.test.domain.Account;
 import org.hibernate.test.domain.Item;
 import org.hibernate.test.domain.Person;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
@@ -24,15 +25,14 @@ import static org.fest.assertions.Assertions.assertThat;
 @Slf4j
 public class HibernateCacheTest extends AbstractHibernateTest {
 
-    private String REGION_NAME = Item.class.getName();
-
+    @Before
     public void before() {
         sessionFactory.getStatistics().setStatisticsEnabled(true);
         sessionFactory.getStatistics().clear();
     }
 
-    public SecondLevelCacheStatistics getSecondLevelCacheStatistics() {
-        return sessionFactory.getStatistics().getSecondLevelCacheStatistics(REGION_NAME);
+    public SecondLevelCacheStatistics getSecondLevelCacheStatistics(Class clazz) {
+        return sessionFactory.getStatistics().getSecondLevelCacheStatistics(clazz.getName());
     }
 
     @Test
@@ -41,13 +41,16 @@ public class HibernateCacheTest extends AbstractHibernateTest {
         Statistics stats = sessionFactory.getStatistics();
         stats.clear();
 
-        SecondLevelCacheStatistics statistics = stats.getSecondLevelCacheStatistics(REGION_NAME);
+        SecondLevelCacheStatistics statistics = stats.getSecondLevelCacheStatistics(Item.class.getName());
         log.info("SecondLevel Cache Region=[{}], ElementInMemory=[{}], HitCount=[{}]",
-                 REGION_NAME, statistics.getElementCountInMemory(), statistics.getHitCount());
+                 Item.class.getName(), statistics.getElementCountInMemory(), statistics.getHitCount());
     }
 
     @Test
     public void queryCacheInvalidation() throws Exception {
+
+        sessionFactory.getCache().evictEntityRegion(Item.class);
+
         Session s = sessionFactory.openSession();
         Transaction t = s.beginTransaction();
         Item i = new Item();
@@ -57,73 +60,116 @@ public class HibernateCacheTest extends AbstractHibernateTest {
         t.commit();
         s.close();
 
-        SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics();
+        SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics(Item.class);
         log.info(slcs.toString());
 
-        Session session = sessionFactory.getCurrentSession();
+        Session session = sessionFactory.openSession();
         Item loaded = (Item) session.get(Item.class, i.getId());
+        assertThat(loaded).isNotNull();
+        session.close();
 
         log.info(slcs.toString());
         assertThat(slcs.getPutCount()).isEqualTo(1);
+        assertThat(slcs.getElementCountInMemory()).isEqualTo(1);
     }
 
     @Test
     public void simpleEntityCaching() {
+
+        sessionFactory.getCache().evictEntityRegion(Item.class);
+        SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics(Item.class);
+        Session session = sessionFactory.openSession();
+
         Item item = new Item();
         item.setName("redis");
         item.setDescription("redis cache item");
 
-        Session session = sessionFactory.getCurrentSession();
+        session = sessionFactory.openSession();
         session.save(item);
         session.flush();
-        session.clear();
+        session.close();
 
+        session = sessionFactory.openSession();
         Item loaded = (Item) session.get(Item.class, item.getId());
         assertThat(loaded).isNotNull();
-        // assertThat(sessionFactory.getCache().containsEntity(Item.class, item.getId())).isTrue();
+        session.close();
 
+        log.info(slcs.toString());
+        assertThat(slcs.getPutCount()).isEqualTo(1);
+        assertThat(slcs.getElementCountInMemory()).isEqualTo(1);
+
+        session = sessionFactory.openSession();
         loaded.setDescription("Update description...");
         session.save(loaded);
         session.flush();
-        session.clear();
+        session.close();
 
+        session = sessionFactory.openSession();
         loaded = (Item) session.get(Item.class, item.getId());
         assertThat(loaded).isNotNull();
-        assertThat(sessionFactory.getCache().containsEntity(Item.class, item.getId())).isTrue();
+        session.close();
+
+        log.info(slcs.toString());
+        assertThat(slcs.getPutCount()).isEqualTo(1);
+        assertThat(slcs.getElementCountInMemory()).isEqualTo(1);
     }
 
     @Test
     public void nonrestrictCaching() {
-        Session session = sessionFactory.getCurrentSession();
+        sessionFactory.getCache().evictEntityRegion(Account.class);
+        sessionFactory.getCache().evictEntityRegion(Person.class);
+
+        SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics(Account.class);
+        SecondLevelCacheStatistics slcs2 = getSecondLevelCacheStatistics(Person.class);
+
+        Session session = sessionFactory.openSession();
 
         Person person = new Person();
         person.setAge(40);
         person.setFirstname("Bae");
         person.setLastname("Sunghyouk");
-        session.saveOrUpdate(person);
+        session.save(person);
 
         Account account = new Account();
         account.setPerson(person);
-        session.saveOrUpdate(account);
+        session.save(account);
 
         session.flush();
-        session.clear();
+        session.close();
 
+        session = sessionFactory.openSession();
         Account acc = (Account) session.get(Account.class, account.getId());
         assertThat(acc).isNotNull();
         assertThat(acc.getPerson()).isNotNull();
+        session.close();
 
-        session.evict(acc);
+        log.info("Account:[{}]", slcs.toString());
+        assertThat(slcs.getPutCount()).isEqualTo(1);
+        assertThat(slcs.getElementCountInMemory()).isEqualTo(1);
+
+        log.info("Person:[{}]", slcs2.toString());
+        assertThat(slcs2.getPutCount()).isEqualTo(1);
+        assertThat(slcs2.getElementCountInMemory()).isEqualTo(1);
+
+        session = sessionFactory.openSession();
         acc = (Account) session.get(Account.class, account.getId());
         assertThat(acc).isNotNull();
         assertThat(acc.getPerson()).isNotNull();
+        session.close();
 
-        assertThat(sessionFactory.getCache().containsEntity(Account.class, account.getId())).isTrue();
-        assertThat(sessionFactory.getCache().containsEntity(Person.class, person.getId())).isTrue();
+        log.info("Account:[{}]", slcs.toString());
+        assertThat(slcs.getPutCount()).isEqualTo(1);
+        assertThat(slcs.getElementCountInMemory()).isEqualTo(1);
+
+        log.info("Person:[{}]", slcs2.toString());
+        assertThat(slcs2.getPutCount()).isEqualTo(1);
+        assertThat(slcs2.getElementCountInMemory()).isEqualTo(1);
     }
 
     @Test
     public void massiveCaching() {
+        sessionFactory.getCache().evictEntityRegion(Item.class);
+
         Session session = sessionFactory.openSession();
         Transaction tx = session.beginTransaction();
 
@@ -137,9 +183,6 @@ public class HibernateCacheTest extends AbstractHibernateTest {
         }
         tx.commit();
         session.close();
-
-        SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics();
-        log.info(slcs.toString());
 
         session = sessionFactory.openSession();
         tx = session.beginTransaction();
@@ -155,7 +198,31 @@ public class HibernateCacheTest extends AbstractHibernateTest {
         tx.commit();
         session.close();
 
-        slcs = getSecondLevelCacheStatistics();
+        SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics(Item.class);
         log.info(slcs.toString());
+        assertThat(slcs.getPutCount()).isEqualTo(count);
+        assertThat(slcs.getElementCountInMemory()).isEqualTo(count);
+
+        session = sessionFactory.openSession();
+        tx = session.beginTransaction();
+        items = (List<Item>) session.createCriteria(Item.class).list();
+        for (Item item : items) {
+            item.getName();
+        }
+        tx.commit();
+        session.close();
+
+        log.info(slcs.toString());
+        assertThat(slcs.getPutCount()).isEqualTo(count);
+        assertThat(slcs.getElementCountInMemory()).isEqualTo(count);
+
+        session = sessionFactory.openSession();
+        tx = session.beginTransaction();
+        items = (List<Item>) session.createCriteria(Item.class).list();
+        for (Item item : items) {
+            session.delete(item);
+        }
+        tx.commit();
+        session.close();
     }
 }

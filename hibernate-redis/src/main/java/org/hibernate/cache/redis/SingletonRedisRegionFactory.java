@@ -44,6 +44,7 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
 
     public SingletonRedisRegionFactory(Properties props) {
         super(props);
+        log.info("SingletonRedisRegionFactory를 생성했습니다.");
         this.jedisClient = JedisTool.createJedisClient(props);
     }
 
@@ -53,8 +54,10 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
 
         this.settings = settings;
         try {
-            this.jedisClient = JedisTool.createJedisClient(props);
-            ReferenceCount.incrementAndGet();
+            if (jedisClient == null) {
+                this.jedisClient = JedisTool.createJedisClient(props);
+                ReferenceCount.incrementAndGet();
+            }
             log.info("RedisRegionFactory를 시작했습니다!!!");
         } catch (Exception e) {
             throw new CacheException(e);

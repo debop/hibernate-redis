@@ -49,7 +49,9 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
 
         this.settings = settings;
         try {
-            this.jedisClient = JedisTool.createJedisClient(props);
+            if (jedisClient == null) {
+                this.jedisClient = JedisTool.createJedisClient(props);
+            }
             log.info("RedisRegionFactory를 시작했습니다...");
         } catch (Exception e) {
             throw new CacheException(e);

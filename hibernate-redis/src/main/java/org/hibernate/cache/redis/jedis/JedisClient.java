@@ -271,7 +271,7 @@ public class JedisClient {
 
     /** 지정된 키의 항목으로 삭제합니다. */
     public void mdel(Collection<?> keys) {
-        if (isTraceEnabled) log.trace("캐시를 삭제합니다. keys=[{}]", CollectionUtil.toString(keys));
+        log.trace("캐시를 삭제합니다. keys=[{}]", CollectionUtil.toString(keys));
         if (keys == null || keys.size() == 0) return;
 
         final byte[][] rawKeys = rawKeys(keys);
@@ -288,8 +288,7 @@ public class JedisClient {
 
     /** 해당 영역의 모든 캐시 항목을 삭제합니다. */
     public void deleteRegion(final String regionName) throws CacheException {
-        if (isDebugEnabled)
-            log.debug("Region 전체를 삭제합니다... regionName=[{}]", regionName);
+        log.debug("Region 전체를 삭제합니다... regionName=[{}]", regionName);
 
         // Redis에서 한 Transaction 하에서 get / set 을 동시에 실행 할 수 없습니다. (복합 함수인 setnx 같은 것을 제외하고)
         //
@@ -297,8 +296,7 @@ public class JedisClient {
         try {
             final byte[] rawRegion = rawRegion(regionName);
 
-            if (isTraceEnabled)
-                log.trace("영역의 모든 키를 조회합니다... region=[{}]", regionName);
+            log.trace("영역의 모든 키를 조회합니다... region=[{}]", regionName);
 
             Set<byte[]> keySet = run(new JedisCallback<Set<byte[]>>() {
                 @Override
@@ -307,8 +305,7 @@ public class JedisClient {
                 }
             });
             if (keySet.size() > 0) {
-                if (isTraceEnabled)
-                    log.trace("영역의 모든 키를 삭제합니다... key 갯수=[{}]", keySet.size());
+                log.trace("영역의 모든 키를 삭제합니다... key 갯수=[{}]", keySet.size());
 
                 final byte[][] rawKeys = keySet.toArray(new byte[keySet.size()][]);
                 runWithTx(new JedisTransactionalCallback() {
@@ -318,9 +315,11 @@ public class JedisClient {
                         tx.zremrangeByRank(rawRegion, 0, -1);
                     }
                 });
+            } else {
+                log.trace("삭제할 키가 없습니다.");
             }
         } catch (Throwable t) {
-            log.error("Region을 삭제하는데 실패했습니다.", t);
+            log.warn("Region을 삭제하는데 실패했습니다.", t);
             throw new CacheException(t);
         }
     }
