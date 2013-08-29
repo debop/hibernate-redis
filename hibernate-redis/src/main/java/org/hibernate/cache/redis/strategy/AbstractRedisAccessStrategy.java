@@ -92,7 +92,6 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
      * @throws CacheException
      */
     public final void evict(Object key) throws CacheException {
-        log.trace("캐시를 evict 합니다. key=[{}]", key);
         region.remove(key);
     }
 
@@ -102,7 +101,6 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
      * @throws CacheException
      */
     public final void evictAll() throws CacheException {
-        log.trace("캐시 영역을 evict 합니다. regionName=[{}]", region.getName());
         region.clear();
     }
 }

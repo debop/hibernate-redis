@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>hibernate-redis</groupId>
 		<artifactId>hibernate-redis-parent</artifactId>
-		<version>1.0.3-SNAPSHOT</version>
+		<version>1.1.0.RELEASE</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -123,21 +123,6 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<!-- Hibernate 2nd cache -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-ehcache</artifactId>
-			<version>${hibernate.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- EhCache -->
-		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache-core</artifactId>
-			<version>2.6.5</version>
 			<scope>test</scope>
 		</dependency>
 
