@@ -19,7 +19,7 @@ package org.hibernate.cache.redis.regions;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.jedis.JedisClient;
-import org.hibernate.cache.redis.strategy.IRedisAccessStrategyFactory;
+import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.spi.CacheDataDescription;
 import org.hibernate.cache.spi.TransactionalDataRegion;
 import org.hibernate.cfg.Settings;
@@ -40,7 +40,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     /** Metadata associated with the objects sorted in the region */
     protected final CacheDataDescription metadata;
 
-    public RedisTransactionalDataRegion(IRedisAccessStrategyFactory accessStrategyFactory,
+    public RedisTransactionalDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
                                         JedisClient jedisClient,
                                         String regionName,
                                         Settings settings,
@@ -67,20 +67,33 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     }
 
     public Object get(Object key) throws CacheException {
-        return jedisClient.get(key);
+        if (key == null) return null;
+        log.trace("캐시를 로드합니다... key=[{}]", key);
+
+        try {
+            Object value = jedisClient.get(key);
+            log.trace("캐시를 로드했습니다. key=[{}], value=[{}]", key, value);
+            return value;
+        } catch (Exception e) {
+            log.warn("캐시를 로드하는데 실패했습니다. key=[{}]", key);
+            return null;
+        }
     }
 
 
     public void put(Object key, Object value) throws CacheException {
+        log.trace("캐시를 저장합니다... key=[{}], value=[{}]", key, value);
         jedisClient.set(key, value);
     }
 
     public void remove(Object key) throws CacheException {
+        log.trace("캐시를 삭제합니다... key=[{}]", key);
         jedisClient.delete(key);
     }
 
 
     public void clear() throws CacheException {
+        log.trace("영역의 모든 캐시를 삭제합니다. regionName=[{}]", getName());
         jedisClient.deleteRegion(getName());
     }
 
@@ -101,10 +114,12 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     }
 
     public void evict(Object key) throws CacheException {
+        log.trace("캐시를 삭제합니다... key=[{}]", key);
         jedisClient.delete(key);
     }
 
     public void evictAll() throws CacheException {
+        log.trace("영역의 모든 캐시를 삭제합니다. regionName=[{}]", getName());
         jedisClient.deleteRegion(getName());
     }
 

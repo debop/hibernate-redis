@@ -18,6 +18,7 @@ package org.hibernate.cache.redis.strategy;
 
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.regions.RedisCollectionRegion;
+import org.hibernate.cache.spi.CollectionRegion;
 import org.hibernate.cache.spi.access.CollectionRegionAccessStrategy;
 import org.hibernate.cache.spi.access.SoftLock;
 import org.hibernate.cfg.Settings;
@@ -29,8 +30,8 @@ import org.hibernate.cfg.Settings;
  * @since 13. 4. 5. 오후 10:42
  */
 public class NonStrictReadWriteRedisCollectionRegionAccessStrategy
-        extends AbstractRedisAccessStrategy<RedisCollectionRegion>
-        implements CollectionRegionAccessStrategy {
+    extends AbstractRedisAccessStrategy<RedisCollectionRegion>
+    implements CollectionRegionAccessStrategy {
 
 
     public NonStrictReadWriteRedisCollectionRegionAccessStrategy(RedisCollectionRegion region,
@@ -39,8 +40,13 @@ public class NonStrictReadWriteRedisCollectionRegionAccessStrategy
     }
 
     @Override
+    public CollectionRegion getRegion() {
+        return region();
+    }
+
+    @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
-        return region.get(key);
+        return region().get(key);
     }
 
     @Override
@@ -49,10 +55,10 @@ public class NonStrictReadWriteRedisCollectionRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) throws CacheException {
-        if (minimalPutOverride && region.contains(key))
+        if (minimalPutOverride && region().contains(key))
             return false;
 
-        region.put(key, value);
+        region().put(key, value);
         return true;
     }
 
@@ -63,6 +69,11 @@ public class NonStrictReadWriteRedisCollectionRegionAccessStrategy
 
     @Override
     public void unlockItem(Object key, SoftLock lock) throws CacheException {
-        region.remove(key);
+        region().remove(key);
+    }
+
+    @Override
+    public void remove(Object key) throws CacheException {
+        region().remove(key);
     }
 }

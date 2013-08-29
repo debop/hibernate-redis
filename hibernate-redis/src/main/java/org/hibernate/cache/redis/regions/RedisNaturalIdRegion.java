@@ -18,7 +18,7 @@ package org.hibernate.cache.redis.regions;
 
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.jedis.JedisClient;
-import org.hibernate.cache.redis.strategy.IRedisAccessStrategyFactory;
+import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.spi.CacheDataDescription;
 import org.hibernate.cache.spi.NaturalIdRegion;
 import org.hibernate.cache.spi.access.AccessType;
@@ -38,7 +38,7 @@ import java.util.Properties;
  */
 public class RedisNaturalIdRegion extends RedisTransactionalDataRegion implements NaturalIdRegion {
 
-    public RedisNaturalIdRegion(IRedisAccessStrategyFactory accessStrategyFactory,
+    public RedisNaturalIdRegion(RedisAccessStrategyFactory accessStrategyFactory,
                                 JedisClient jedisClient,
                                 String regionName,
                                 Settings settings,
@@ -49,6 +49,6 @@ public class RedisNaturalIdRegion extends RedisTransactionalDataRegion implement
 
     @Override
     public NaturalIdRegionAccessStrategy buildAccessStrategy(AccessType accessType) throws CacheException {
-        return accessStrategyFactory.createNaturalIdRegionAccessStrategy(this, accessType);
+        return getAccessStrategyFactory().createNaturalIdRegionAccessStrategy(this, accessType);
     }
 }

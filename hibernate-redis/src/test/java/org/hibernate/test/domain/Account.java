@@ -14,17 +14,17 @@ import java.io.Serializable;
  * @since 13. 4. 6. 오전 12:53
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "hibernate-redis", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "hibernate-redis", usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Getter
 @Setter
 public class Account implements Serializable {
-	private static final long serialVersionUID = 6662300674854084326L;
+    private static final long serialVersionUID = 6662300674854084326L;
 
-	@Id
-	@GeneratedValue
-	private Long id;
+    @Id
+    @GeneratedValue
+    private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "PersonId")
-	private Person person;
+    @ManyToOne
+    @JoinColumn(name = "PersonId")
+    private Person person;
 }

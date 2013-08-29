@@ -18,7 +18,7 @@ package org.hibernate.cache.redis;
 
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.regions.*;
-import org.hibernate.cache.redis.strategy.IRedisAccessStrategyFactory;
+import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactoryImpl;
 import org.hibernate.cache.redis.util.JedisTool;
 import org.hibernate.cache.spi.*;
@@ -55,7 +55,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
 
     protected final Properties props;
 
-    protected final IRedisAccessStrategyFactory accessStrategyFactory = new RedisAccessStrategyFactoryImpl();
+    protected final RedisAccessStrategyFactory accessStrategyFactory = new RedisAccessStrategyFactoryImpl();
 
     public AbstractRedisRegionFactory(Properties props) {
         this.props = props;
