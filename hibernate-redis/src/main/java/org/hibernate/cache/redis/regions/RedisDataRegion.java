@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.jedis.JedisClient;
-import org.hibernate.cache.redis.strategy.IRedisAccessStrategyFactory;
+import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.redis.util.Timestamper;
 import org.hibernate.cache.spi.Region;
 
@@ -40,7 +40,8 @@ public abstract class RedisDataRegion implements Region {
 
     public static final String REGION_SEPARATOR = ":-:";
 
-    protected final IRedisAccessStrategyFactory accessStrategyFactory;
+    @Getter
+    protected final RedisAccessStrategyFactory accessStrategyFactory;
 
     /** Region name */
     private final String name;
@@ -52,7 +53,7 @@ public abstract class RedisDataRegion implements Region {
     @Getter
     private final int cacheLockTimeout; // milliseconds
 
-    protected RedisDataRegion(IRedisAccessStrategyFactory accessStrategyFactory,
+    protected RedisDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
                               JedisClient jedisClient,
                               String regionName,
                               Properties props) {
@@ -60,8 +61,9 @@ public abstract class RedisDataRegion implements Region {
         this.jedisClient = jedisClient;
         this.name = regionName;
 
-        this.cacheLockTimeout = Integer.decode(props.getProperty(CACHE_LOCK_TIMEOUT_PROPERTY,
-                                                                 Integer.toString(DEFAULT_CACHE_LOCK_TIMEOUT)));
+        this.cacheLockTimeout =
+            Integer.decode(props.getProperty(CACHE_LOCK_TIMEOUT_PROPERTY,
+                                             Integer.toString(DEFAULT_CACHE_LOCK_TIMEOUT)));
     }
 
     public String getName() {
@@ -73,24 +75,29 @@ public abstract class RedisDataRegion implements Region {
         try {
             jedisClient.deleteRegion(getName());
         } catch (Exception e) {
-            throw new CacheException(e);
+            log.warn("동시에 여러 서버에서 요청 시 예외가 발생할 수 있습니다. 무시합니다.", e);
         }
     }
 
     @Override
     public boolean contains(Object key) {
-        return jedisClient.exists(key);
+        boolean exists = jedisClient.exists(key);
+        log.trace("캐시 항목 확인. key=[{}], exists=[{}]", key, exists);
+        return exists;
     }
 
     @Override
     public long getSizeInMemory() {
-        return jedisClient.dbSize();
+        long dbSize = jedisClient.dbSize();
+        log.trace("Redis DB 사이즈를 구합니다... dbSize=[{}]", dbSize);
+        return dbSize;
     }
 
     @Override
     public long getElementCountInMemory() {
-        if (log.isTraceEnabled()) log.trace("getElementCountInMemory... region=[{}]", name);
-        return jedisClient.keysInRegion(name).size();
+        long elementCount = jedisClient.keysInRegion(this.name).size();
+        log.trace("영역 [{}]에 존재하는 요소 수=[{}]", this.name, elementCount);
+        return elementCount;
     }
 
     @Override
@@ -102,7 +109,7 @@ public abstract class RedisDataRegion implements Region {
     @Override
     public Map toMap() {
         try {
-            Map result = new HashMap();
+            final Map<Object, Object> result = new HashMap<Object, Object>();
             Set keys = jedisClient.keysInRegion(name);
             List<Object> values = jedisClient.mget(keys);
 
@@ -113,7 +120,7 @@ public abstract class RedisDataRegion implements Region {
             return result;
         } catch (Exception e) {
             log.error("CacheEntry를 만드는데 실패했습니다.", e);
-            throw new CacheException(e);
+            return Collections.emptyMap();
         }
     }
 

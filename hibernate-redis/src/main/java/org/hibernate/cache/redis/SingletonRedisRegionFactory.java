@@ -44,22 +44,21 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
 
     public SingletonRedisRegionFactory(Properties props) {
         super(props);
+        log.info("SingletonRedisRegionFactory를 생성했습니다.");
         this.jedisClient = JedisTool.createJedisClient(props);
     }
 
     @Override
     public void start(Settings settings, Properties properties) throws CacheException {
-        if (isDebugEnabled)
-            log.debug("Starting region factory...");
+        log.info("Redis를 2차 캐시 저장소로 사용하는 RedisRegionFactory를 시작합니다...");
 
         this.settings = settings;
-
         try {
-            this.jedisClient = JedisTool.createJedisClient(props);
-            ReferenceCount.incrementAndGet();
-
-            if (isDebugEnabled)
-                log.debug("Start region factory");
+            if (jedisClient == null) {
+                this.jedisClient = JedisTool.createJedisClient(props);
+                ReferenceCount.incrementAndGet();
+            }
+            log.info("RedisRegionFactory를 시작했습니다!!!");
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -67,18 +66,19 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
 
     @Override
     public void stop() {
-        if (isDebugEnabled)
-            log.debug("Stop regoin factory...");
+        log.debug("RedisRegionFactory 사용을 중지합니다...");
 
         try {
-            if (ReferenceCount.decrementAndGet() == 0) {
-                jedisClient.flushDb();
+            if (jedisClient != null) {
+                if (ReferenceCount.decrementAndGet() == 0) {
+                    jedisClient.flushDb();
 
-                if (isDebugEnabled)
-                    log.debug("flush db");
+                    if (isDebugEnabled)
+                        log.debug("flush db");
+                }
+                log.info("RedisREgionFactory를 중지하였습니다.");
+                jedisClient = null;
             }
-            log.debug("Stop region factory is success");
-            jedisClient = null;
         } catch (Exception e) {
             log.error("jedisClient region factory fail to stop.", e);
         }

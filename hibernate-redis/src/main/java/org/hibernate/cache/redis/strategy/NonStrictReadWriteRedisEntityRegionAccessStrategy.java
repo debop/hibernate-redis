@@ -18,6 +18,7 @@ package org.hibernate.cache.redis.strategy;
 
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.regions.RedisEntityRegion;
+import org.hibernate.cache.spi.EntityRegion;
 import org.hibernate.cache.spi.access.EntityRegionAccessStrategy;
 import org.hibernate.cache.spi.access.SoftLock;
 import org.hibernate.cfg.Settings;
@@ -29,16 +30,21 @@ import org.hibernate.cfg.Settings;
  * @since 13. 4. 5. 오후 10:46
  */
 public class NonStrictReadWriteRedisEntityRegionAccessStrategy
-        extends AbstractRedisAccessStrategy<RedisEntityRegion>
-        implements EntityRegionAccessStrategy {
+    extends AbstractRedisAccessStrategy<RedisEntityRegion>
+    implements EntityRegionAccessStrategy {
 
     public NonStrictReadWriteRedisEntityRegionAccessStrategy(RedisEntityRegion region, Settings settings) {
         super(region, settings);
     }
 
     @Override
+    public EntityRegion getRegion() {
+        return super.region();
+    }
+
+    @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
-        return region.get(key);
+        return region().get(key);
     }
 
     @Override
@@ -47,10 +53,10 @@ public class NonStrictReadWriteRedisEntityRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) throws CacheException {
-        if (minimalPutOverride && region.contains(key))
+        if (minimalPutOverride && region().contains(key))
             return false;
 
-        region.put(key, value);
+        region().put(key, value);
         return true;
     }
 
@@ -61,7 +67,7 @@ public class NonStrictReadWriteRedisEntityRegionAccessStrategy
 
     @Override
     public void unlockItem(Object key, SoftLock lock) throws CacheException {
-        region.remove(key);
+        region().remove(key);
     }
 
     @Override
@@ -95,6 +101,6 @@ public class NonStrictReadWriteRedisEntityRegionAccessStrategy
 
     @Override
     public void remove(Object key) throws CacheException {
-        region.remove(key);
+        region().remove(key);
     }
 }

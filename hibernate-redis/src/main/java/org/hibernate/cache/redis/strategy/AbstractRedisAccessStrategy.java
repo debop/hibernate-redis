@@ -39,8 +39,12 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
         this.settings = settings;
     }
 
-    public T getRegion() {
+    protected T region() {
         return region;
+    }
+
+    protected Settings settings() {
+        return settings;
     }
 
     public final boolean putFromLoad(Object key, Object value, long txTimestamp, Object version) throws CacheException {
@@ -88,6 +92,7 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
      * @throws CacheException
      */
     public final void evict(Object key) throws CacheException {
+        log.trace("캐시를 evict 합니다. key=[{}]", key);
         region.remove(key);
     }
 
@@ -97,6 +102,7 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
      * @throws CacheException
      */
     public final void evictAll() throws CacheException {
+        log.trace("캐시 영역을 evict 합니다. regionName=[{}]", region.getName());
         region.clear();
     }
 }

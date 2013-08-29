@@ -18,40 +18,40 @@ import java.util.Set;
  * @since 13. 4. 6. 오전 12:54
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "hibernate-redis", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Person implements Serializable {
 
-	private static final long serialVersionUID = -8245742950718661800L;
+    private static final long serialVersionUID = -8245742950718661800L;
 
-	@Id
-	@GeneratedValue
-	private Long id;
+    @Id
+    @GeneratedValue
+    private Long id;
 
-	private int age;
-	private String firstname;
-	private String lastname;
+    private int age;
+    private String firstname;
+    private String lastname;
 
-	@ManyToMany(mappedBy = "participants")
-	private List<Event> events = new ArrayList<Event>();
+    @ManyToMany(mappedBy = "participants")
+    private List<Event> events = new ArrayList<Event>();
 
-	@CollectionTable(name = "EmailAddressSet", joinColumns = @JoinColumn(name = "PersonId"))
-	@ElementCollection(targetClass = String.class)
-	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
-	private Set<String> emailAddresses = new HashSet<String>();
+    @CollectionTable(name = "EmailAddressSet", joinColumns = @JoinColumn(name = "PersonId"))
+    @ElementCollection(targetClass = String.class)
+    @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private Set<String> emailAddresses = new HashSet<String>();
 
-	@CollectionTable(name = "PhoneNumberSet", joinColumns = @JoinColumn(name = "ProductItemId"))
-	@ElementCollection(targetClass = PhoneNumber.class)
-	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
-	private Set<PhoneNumber> phoneNumbers = new HashSet<PhoneNumber>();
+    @CollectionTable(name = "PhoneNumberSet", joinColumns = @JoinColumn(name = "ProductItemId"))
+    @ElementCollection(targetClass = PhoneNumber.class)
+    @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private Set<PhoneNumber> phoneNumbers = new HashSet<PhoneNumber>();
 
-	@CollectionTable(name = "TailsManList", joinColumns = @JoinColumn(name = "PersonId"))
-	@ElementCollection(targetClass = String.class)
-	@org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
-	private List<String> tailsmans = new ArrayList<String>();
+    @CollectionTable(name = "TailsManList", joinColumns = @JoinColumn(name = "PersonId"))
+    @ElementCollection(targetClass = String.class)
+    @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
+    private List<String> tailsmans = new ArrayList<String>();
 
-	public String toString() {
-		return getFirstname() + " " + getLastname();
-	}
+    public String toString() {
+        return getFirstname() + " " + getLastname();
+    }
 }

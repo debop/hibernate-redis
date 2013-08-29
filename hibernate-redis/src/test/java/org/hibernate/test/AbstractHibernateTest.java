@@ -13,9 +13,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @since 13. 8. 28. 오후 9:48
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { HibernateConfiguration.class })
+@ContextConfiguration(classes = { HibernateRedisConfiguration.class })
+// @ContextConfiguration(classes = { HibernateEhCacheConfiguration.class })
 public abstract class AbstractHibernateTest {
 
-	@Autowired
-	protected SessionFactory sessionFactory;
+    @Autowired
+    protected SessionFactory sessionFactory;
 }
