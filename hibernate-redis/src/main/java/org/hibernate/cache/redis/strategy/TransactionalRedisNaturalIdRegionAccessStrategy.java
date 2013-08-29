@@ -59,11 +59,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
-        try {
-            return jedisClient.get(key);
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
+        return jedisClient.get(key);
     }
 
     @Override
@@ -73,13 +69,8 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean insert(Object key, Object value) throws CacheException {
-        log.trace("캐시를 추가합니다... key=[{}], value=[{}]", key, value);
-        try {
-            jedisClient.set(key, value);
-            return true;
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
+        jedisClient.set(key, value);
+        return true;
     }
 
     @Override
@@ -93,28 +84,16 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) throws CacheException {
-        log.trace("엔티티를 로드하고, 캐시에 저장합니다... key=[{}]", key);
-
-        try {
-            if (minimalPutOverride && jedisClient.exists(key))
-                return false;
-            jedisClient.set(key, value);
-            return true;
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
+        if (minimalPutOverride && jedisClient.exists(key))
+            return false;
+        jedisClient.set(key, value);
+        return true;
     }
 
 
     @Override
     public void remove(Object key) throws CacheException {
-        log.trace("캐시를 삭제합니다. key=[{}]", key);
-
-        try {
-            jedisClient.delete(key);
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
+        jedisClient.delete(key);
     }
 
     @Override
@@ -124,12 +103,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean update(Object key, Object value) throws CacheException {
-        log.trace("캐시를 갱신합니다... key=[{}], value=[{}]", key, value);
-        try {
-            jedisClient.set(key, value);
-            return true;
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
+        jedisClient.set(key, value);
+        return true;
     }
 }

@@ -52,7 +52,6 @@ public class ReadWriteRedisEntityRegionAccessStrategy
 
     @Override
     public boolean afterInsert(Object key, Object value, Object version) throws CacheException {
-        log.trace("afterInsert key=[{}]", key);
         region().writeLock(key);
         try {
             Object loaded = region.get(key);

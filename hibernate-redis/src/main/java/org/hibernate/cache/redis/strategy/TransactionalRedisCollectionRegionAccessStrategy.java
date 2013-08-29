@@ -53,7 +53,6 @@ public class TransactionalRedisCollectionRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
-        log.trace("캐시 값을 로드합니다. key=[{}], txTimestamp=[{}]", key, txTimestamp);
         try {
             return jedisClient.get(key);
         } catch (Exception e) {
@@ -67,7 +66,6 @@ public class TransactionalRedisCollectionRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) throws CacheException {
-        log.trace("엔티티 로드 후 작업 key=[{}], value=[{}]", key, value);
         try {
             if (minimalPutOverride && jedisClient.exists(key)) {
                 return false;
@@ -92,7 +90,6 @@ public class TransactionalRedisCollectionRegionAccessStrategy
 
     @Override
     public void remove(Object key) throws CacheException {
-        log.trace("캐시 키를 제거합니다. key=[{}]", key);
         try {
             jedisClient.delete(key);
         } catch (Exception e) {

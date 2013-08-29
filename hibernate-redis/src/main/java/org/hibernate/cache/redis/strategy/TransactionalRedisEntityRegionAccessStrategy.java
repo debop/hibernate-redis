@@ -53,12 +53,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
-        log.trace("캐시 값을 로드합니다. key=[{}], txTimestamp=[{}]", key, txTimestamp);
-        try {
-            return jedisClient.get(key);
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
+        return jedisClient.get(key);
     }
 
     @Override
@@ -67,15 +62,10 @@ public class TransactionalRedisEntityRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) throws CacheException {
-        log.trace("putFromLoad... key=[{}]", key);
-        try {
-            if (minimalPutOverride && jedisClient.exists(key))
-                return false;
-            jedisClient.set(key, value);
-            return true;
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
+        if (minimalPutOverride && jedisClient.exists(key))
+            return false;
+        jedisClient.set(key, value);
+        return true;
     }
 
     @Override
@@ -90,13 +80,8 @@ public class TransactionalRedisEntityRegionAccessStrategy
 
     @Override
     public boolean insert(Object key, Object value, Object version) throws CacheException {
-        log.trace("캐시 값을 저장합니다... key=[{}]", key);
-        try {
-            jedisClient.set(key, value);
-            return true;
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
+        jedisClient.set(key, value);
+        return true;
     }
 
     @Override
@@ -106,13 +91,8 @@ public class TransactionalRedisEntityRegionAccessStrategy
 
     @Override
     public boolean update(Object key, Object value, Object currentVersion, Object previousVersion) throws CacheException {
-        log.trace("update cache item... key=[{}]", key);
-        try {
-            jedisClient.set(key, value);
-            return true;
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
+        jedisClient.set(key, value);
+        return true;
     }
 
     @Override
@@ -123,11 +103,6 @@ public class TransactionalRedisEntityRegionAccessStrategy
 
     @Override
     public void remove(Object key) throws CacheException {
-        log.trace("캐시를 삭제합니다. key=[{}]", key);
-        try {
-            jedisClient.delete(key);
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
+        jedisClient.delete(key);
     }
 }
