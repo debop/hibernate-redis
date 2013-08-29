@@ -17,7 +17,9 @@ import java.util.List;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * org.hibernate.test.cache.HibernateCacheTest
+ * Hibernate 실전 테스트 입니다.
+ * <p/>
+ * NOTE: Entity의 Cache Region은 지정하시면 안됩니다!!! Class Name 이 Region이 되도록 했습니다.
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 6. 오전 12:51
