@@ -70,14 +70,9 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
         if (key == null) return null;
         log.trace("캐시를 로드합니다... key=[{}]", key);
 
-        try {
-            Object value = jedisClient.get(key);
-            log.trace("캐시를 로드했습니다. key=[{}], value=[{}]", key, value);
-            return value;
-        } catch (Exception e) {
-            log.warn("캐시를 로드하는데 실패했습니다. key=[{}]", key);
-            return null;
-        }
+        Object value = jedisClient.get(key);
+        log.trace("캐시를 로드했습니다. key=[{}], value=[{}]", key, value);
+        return value;
     }
 
 

@@ -45,15 +45,12 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
 
     @Override
     public void start(Settings settings, Properties properties) throws CacheException {
-        if (isDebugEnabled)
-            log.debug("Starting region factory...");
+        log.info("Redis를 2차 캐시 저장소로 사용하는 RedisRegionFactory를 시작합니다...");
 
         this.settings = settings;
-
         try {
             this.jedisClient = JedisTool.createJedisClient(props);
-            if (isDebugEnabled)
-                log.debug("Start region factory!!!");
+            log.info("RedisRegionFactory를 시작했습니다...");
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -62,16 +59,15 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
     @Override
     public void stop() {
         if (jedisClient == null) return;
-        if (isDebugEnabled)
-            log.debug("Stop regoin factory...");
+        log.debug("RedisRegionFactory 사용을 중지합니다...");
 
         try {
             jedisClient.flushDb();
             jedisClient = null;
-            if (isDebugEnabled)
-                log.debug("Stop region factory!!!");
+            log.info("RedisRegionFactory를 중지했습니다.");
         } catch (Exception e) {
             log.error("jedisClient region factory fail to stop.", e);
+            throw new CacheException(e);
         }
     }
 }

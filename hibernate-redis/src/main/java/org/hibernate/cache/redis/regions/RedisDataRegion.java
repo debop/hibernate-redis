@@ -81,12 +81,16 @@ public abstract class RedisDataRegion implements Region {
 
     @Override
     public boolean contains(Object key) {
-        return jedisClient.exists(key);
+        boolean exists = jedisClient.exists(key);
+        log.trace("캐시 항목 확인. key=[{}], exists=[{}]", key, exists);
+        return exists;
     }
 
     @Override
     public long getSizeInMemory() {
-        return jedisClient.dbSize();
+        long dbSize = jedisClient.dbSize();
+        log.trace("Redis DB 사이즈를 구합니다... dbSize=[{}]", dbSize);
+        return dbSize;
     }
 
     @Override

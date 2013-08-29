@@ -9,9 +9,7 @@ import org.hibernate.test.AbstractHibernateTest;
 import org.hibernate.test.domain.Account;
 import org.hibernate.test.domain.Item;
 import org.hibernate.test.domain.Person;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,14 +22,13 @@ import static org.fest.assertions.Assertions.assertThat;
  * @since 13. 4. 6. 오전 12:51
  */
 @Slf4j
-@Transactional
 public class HibernateCacheTest extends AbstractHibernateTest {
 
-    private String REGION_NAME = "hibernate-redis";
+    private String REGION_NAME = Item.class.getName();
 
-    @Before
     public void before() {
         sessionFactory.getStatistics().setStatisticsEnabled(true);
+        sessionFactory.getStatistics().clear();
     }
 
     public SecondLevelCacheStatistics getSecondLevelCacheStatistics() {
@@ -43,7 +40,6 @@ public class HibernateCacheTest extends AbstractHibernateTest {
         sessionFactory.getCache().evictEntityRegion(Item.class);
         Statistics stats = sessionFactory.getStatistics();
         stats.clear();
-
 
         SecondLevelCacheStatistics statistics = stats.getSecondLevelCacheStatistics(REGION_NAME);
         log.info("SecondLevel Cache Region=[{}], ElementInMemory=[{}], HitCount=[{}]",
@@ -62,11 +58,13 @@ public class HibernateCacheTest extends AbstractHibernateTest {
         s.close();
 
         SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics();
+        log.info(slcs.toString());
 
-        // assertThat(slcs.getPutCount()).isEqualTo(1);
-        assertThat(slcs.getElementCountInMemory()).isEqualTo(1);
-        assertThat(slcs.getEntries().size()).isEqualTo(1);
+        Session session = sessionFactory.getCurrentSession();
+        Item loaded = (Item) session.get(Item.class, i.getId());
 
+        log.info(slcs.toString());
+        assertThat(slcs.getPutCount()).isEqualTo(1);
     }
 
     @Test
@@ -126,7 +124,9 @@ public class HibernateCacheTest extends AbstractHibernateTest {
 
     @Test
     public void massiveCaching() {
-        Session session = sessionFactory.getCurrentSession();
+        Session session = sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
+
         int count = 100;
 
         for (int i = 0; i < count; i++) {
@@ -135,15 +135,27 @@ public class HibernateCacheTest extends AbstractHibernateTest {
             item.setDescription("redis cache item - " + i);
             session.save(item);
         }
-        session.flush();
+        tx.commit();
+        session.close();
 
+        SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics();
+        log.info(slcs.toString());
+
+        session = sessionFactory.openSession();
+        tx = session.beginTransaction();
         List<Item> items = (List<Item>) session.createCriteria(Item.class).list();
 
         assertThat(items.size()).isEqualTo(count);
-        for (Item item : items) {
-            assertThat(sessionFactory.getCache().containsEntity(Item.class, item.getId())).isTrue();
-        }
 
-        sessionFactory.getCache().evictEntityRegion(Item.class);
+        items = (List<Item>) session.createCriteria(Item.class).list();
+
+        for (Item item : items) {
+            session.update(item);
+        }
+        tx.commit();
+        session.close();
+
+        slcs = getSecondLevelCacheStatistics();
+        log.info(slcs.toString());
     }
 }

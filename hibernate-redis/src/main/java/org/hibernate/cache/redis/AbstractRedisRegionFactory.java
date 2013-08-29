@@ -91,8 +91,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     public EntityRegion buildEntityRegion(String regionName,
                                           Properties properties,
                                           CacheDataDescription metadata) throws CacheException {
-        if (isDebugEnabled)
-            log.debug("EntityRegion을 빌드합니다. Region=[{}]", regionName);
+        log.debug("EntityRegion을 빌드합니다. Region=[{}]", regionName);
 
         return new RedisEntityRegion(accessStrategyFactory,
                                      JedisTool.createJedisClient(regionName, properties),
@@ -106,8 +105,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     public NaturalIdRegion buildNaturalIdRegion(String regionName,
                                                 Properties properties,
                                                 CacheDataDescription metadata) throws CacheException {
-        if (isDebugEnabled)
-            log.debug("NaturalIdRegion을 빌드합니다. Region=[{}]", regionName);
+        log.debug("NaturalIdRegion을 빌드합니다. Region=[{}]", regionName);
 
         return new RedisNaturalIdRegion(accessStrategyFactory,
                                         JedisTool.createJedisClient(regionName, properties),
@@ -121,8 +119,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     public CollectionRegion buildCollectionRegion(String regionName,
                                                   Properties properties,
                                                   CacheDataDescription metadata) throws CacheException {
-        if (isDebugEnabled)
-            log.debug("CollectionRegion을 빌드합니다. Region=[{}]", regionName);
+        log.debug("CollectionRegion을 빌드합니다. Region=[{}]", regionName);
 
         return new RedisCollectionRegion(accessStrategyFactory,
                                          JedisTool.createJedisClient(regionName, properties),

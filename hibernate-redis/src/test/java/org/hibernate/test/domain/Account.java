@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @since 13. 4. 6. 오전 12:53
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "hibernate-redis", usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Getter
 @Setter
 public class Account implements Serializable {

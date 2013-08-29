@@ -43,26 +43,16 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
     @Override
     public Object get(Object key) throws CacheException {
         if (key == null) return null;
-        log.trace("캐시를 로드합니다... key=[{}]", key);
-
-        try {
-            Object value = jedisClient.get(key);
-            log.trace("캐시를 로드했습니다. key=[{}], value=[{}]", key, value);
-            return value;
-        } catch (Exception e) {
-            log.warn("캐시를 로드하는데 실패했습니다. key=[{}]", key);
-            return null;
-        }
+        Object value = jedisClient.get(key);
+        log.trace("캐시를 로드했습니다. key=[{}], value=[{}]", key, value);
+        return value;
     }
 
     @Override
     public void put(Object key, Object value) throws CacheException {
         log.trace("캐시를 저장합니다... key=[{}], value=[{}]", key, value);
-        try {
-            jedisClient.set(key, value);
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
+
+        jedisClient.set(key, value);
     }
 
     @Override
