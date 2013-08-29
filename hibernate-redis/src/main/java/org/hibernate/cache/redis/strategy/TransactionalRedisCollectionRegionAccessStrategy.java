@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.regions.RedisCollectionRegion;
+import org.hibernate.cache.spi.CollectionRegion;
 import org.hibernate.cache.spi.access.CollectionRegionAccessStrategy;
 import org.hibernate.cache.spi.access.SoftLock;
 import org.hibernate.cfg.Settings;
@@ -33,61 +34,66 @@ import org.hibernate.cfg.Settings;
  */
 @Slf4j
 public class TransactionalRedisCollectionRegionAccessStrategy
-		extends AbstractRedisAccessStrategy<RedisCollectionRegion>
-		implements CollectionRegionAccessStrategy {
+    extends AbstractRedisAccessStrategy<RedisCollectionRegion>
+    implements CollectionRegionAccessStrategy {
 
-	@Getter
-	private final JedisClient jedisClient;
+    @Getter
+    private final JedisClient jedisClient;
 
-	public TransactionalRedisCollectionRegionAccessStrategy(RedisCollectionRegion region,
-	                                                        Settings settings) {
-		super(region, settings);
-		this.jedisClient = region.getJedisClient();
-	}
+    public TransactionalRedisCollectionRegionAccessStrategy(RedisCollectionRegion region,
+                                                            Settings settings) {
+        super(region, settings);
+        this.jedisClient = region.getJedisClient();
+    }
 
-	@Override
-	public Object get(Object key, long txTimestamp) throws CacheException {
-		try {
-			return jedisClient.get(key);
-		} catch (Exception e) {
-			throw new CacheException(e);
-		}
-	}
+    @Override
+    public CollectionRegion getRegion() {
+        return region();
+    }
 
-	@Override
-	public boolean putFromLoad(Object key,
-	                           Object value,
-	                           long txTimestamp,
-	                           Object version,
-	                           boolean minimalPutOverride) throws CacheException {
-		log.trace("putFromLoad... key=[{}]", key);
-		try {
-			if (minimalPutOverride && jedisClient.exists(key))
-				return false;
+    @Override
+    public Object get(Object key, long txTimestamp) throws CacheException {
+        try {
+            return jedisClient.get(key);
+        } catch (Exception e) {
+            throw new CacheException(e);
+        }
+    }
 
-			jedisClient.set(key, value);
-			return true;
-		} catch (Exception e) {
-			throw new CacheException(e);
-		}
-	}
+    @Override
+    public boolean putFromLoad(Object key,
+                               Object value,
+                               long txTimestamp,
+                               Object version,
+                               boolean minimalPutOverride) throws CacheException {
+        try {
+            if (minimalPutOverride && jedisClient.exists(key)) {
+                return false;
+            } else {
+                jedisClient.set(key, value);
+                return true;
+            }
+        } catch (Exception e) {
+            throw new CacheException(e);
+        }
+    }
 
-	@Override
-	public SoftLock lockItem(Object key, Object version) throws CacheException {
-		return null;
-	}
+    @Override
+    public SoftLock lockItem(Object key, Object version) throws CacheException {
+        return null;
+    }
 
-	@Override
-	public void unlockItem(Object key, SoftLock lock) throws CacheException {
-		// nothing to do.
-	}
+    @Override
+    public void unlockItem(Object key, SoftLock lock) throws CacheException {
+        // nothing to do.
+    }
 
-	@Override
-	public void remove(Object key) throws CacheException {
-		try {
-			jedisClient.delete(key);
-		} catch (Exception e) {
-			throw new CacheException(e);
-		}
-	}
+    @Override
+    public void remove(Object key) throws CacheException {
+        try {
+            jedisClient.delete(key);
+        } catch (Exception e) {
+            throw new CacheException(e);
+        }
+    }
 }

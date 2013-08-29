@@ -19,6 +19,7 @@ package org.hibernate.cache.redis.strategy;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.regions.RedisEntityRegion;
+import org.hibernate.cache.spi.EntityRegion;
 import org.hibernate.cache.spi.access.EntityRegionAccessStrategy;
 import org.hibernate.cache.spi.access.SoftLock;
 import org.hibernate.cfg.Settings;
@@ -31,16 +32,21 @@ import org.hibernate.cfg.Settings;
  */
 @Slf4j
 public class ReadOnlyRedisEntityRegionAccessStrategy
-        extends AbstractRedisAccessStrategy<RedisEntityRegion>
-        implements EntityRegionAccessStrategy {
+    extends AbstractRedisAccessStrategy<RedisEntityRegion>
+    implements EntityRegionAccessStrategy {
 
     public ReadOnlyRedisEntityRegionAccessStrategy(RedisEntityRegion region, Settings settings) {
         super(region, settings);
     }
 
     @Override
+    public EntityRegion getRegion() {
+        return region();
+    }
+
+    @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
-        return region.get(key);
+        return region().get(key);
     }
 
     @Override
@@ -49,7 +55,7 @@ public class ReadOnlyRedisEntityRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) throws CacheException {
-        if (minimalPutOverride && region.contains(key))
+        if (minimalPutOverride && region().contains(key))
             return false;
 
         region.put(key, value);

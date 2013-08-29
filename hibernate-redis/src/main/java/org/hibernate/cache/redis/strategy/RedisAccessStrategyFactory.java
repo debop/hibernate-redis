@@ -25,12 +25,12 @@ import org.hibernate.cache.spi.access.EntityRegionAccessStrategy;
 import org.hibernate.cache.spi.access.NaturalIdRegionAccessStrategy;
 
 /**
- * IRedisAccessStrategyFactory
+ * RedisAccessStrategyFactory
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 5. 오후 8:50
  */
-public interface IRedisAccessStrategyFactory {
+public interface RedisAccessStrategyFactory {
 
     /**
      * Create {@link EntityRegionAccessStrategy}

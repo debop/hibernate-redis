@@ -17,21 +17,21 @@ import java.io.Serializable;
  * @since 13. 4. 6. 오전 12:54
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "hibernate-redis", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class VersionedItem implements Serializable {
 
-	private static final long serialVersionUID = -1799457963599978471L;
+    private static final long serialVersionUID = -1799457963599978471L;
 
-	@Id
-	@GeneratedValue
-	private Long id;
+    @Id
+    @GeneratedValue
+    private Long id;
 
-	@Version
-	private Long version;
+    @Version
+    private Long version;
 
-	private String name;
+    private String name;
 
-	private String description;
+    private String description;
 }

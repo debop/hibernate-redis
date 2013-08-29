@@ -39,8 +39,12 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
         this.settings = settings;
     }
 
-    public T getRegion() {
+    protected T region() {
         return region;
+    }
+
+    protected Settings settings() {
+        return settings;
     }
 
     public final boolean putFromLoad(Object key, Object value, long txTimestamp, Object version) throws CacheException {

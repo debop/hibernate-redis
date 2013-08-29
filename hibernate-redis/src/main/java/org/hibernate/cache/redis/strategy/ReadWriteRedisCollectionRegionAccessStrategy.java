@@ -18,6 +18,7 @@ package org.hibernate.cache.redis.strategy;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.redis.regions.RedisCollectionRegion;
+import org.hibernate.cache.spi.CollectionRegion;
 import org.hibernate.cache.spi.access.CollectionRegionAccessStrategy;
 import org.hibernate.cfg.Settings;
 
@@ -29,10 +30,15 @@ import org.hibernate.cfg.Settings;
  */
 @Slf4j
 public class ReadWriteRedisCollectionRegionAccessStrategy
-        extends AbstractReadWriteRedisAccessStrategy<RedisCollectionRegion>
-        implements CollectionRegionAccessStrategy {
+    extends AbstractReadWriteRedisAccessStrategy<RedisCollectionRegion>
+    implements CollectionRegionAccessStrategy {
 
     public ReadWriteRedisCollectionRegionAccessStrategy(RedisCollectionRegion region, Settings settings) {
         super(region, settings);
+    }
+
+    @Override
+    public CollectionRegion getRegion() {
+        return region();
     }
 }

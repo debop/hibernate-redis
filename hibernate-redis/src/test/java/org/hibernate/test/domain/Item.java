@@ -16,18 +16,18 @@ import java.io.Serializable;
  * @since 13. 4. 6. 오전 12:54
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "hibernate-redis", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Item implements Serializable {
 
-	@Id
-	@GeneratedValue
-	private Long id;
+    @Id
+    @GeneratedValue
+    private Long id;
 
-	private String name;
+    private String name;
 
-	private String description;
+    private String description;
 
-	private static final long serialVersionUID = 5597936606448211014L;
+    private static final long serialVersionUID = 5597936606448211014L;
 }

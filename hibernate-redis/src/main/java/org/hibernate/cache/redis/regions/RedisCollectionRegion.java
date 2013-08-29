@@ -19,7 +19,7 @@ package org.hibernate.cache.redis.regions;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.jedis.JedisClient;
-import org.hibernate.cache.redis.strategy.IRedisAccessStrategyFactory;
+import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.spi.CacheDataDescription;
 import org.hibernate.cache.spi.CollectionRegion;
 import org.hibernate.cache.spi.access.AccessType;
@@ -40,7 +40,7 @@ import java.util.Properties;
 @Slf4j
 public class RedisCollectionRegion extends RedisTransactionalDataRegion implements CollectionRegion {
 
-    public RedisCollectionRegion(IRedisAccessStrategyFactory accessStrategyFactory,
+    public RedisCollectionRegion(RedisAccessStrategyFactory accessStrategyFactory,
                                  JedisClient jedisClient,
                                  String regionName,
                                  Settings settings,
@@ -51,6 +51,6 @@ public class RedisCollectionRegion extends RedisTransactionalDataRegion implemen
 
     @Override
     public CollectionRegionAccessStrategy buildAccessStrategy(AccessType accessType) throws CacheException {
-        return accessStrategyFactory.createCollectionRegionAccessStrategy(this, accessType);
+        return getAccessStrategyFactory().createCollectionRegionAccessStrategy(this, accessType);
     }
 }
