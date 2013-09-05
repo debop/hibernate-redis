@@ -440,7 +440,7 @@ public class JedisClient {
 			return callback.execute(jedis);
 		} catch (Throwable t) {
 			log.warn("Redis 작업 중 예외가 발생했습니다.", t);
-			jedisPool.returnBrokenResource(jedis);
+			// jedisPool.returnBrokenResource(jedis);
 			jedis = null;
 			throw new RuntimeException(t);
 		} finally {
@@ -463,7 +463,7 @@ public class JedisClient {
 			return tx.exec();
 		} catch (Throwable t) {
 			log.warn("Redis 작업 중 예외가 발생했습니다.", t);
-			jedisPool.returnBrokenResource(jedis);
+			// jedisPool.returnBrokenResource(jedis);
 			jedis = null;
 			throw new RuntimeException(t);
 		} finally {

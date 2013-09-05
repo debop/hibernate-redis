@@ -34,53 +34,55 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
 
-    private static final Logger log = LoggerFactory.getLogger(SingletonRedisRegionFactory.class);
-    private static final boolean isTraceEnabled = log.isTraceEnabled();
-    private static final boolean isDebugEnabled = log.isDebugEnabled();
+	private static final Logger log = LoggerFactory.getLogger(SingletonRedisRegionFactory.class);
+	private static final boolean isTraceEnabled = log.isTraceEnabled();
+	private static final boolean isDebugEnabled = log.isDebugEnabled();
 
-    private static final AtomicInteger ReferenceCount = new AtomicInteger();
+	private static final AtomicInteger ReferenceCount = new AtomicInteger();
 
-    private JedisClient jedisClient;
+	private JedisClient jedisClient;
 
-    public SingletonRedisRegionFactory(Properties props) {
-        super(props);
-        log.info("SingletonRedisRegionFactory를 생성했습니다.");
-        this.jedisClient = JedisTool.createJedisClient(props);
-    }
+	public SingletonRedisRegionFactory(Properties props) {
+		super(props);
+		log.info("SingletonRedisRegionFactory를 생성했습니다.");
+		this.jedisClient = JedisTool.createJedisClient(props);
+	}
 
-    @Override
-    public void start(Settings settings, Properties properties) throws CacheException {
-        log.info("Redis를 2차 캐시 저장소로 사용하는 RedisRegionFactory를 시작합니다...");
+	@Override
+	public void start(Settings settings, Properties properties) throws CacheException {
+		log.info("Redis를 2차 캐시 저장소로 사용하는 RedisRegionFactory를 시작합니다...");
 
-        this.settings = settings;
-        try {
-            if (jedisClient == null) {
-                this.jedisClient = JedisTool.createJedisClient(props);
-                ReferenceCount.incrementAndGet();
-            }
-            log.info("RedisRegionFactory를 시작했습니다!!!");
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
-    }
+		this.settings = settings;
+		try {
+			if (jedisClient == null) {
+				this.jedisClient = JedisTool.createJedisClient(props);
+				ReferenceCount.incrementAndGet();
+			}
+			log.info("RedisRegionFactory를 시작했습니다!!!");
+		} catch (Exception e) {
+			throw new CacheException(e);
+		}
+	}
 
-    @Override
-    public void stop() {
-        log.debug("RedisRegionFactory 사용을 중지합니다...");
+	@Override
+	public void stop() {
+		log.debug("RedisRegionFactory 사용을 중지합니다...");
 
-        try {
-            if (jedisClient != null) {
-                if (ReferenceCount.decrementAndGet() == 0) {
-                    jedisClient.flushDb();
+		try {
+			if (jedisClient != null) {
+				if (ReferenceCount.decrementAndGet() == 0) {
+					jedisClient.flushDb();
 
-                    if (isDebugEnabled)
-                        log.debug("flush db");
-                }
-                log.info("RedisREgionFactory를 중지하였습니다.");
-                jedisClient = null;
-            }
-        } catch (Exception e) {
-            log.error("jedisClient region factory fail to stop.", e);
-        }
-    }
+					if (isDebugEnabled)
+						log.debug("flush db");
+				}
+			}
+		} catch (Exception e) {
+			log.error("jedisClient region factory fail to stop.", e);
+		} finally {
+			log.info("RedisRegionFactory를 중지하였습니다.");
+			jedisClient = null;
+		}
+
+	}
 }
