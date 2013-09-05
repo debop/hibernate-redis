@@ -323,7 +323,7 @@ public class JedisClient {
 					return jedis.zrange(rawRegion, 0, -1);
 				}
 			});
-			if (keySet.size() > 0) {
+			if (keySet != null && keySet.size() > 0) {
 				log.trace("영역의 모든 키를 삭제합니다... key 갯수=[{}]", keySet.size());
 
 				final byte[][] rawKeys = keySet.toArray(new byte[keySet.size()][]);
@@ -434,15 +434,9 @@ public class JedisClient {
 	private <T> T run(final JedisCallback<T> callback) {
 
 		Jedis jedis = jedisPool.getResource();
-
 		try {
 			jedis.select(database);
 			return callback.execute(jedis);
-		} catch (Throwable t) {
-			log.warn("Redis 작업 중 예외가 발생했습니다.", t);
-			// jedisPool.returnBrokenResource(jedis);
-			jedis = null;
-			throw new RuntimeException(t);
 		} finally {
 			jedisPool.returnResource(jedis);
 		}
@@ -455,17 +449,11 @@ public class JedisClient {
 	private List<Object> runWithTx(final JedisTransactionalCallback callback) {
 
 		Jedis jedis = jedisPool.getResource();
-
 		try {
 			Transaction tx = jedis.multi();
 			tx.select(database);
 			callback.execute(tx);
 			return tx.exec();
-		} catch (Throwable t) {
-			log.warn("Redis 작업 중 예외가 발생했습니다.", t);
-			// jedisPool.returnBrokenResource(jedis);
-			jedis = null;
-			throw new RuntimeException(t);
 		} finally {
 			jedisPool.returnResource(jedis);
 		}
