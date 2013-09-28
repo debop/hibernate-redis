@@ -28,64 +28,64 @@ import java.util.Properties;
 @Configuration
 public class HibernateRedisConfiguration {
 
-    public String getDatabaseName() {
-        return "hibernate";
-    }
+	public String getDatabaseName() {
+		return "hibernate";
+	}
 
-    public String[] getMappedPackageNames() {
-        return new String[]{
-            Account.class.getPackage().getName()
-        };
-    }
+	public String[] getMappedPackageNames() {
+		return new String[] {
+				Account.class.getPackage().getName()
+		};
+	}
 
-    public Properties hibernateProperties() {
-        Properties props = new Properties();
+	public Properties hibernateProperties() {
+		Properties props = new Properties();
 
-        props.put(Environment.FORMAT_SQL, "true");
-        props.put(Environment.HBM2DDL_AUTO, "create");
-        props.put(Environment.SHOW_SQL, "true");
+		props.put(Environment.FORMAT_SQL, "true");
+		props.put(Environment.HBM2DDL_AUTO, "create");
+		props.put(Environment.SHOW_SQL, "true");
 
-        props.put(Environment.POOL_SIZE, 30);
+		props.put(Environment.POOL_SIZE, 30);
 
-        // Secondary Cache
-        props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
-        props.put(Environment.USE_QUERY_CACHE, true);
-        props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
-        props.put(Environment.CACHE_REGION_PREFIX, "");
-        props.setProperty(Environment.GENERATE_STATISTICS, "true");
-        props.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
-        props.setProperty(Environment.TRANSACTION_STRATEGY, JdbcTransactionFactory.class.getName());
-        props.put(Environment.CACHE_PROVIDER_CONFIG, "classpath:redis.properties");
+		// Secondary Cache
+		props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
+		props.put(Environment.USE_QUERY_CACHE, true);
+		props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
+		props.put(Environment.CACHE_REGION_PREFIX, "");
+		props.setProperty(Environment.GENERATE_STATISTICS, "true");
+		props.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
+		props.setProperty(Environment.TRANSACTION_STRATEGY, JdbcTransactionFactory.class.getName());
+		props.put(Environment.CACHE_PROVIDER_CONFIG, "classpath:redis.properties");
 
-        return props;
-    }
+		return props;
+	}
 
-    @Bean
-    public DataSource dataSource() {
-        return new EmbeddedDatabaseBuilder()
-            .setType(EmbeddedDatabaseType.H2)
-            .build();
-    }
+	@Bean
+	public DataSource dataSource() {
+		return new EmbeddedDatabaseBuilder()
+				.setType(EmbeddedDatabaseType.HSQL)
+				.build();
+	}
 
-    @Bean
-    public SessionFactory sessionFactory() {
+	@Bean
+	public SessionFactory sessionFactory() {
 
-        LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
-        factoryBean.setPackagesToScan(getMappedPackageNames());
-        factoryBean.setDataSource(dataSource());
-        factoryBean.setHibernateProperties(hibernateProperties());
+		LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
+		factoryBean.setPackagesToScan(getMappedPackageNames());
+		factoryBean.setDataSource(dataSource());
+		factoryBean.setHibernateProperties(hibernateProperties());
 
-        try {
-            factoryBean.afterPropertiesSet();
-        } catch (IOException e) {
-            throw new RuntimeException("Fail to build SessionFactory!!!", e);
-        }
+		try {
+			factoryBean.afterPropertiesSet();
+		} catch (IOException e) {
+			throw new RuntimeException("Fail to build SessionFactory!!!", e);
+		}
 
-        return factoryBean.getObject();
-    }
+		return factoryBean.getObject();
+	}
 
-    @Bean
-    public PlatformTransactionManager transactionManager() {
-        return new HibernateTransactionManager(sessionFactory());
-    }
+	@Bean
+	public PlatformTransactionManager transactionManager() {
+		return new HibernateTransactionManager(sessionFactory());
+	}
 }

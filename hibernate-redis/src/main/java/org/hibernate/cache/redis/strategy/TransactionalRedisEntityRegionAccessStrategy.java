@@ -34,8 +34,8 @@ import org.hibernate.cfg.Settings;
  */
 @Slf4j
 public class TransactionalRedisEntityRegionAccessStrategy
-    extends AbstractRedisAccessStrategy<RedisEntityRegion>
-    implements EntityRegionAccessStrategy {
+        extends AbstractRedisAccessStrategy<RedisEntityRegion>
+        implements EntityRegionAccessStrategy {
 
     @Getter
     private final JedisClient jedisClient;
@@ -53,7 +53,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
-        return jedisClient.get(key);
+        return jedisClient.get(region.getName(), key);
     }
 
     @Override
@@ -62,9 +62,9 @@ public class TransactionalRedisEntityRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) throws CacheException {
-        if (minimalPutOverride && jedisClient.exists(key))
+        if (minimalPutOverride && jedisClient.exists(region.getName(), key))
             return false;
-        jedisClient.set(key, value);
+        jedisClient.set(region.getName(), key, value);
         return true;
     }
 
@@ -80,7 +80,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
 
     @Override
     public boolean insert(Object key, Object value, Object version) throws CacheException {
-        jedisClient.set(key, value);
+        jedisClient.set(region.getName(), key, value);
         return true;
     }
 
@@ -91,18 +91,18 @@ public class TransactionalRedisEntityRegionAccessStrategy
 
     @Override
     public boolean update(Object key, Object value, Object currentVersion, Object previousVersion) throws CacheException {
-        jedisClient.set(key, value);
+        jedisClient.set(region.getName(), key, value);
         return true;
     }
 
     @Override
     public boolean afterUpdate(Object key, Object value, Object currentVersion, Object previousVersion, SoftLock lock)
-        throws CacheException {
+            throws CacheException {
         return false;
     }
 
     @Override
     public void remove(Object key) throws CacheException {
-        jedisClient.delete(key);
+        jedisClient.del(region.getName(), key);
     }
 }

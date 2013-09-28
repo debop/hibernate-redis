@@ -34,8 +34,8 @@ import org.hibernate.cfg.Settings;
  */
 @Slf4j
 public class TransactionalRedisCollectionRegionAccessStrategy
-    extends AbstractRedisAccessStrategy<RedisCollectionRegion>
-    implements CollectionRegionAccessStrategy {
+        extends AbstractRedisAccessStrategy<RedisCollectionRegion>
+        implements CollectionRegionAccessStrategy {
 
     @Getter
     private final JedisClient jedisClient;
@@ -54,7 +54,7 @@ public class TransactionalRedisCollectionRegionAccessStrategy
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
         try {
-            return jedisClient.get(key);
+            return jedisClient.get(region.getName(), key);
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -67,10 +67,10 @@ public class TransactionalRedisCollectionRegionAccessStrategy
                                Object version,
                                boolean minimalPutOverride) throws CacheException {
         try {
-            if (minimalPutOverride && jedisClient.exists(key)) {
+            if (minimalPutOverride && jedisClient.exists(region.getName(), key)) {
                 return false;
             } else {
-                jedisClient.set(key, value);
+                jedisClient.set(region.getName(), key, value);
                 return true;
             }
         } catch (Exception e) {
@@ -91,7 +91,7 @@ public class TransactionalRedisCollectionRegionAccessStrategy
     @Override
     public void remove(Object key) throws CacheException {
         try {
-            jedisClient.delete(key);
+            jedisClient.del(region.getName(), key);
         } catch (Exception e) {
             throw new CacheException(e);
         }

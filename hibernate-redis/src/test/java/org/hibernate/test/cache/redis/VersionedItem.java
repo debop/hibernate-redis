@@ -2,6 +2,8 @@ package org.hibernate.test.cache.redis;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +17,7 @@ import javax.persistence.Version;
  * @since 13. 4. 6. 오전 12:53
  */
 @Entity
+@Cache(region = "redis:test", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class VersionedItem {

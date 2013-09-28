@@ -16,11 +16,14 @@
 
 package org.hibernate.test.cache.redis.jedis;
 
+import com.carrotsearch.junitbenchmarks.BenchmarkRule;
 import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.test.cache.MultiThreadTestTool;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 import redis.clients.jedis.JedisPool;
 
 import java.util.ArrayList;
@@ -36,6 +39,9 @@ import static org.fest.assertions.Assertions.assertThat;
  * @since 13. 5. 1. 오후 3:05
  */
 public class JedisClientTest {
+
+    @Rule
+    public TestRule benchmarkRun = new BenchmarkRule();
 
     private JedisPool jedisPool;
     private JedisClient client;
@@ -73,21 +79,22 @@ public class JedisClientTest {
 
     @Test
     public void getAndSet() throws Exception {
-        client.set("key", 123);
-        assertThat(client.get("key")).isEqualTo(123);
+        client.set(JedisClient.DEFAULT_REGION_NAME, "key", 123, -1);
+        assertThat(client.get(JedisClient.DEFAULT_REGION_NAME, "key")).isEqualTo(123);
     }
 
     @Test
     public void expireTest() throws Exception {
-        client.set("expireTest", "Value", 1);
-        assertThat(client.get("expireTest")).isEqualTo("Value");
-        Thread.sleep(1000);
-        assertThat(client.get("expireTest")).isNull();
+        client.set(JedisClient.DEFAULT_REGION_NAME, "expireTest", "Value", 1);
+        assertThat(client.get(JedisClient.DEFAULT_REGION_NAME, "expireTest")).isEqualTo("Value");
+        Thread.sleep(1500);
+        client.expire(JedisClient.DEFAULT_REGION_NAME);
+        assertThat(client.get(JedisClient.DEFAULT_REGION_NAME, "expireTest")).isNull();
     }
 
     @Test
     public void flushDbTest() throws Exception {
-        client.set("a", "a");
+        client.set(JedisClient.DEFAULT_REGION_NAME, "a", "a");
         assertThat(client.dbSize()).isGreaterThan(0);
         client.flushDb();
         assertThat(client.dbSize()).isEqualTo(0);
@@ -95,13 +102,13 @@ public class JedisClientTest {
 
     @Test
     public void deleteTest() throws Exception {
-        client.set("d", "d");
-        assertThat(client.get("d")).isEqualTo("d");
-        assertThat(client.exists("d")).isTrue();
+        client.set(JedisClient.DEFAULT_REGION_NAME, "d", "d");
+        assertThat(client.get(JedisClient.DEFAULT_REGION_NAME, "d")).isEqualTo("d");
+        assertThat(client.exists(JedisClient.DEFAULT_REGION_NAME, "d")).isTrue();
 
-        client.del("d");
-        assertThat(client.get("d")).isNull();
-        assertThat(client.exists("d")).isFalse();
+        client.del(JedisClient.DEFAULT_REGION_NAME, "d");
+        assertThat(client.get(JedisClient.DEFAULT_REGION_NAME, "d")).isNull();
+        assertThat(client.exists(JedisClient.DEFAULT_REGION_NAME, "d")).isFalse();
     }
 
     @Test
@@ -109,10 +116,10 @@ public class JedisClientTest {
         int count = 100;
         List<Integer> keys = new ArrayList<Integer>();
         for (int i = 0; i < count; i++) {
-            client.set(i, i);
+            client.set(JedisClient.DEFAULT_REGION_NAME, i, i, -1);
             keys.add(i);
         }
-        List<Object> values = client.mget(keys);
+        List<Object> values = client.mget(JedisClient.DEFAULT_REGION_NAME, keys);
         assertThat(values.size()).isEqualTo(count);
     }
 
@@ -121,15 +128,15 @@ public class JedisClientTest {
         int count = 100;
         List<Integer> keys = new ArrayList<Integer>();
         for (int i = 0; i < count; i++) {
-            client.set(i, i);
+            client.set(JedisClient.DEFAULT_REGION_NAME, i, i, -1);
             keys.add(i);
         }
-        List<Object> values = client.mget(keys);
+        List<Object> values = client.mget(JedisClient.DEFAULT_REGION_NAME, keys);
         assertThat(values.size()).isEqualTo(count);
 
-        client.mdel(keys);
+        client.mdel(JedisClient.DEFAULT_REGION_NAME, keys);
         for (int i = 0; i < count; i++) {
-            assertThat(client.get(i)).isNull();
+            assertThat(client.get(JedisClient.DEFAULT_REGION_NAME, i)).isNull();
         }
     }
 
@@ -141,7 +148,7 @@ public class JedisClientTest {
         int count = 100;
         List<Integer> keys = new ArrayList<Integer>();
         for (int i = 0; i < count; i++) {
-            client.set(i, i);
+            client.set(JedisClient.DEFAULT_REGION_NAME, i, i, -1);
             keys.add(i);
         }
 

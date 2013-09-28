@@ -17,9 +17,9 @@
 package org.hibernate.cache.redis.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.pool.impl.GenericObjectPool;
 import org.hibernate.cache.redis.jedis.JedisClient;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.Properties;
 
@@ -34,7 +34,9 @@ public final class JedisTool {
 
     private JedisTool() { }
 
-    /** {@link redis.clients.jedis.JedisPool} 을 생성합니다. */
+    /**
+     * {@link redis.clients.jedis.JedisPool} 을 생성합니다.
+     */
     public static JedisPool createJedisPool(Properties props) {
 
         String host = props.getProperty("redis.host", "localhost");
@@ -46,17 +48,21 @@ public final class JedisTool {
         log.info("JedisPool을 생성합니다... host=[{}], port=[{}], timeout=[{}], password=[{}], database=[{}]",
                  host, port, timeout, password, database);
 
-        return new JedisPool(new GenericObjectPool.Config(), host, port, timeout, password, database);
+        return new JedisPool(createJedisPoolConfig(), host, port, timeout, password, database);
     }
 
-    /** {@link JedisClient} 를 생성합니다. */
+    /**
+     * {@link org.hibernate.cache.redis.jedis.JedisClient} 를 생성합니다.
+     */
     public static JedisClient createJedisClient(Properties props) {
-        return createJedisClient(JedisClient.DEFAULT_REGION_NAME, props);
+        Integer expiryInSeconds = Integer.decode(props.getProperty("redis.expiryInSeconds", "120"));  // 120 seconds
+        return new JedisClient(createJedisPool(props), expiryInSeconds);
     }
 
-    /** {@link JedisClient} 를 생성합니다. */
-    public static JedisClient createJedisClient(String regionName, Properties props) {
-        Integer expiryInSeconds = Integer.decode(props.getProperty("redis.expiryInSeconds", "120"));  // 120 seconds
-        return new JedisClient(regionName, createJedisPool(props), expiryInSeconds);
+    private static JedisPoolConfig createJedisPoolConfig() {
+        JedisPoolConfig poolConfig = new JedisPoolConfig();
+        poolConfig.setMaxActive(32);
+        poolConfig.setMinIdle(2);
+        return poolConfig;
     }
 }
