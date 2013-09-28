@@ -35,120 +35,120 @@ import java.util.Properties;
 @Slf4j
 public class RedisTransactionalDataRegion extends RedisDataRegion implements TransactionalDataRegion {
 
-	/**
-	 * Hibernate settings associated with the persistence unit.
-	 */
-	protected final Settings settings;
-	/**
-	 * Metadata associated with the objects sorted in the region
-	 */
-	protected final CacheDataDescription metadata;
+    /**
+     * Hibernate settings associated with the persistence unit.
+     */
+    protected final Settings settings;
+    /**
+     * Metadata associated with the objects sorted in the region
+     */
+    protected final CacheDataDescription metadata;
 
-	public RedisTransactionalDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
-	                                    JedisClient jedisClient,
-	                                    String regionName,
-	                                    Settings settings,
-	                                    CacheDataDescription metadata,
-	                                    Properties props) {
-		super(accessStrategyFactory, jedisClient, regionName, props);
+    public RedisTransactionalDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
+                                        JedisClient jedisClient,
+                                        String regionName,
+                                        Settings settings,
+                                        CacheDataDescription metadata,
+                                        Properties props) {
+        super(accessStrategyFactory, jedisClient, regionName, props);
 
-		this.settings = settings;
-		this.metadata = metadata;
-	}
+        this.settings = settings;
+        this.metadata = metadata;
+    }
 
-	public Settings getSettings() {
-		return settings;
-	}
+    public Settings getSettings() {
+        return settings;
+    }
 
-	@Override
-	public boolean isTransactionAware() {
-		return false;
-	}
+    @Override
+    public boolean isTransactionAware() {
+        return false;
+    }
 
-	@Override
-	public CacheDataDescription getCacheDataDescription() {
-		return metadata;
-	}
+    @Override
+    public CacheDataDescription getCacheDataDescription() {
+        return metadata;
+    }
 
-	public Object get(Object key) throws CacheException {
-		log.trace("캐시를 로드합니다... key=[{}]", key);
-		try {
-			return jedisClient.get(key);
-		} catch (Exception e) {
-			return new CacheException(e);
-		}
-	}
-
-
-	public void put(Object key, Object value) throws CacheException {
-		log.trace("캐시를 저장합니다... key=[{}], value=[{}]", key, value);
-		try {
-			jedisClient.set(key, value);
-		} catch (Exception e) {
-			throw new CacheException(e);
-		}
-	}
-
-	public void remove(Object key) throws CacheException {
-		log.trace("캐시를 삭제합니다... key=[{}]", key);
-		try {
-			jedisClient.delete(key);
-		} catch (Exception e) {
-			throw new CacheException(e);
-		}
-	}
+    public Object get(Object key) throws CacheException {
+        log.trace("캐시를 로드합니다... key=[{}]", key);
+        try {
+            return jedisClient.get(getName(), key);
+        } catch (Exception e) {
+            return new CacheException(e);
+        }
+    }
 
 
-	public void clear() throws CacheException {
-		log.trace("영역의 모든 캐시를 삭제합니다. regionName=[{}]", getName());
-		try {
-			jedisClient.deleteRegion(getName());
-		} catch (Exception e) {
-			throw new CacheException(e);
-		}
-	}
+    public void put(Object key, Object value) throws CacheException {
+        log.trace("캐시를 저장합니다... key=[{}], value=[{}]", key, value);
+        try {
+            jedisClient.set(getName(), key, value);
+        } catch (Exception e) {
+            throw new CacheException(e);
+        }
+    }
 
-	public void writeLock(Object key) {
-		// nothing to do.
-	}
+    public void remove(Object key) throws CacheException {
+        log.trace("캐시를 삭제합니다... key=[{}]", key);
+        try {
+            jedisClient.del(getName(), key);
+        } catch (Exception e) {
+            throw new CacheException(e);
+        }
+    }
 
-	public void writeUnlock(Object key) {
-		// nothing to do.
-	}
 
-	public void readLock(Object key) {
-		// nothing to do.
-	}
+    public void clear() throws CacheException {
+        log.trace("영역의 모든 캐시를 삭제합니다. regionName=[{}]", getName());
+        try {
+            jedisClient.deleteRegion(getName());
+        } catch (Exception e) {
+            throw new CacheException(e);
+        }
+    }
 
-	public void readUnlock(Object key) {
-		// nothing to do.
-	}
+    public void writeLock(Object key) {
+        // nothing to do.
+    }
 
-	public void evict(Object key) throws CacheException {
-		log.trace("캐시를 삭제합니다... key=[{}]", key);
-		try {
-			jedisClient.delete(key);
-		} catch (Exception e) {
-			throw new CacheException(e);
-		}
-	}
+    public void writeUnlock(Object key) {
+        // nothing to do.
+    }
 
-	public void evictAll() throws CacheException {
-		log.trace("영역의 모든 캐시를 삭제합니다. regionName=[{}]", getName());
-		try {
-			jedisClient.deleteRegion(getName());
-		} catch (Exception e) {
-			throw new CacheException(e);
-		}
-	}
+    public void readLock(Object key) {
+        // nothing to do.
+    }
 
-	/**
-	 * Returns <code>true</code> if the locks used by the locking methods of this region are the independent of the cache.
-	 * <p/>
-	 * Independent locks are not locked by the cache when the cache is accessed directly.  This means that for an independent lock
-	 * lock holds taken through a region method will not block direct access to the cache via other means.
-	 */
-	public final boolean locksAreIndependentOfCache() {
-		return false;
-	}
+    public void readUnlock(Object key) {
+        // nothing to do.
+    }
+
+    public void evict(Object key) throws CacheException {
+        log.trace("캐시를 삭제합니다... key=[{}]", key);
+        try {
+            jedisClient.del(getName(), key);
+        } catch (Exception e) {
+            throw new CacheException(e);
+        }
+    }
+
+    public void evictAll() throws CacheException {
+        log.trace("영역의 모든 캐시를 삭제합니다. regionName=[{}]", getName());
+        try {
+            jedisClient.deleteRegion(getName());
+        } catch (Exception e) {
+            throw new CacheException(e);
+        }
+    }
+
+    /**
+     * Returns <code>true</code> if the locks used by the locking methods of this region are the independent of the cache.
+     * <p/>
+     * Independent locks are not locked by the cache when the cache is accessed directly.  This means that for an independent lock
+     * lock holds taken through a region method will not block direct access to the cache via other means.
+     */
+    public final boolean locksAreIndependentOfCache() {
+        return false;
+    }
 }

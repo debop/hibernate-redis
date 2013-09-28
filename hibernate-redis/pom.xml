@@ -111,6 +111,11 @@
             <artifactId>hamcrest-all</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.carrotsearch</groupId>
+            <artifactId>junit-benchmarks</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!-- tomcat connection pool 성능이 좋다. -->
         <dependency>
@@ -125,6 +130,7 @@
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
         </dependency>
+
 
     </dependencies>
 </project>

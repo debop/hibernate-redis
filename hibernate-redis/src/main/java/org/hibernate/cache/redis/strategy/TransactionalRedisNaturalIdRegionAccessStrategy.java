@@ -34,8 +34,8 @@ import org.hibernate.cfg.Settings;
  */
 @Slf4j
 public class TransactionalRedisNaturalIdRegionAccessStrategy
-    extends AbstractRedisAccessStrategy<RedisNaturalIdRegion>
-    implements NaturalIdRegionAccessStrategy {
+        extends AbstractRedisAccessStrategy<RedisNaturalIdRegion>
+        implements NaturalIdRegionAccessStrategy {
 
     @Getter
     private final JedisClient jedisClient;
@@ -59,7 +59,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
-        return jedisClient.get(key);
+        return jedisClient.get(region.getName(), key);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean insert(Object key, Object value) throws CacheException {
-        jedisClient.set(key, value);
+        jedisClient.set(region.getName(), key, value);
         return true;
     }
 
@@ -84,16 +84,16 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) throws CacheException {
-        if (minimalPutOverride && jedisClient.exists(key))
+        if (minimalPutOverride && jedisClient.exists(region.getName(), key))
             return false;
-        jedisClient.set(key, value);
+        jedisClient.set(region.getName(), key, value);
         return true;
     }
 
 
     @Override
     public void remove(Object key) throws CacheException {
-        jedisClient.delete(key);
+        jedisClient.del(region.getName(), key);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean update(Object key, Object value) throws CacheException {
-        jedisClient.set(key, value);
+        jedisClient.set(region.getName(), key, value);
         return true;
     }
 }

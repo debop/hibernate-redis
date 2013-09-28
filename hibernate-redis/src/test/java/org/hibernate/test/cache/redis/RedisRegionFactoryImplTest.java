@@ -9,12 +9,12 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
- * org.hibernate.test.cache.redis.RedisRegionFactoryImpl
+ * org.hibernate.test.cache.redis.RedisRegionFactoryImplTest
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 6. 오전 12:52
  */
-public class RedisRegionFactoryImpl extends RedisTest {
+public class RedisRegionFactoryImplTest extends RedisTest {
 
     @Override
     protected void configCache(Configuration cfg) {
@@ -29,8 +29,8 @@ public class RedisRegionFactoryImpl extends RedisTest {
     protected Map getMapFromCacheEntry(final Object entry) {
         final Map map;
         if (entry.getClass()
-                .getName()
-                .equals(ABSTRACT_READ_WRITE_REDIS_ACCESS_STRATEGY_CLASS_NAME + "$Item")) {
+                 .getName()
+                 .equals(ABSTRACT_READ_WRITE_REDIS_ACCESS_STRATEGY_CLASS_NAME + "$Item")) {
             try {
                 Field field = entry.getClass().getDeclaredField("value");
                 field.setAccessible(true);

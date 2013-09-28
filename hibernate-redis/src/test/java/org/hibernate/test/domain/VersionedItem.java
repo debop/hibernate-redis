@@ -17,7 +17,7 @@ import java.io.Serializable;
  * @since 13. 4. 6. 오전 12:54
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "common", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class VersionedItem implements Serializable {

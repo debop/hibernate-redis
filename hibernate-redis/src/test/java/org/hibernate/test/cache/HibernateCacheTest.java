@@ -1,8 +1,10 @@
 package org.hibernate.test.cache;
 
+import com.carrotsearch.junitbenchmarks.BenchmarkRule;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.cache.redis.util.HibernateCacheUtil;
 import org.hibernate.stat.SecondLevelCacheStatistics;
 import org.hibernate.stat.Statistics;
 import org.hibernate.test.AbstractHibernateTest;
@@ -10,7 +12,9 @@ import org.hibernate.test.domain.Account;
 import org.hibernate.test.domain.Item;
 import org.hibernate.test.domain.Person;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 
 import java.util.List;
 
@@ -27,6 +31,10 @@ import static org.fest.assertions.Assertions.assertThat;
 @Slf4j
 public class HibernateCacheTest extends AbstractHibernateTest {
 
+    @Rule
+    public TestRule benchmarkRun = new BenchmarkRule();
+
+
     @Before
     public void before() {
         sessionFactory.getStatistics().setStatisticsEnabled(true);
@@ -34,7 +42,8 @@ public class HibernateCacheTest extends AbstractHibernateTest {
     }
 
     public SecondLevelCacheStatistics getSecondLevelCacheStatistics(Class clazz) {
-        return sessionFactory.getStatistics().getSecondLevelCacheStatistics(clazz.getName());
+        final String regionName = HibernateCacheUtil.getRegionName(sessionFactory, clazz);
+        return sessionFactory.getStatistics().getSecondLevelCacheStatistics(regionName);
     }
 
     @Test
@@ -43,9 +52,11 @@ public class HibernateCacheTest extends AbstractHibernateTest {
         Statistics stats = sessionFactory.getStatistics();
         stats.clear();
 
-        SecondLevelCacheStatistics statistics = stats.getSecondLevelCacheStatistics(Item.class.getName());
+        final String regionName = HibernateCacheUtil.getRegionName(sessionFactory, Item.class);
+        SecondLevelCacheStatistics statistics = getSecondLevelCacheStatistics(Item.class);
+
         log.info("SecondLevel Cache Region=[{}], ElementInMemory=[{}], HitCount=[{}]",
-                 Item.class.getName(), statistics.getElementCountInMemory(), statistics.getHitCount());
+                 regionName, statistics.getElementCountInMemory(), statistics.getHitCount());
     }
 
     @Test
@@ -61,6 +72,7 @@ public class HibernateCacheTest extends AbstractHibernateTest {
         s.persist(i);
         t.commit();
         s.close();
+
 
         SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics(Item.class);
         log.info(slcs.toString());

@@ -33,50 +33,50 @@ import java.util.Properties;
 @Slf4j
 public abstract class RedisGeneralDataRegion extends RedisDataRegion implements GeneralDataRegion {
 
-	protected RedisGeneralDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
-	                                 JedisClient jedisClient,
-	                                 String regionName,
-	                                 Properties props) {
-		super(accessStrategyFactory, jedisClient, regionName, props);
-	}
+    protected RedisGeneralDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
+                                     JedisClient jedisClient,
+                                     String regionName,
+                                     Properties props) {
+        super(accessStrategyFactory, jedisClient, regionName, props);
+    }
 
-	@Override
-	public Object get(Object key) throws CacheException {
-		if (key == null) return null;
-		try {
-			Object value = jedisClient.get(key);
-			log.trace("캐시를 로드했습니다. key=[{}], value=[{}]", key, value);
-			return value;
-		} catch (Exception e) {
-			return new CacheException(e);
-		}
-	}
+    @Override
+    public Object get(Object key) throws CacheException {
+        if (key == null) return null;
+        try {
+            Object value = jedisClient.get(getName(), key);
+            log.trace("캐시를 로드했습니다. key=[{}], value=[{}]", key, value);
+            return value;
+        } catch (Exception e) {
+            return new CacheException(e);
+        }
+    }
 
-	@Override
-	public void put(Object key, Object value) throws CacheException {
-		try {
-			log.trace("put cache item. key=[{}], value=[{}]", key, value);
-			jedisClient.set(key, value);
-		} catch (Exception e) {
-			throw new CacheException(e);
-		}
-	}
+    @Override
+    public void put(Object key, Object value) throws CacheException {
+        try {
+            log.trace("put cache item. key=[{}], value=[{}]", key, value);
+            jedisClient.set(getName(), key, value);
+        } catch (Exception e) {
+            throw new CacheException(e);
+        }
+    }
 
-	@Override
-	public void evict(Object key) throws CacheException {
-		try {
-			jedisClient.delete(key);
-		} catch (Exception e) {
-			throw new CacheException(e);
-		}
-	}
+    @Override
+    public void evict(Object key) throws CacheException {
+        try {
+            jedisClient.del(getName(), key);
+        } catch (Exception e) {
+            throw new CacheException(e);
+        }
+    }
 
-	@Override
-	public void evictAll() throws CacheException {
-		try {
-			jedisClient.deleteRegion(getName());
-		} catch (Exception e) {
-			throw new CacheException(e);
-		}
-	}
+    @Override
+    public void evictAll() throws CacheException {
+        try {
+            jedisClient.deleteRegion(getName());
+        } catch (Exception e) {
+            throw new CacheException(e);
+        }
+    }
 }

@@ -17,7 +17,7 @@ import java.util.Set;
  * @since 13. 4. 6. 오전 12:53
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "account", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Event implements Serializable {
