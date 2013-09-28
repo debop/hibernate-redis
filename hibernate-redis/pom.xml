@@ -3,7 +3,7 @@
     <parent>
         <groupId>hibernate-redis</groupId>
         <artifactId>hibernate-redis-parent</artifactId>
-        <version>1.2.3-SNAPSHOT</version>
+        <version>1.3.0.RELEASE</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
