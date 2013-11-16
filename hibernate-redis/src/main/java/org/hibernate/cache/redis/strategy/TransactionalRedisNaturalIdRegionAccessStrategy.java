@@ -69,7 +69,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean insert(Object key, Object value) throws CacheException {
-        jedisClient.set(region.getName(), key, value);
+        jedisClient.set(region.getName(), key, value, region.getExpireInSeconds());
         return true;
     }
 
@@ -86,7 +86,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
                                boolean minimalPutOverride) throws CacheException {
         if (minimalPutOverride && jedisClient.exists(region.getName(), key))
             return false;
-        jedisClient.set(region.getName(), key, value);
+        jedisClient.set(region.getName(), key, value, region.getExpireInSeconds());
         return true;
     }
 
@@ -103,7 +103,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean update(Object key, Object value) throws CacheException {
-        jedisClient.set(region.getName(), key, value);
+        jedisClient.set(region.getName(), key, value, region.getExpireInSeconds());
         return true;
     }
 }

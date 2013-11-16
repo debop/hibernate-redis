@@ -16,12 +16,10 @@
 
 package org.hibernate.cache.redis;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
-import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.util.JedisTool;
 import org.hibernate.cfg.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,57 +30,41 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 6. 오전 12:31
  */
+@Slf4j
 public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
 
-	private static final Logger log = LoggerFactory.getLogger(SingletonRedisRegionFactory.class);
-	private static final boolean isTraceEnabled = log.isTraceEnabled();
-	private static final boolean isDebugEnabled = log.isDebugEnabled();
+    private static final AtomicInteger ReferenceCount = new AtomicInteger();
 
-	private static final AtomicInteger ReferenceCount = new AtomicInteger();
+    public SingletonRedisRegionFactory(Properties props) {
+        super(props);
+        log.info("create SingletonRedisRegionFactory instance.");
+    }
 
-	private JedisClient jedisClient;
+    @Override
+    public void start(Settings settings, Properties properties) throws CacheException {
+        log.info("starting SingletonRedisRegionFactory...");
 
-	public SingletonRedisRegionFactory(Properties props) {
-		super(props);
-		log.info("SingletonRedisRegionFactory를 생성했습니다.");
-		this.jedisClient = JedisTool.createJedisClient(props);
-	}
+        this.settings = settings;
+        try {
+            if (jedisClient == null) {
+                this.jedisClient = JedisTool.createJedisClient(props);
+            }
+            ReferenceCount.incrementAndGet();
+            log.info("Started SingletonRedisRegionFactory");
+        } catch (Exception e) {
+            throw new CacheException(e);
+        }
+    }
 
-	@Override
-	public void start(Settings settings, Properties properties) throws CacheException {
-		log.info("Redis를 2차 캐시 저장소로 사용하는 RedisRegionFactory를 시작합니다...");
+    @Override
+    public void stop() {
+        log.debug("stopping SingletonRedisRegionFactory...");
 
-		this.settings = settings;
-		try {
-			if (jedisClient == null) {
-				this.jedisClient = JedisTool.createJedisClient(props);
-				ReferenceCount.incrementAndGet();
-			}
-			log.info("RedisRegionFactory를 시작했습니다!!!");
-		} catch (Exception e) {
-			throw new CacheException(e);
-		}
-	}
+        if (ReferenceCount.decrementAndGet() == 0) {
+            jedisClient = null;
+            log.info("stopped SingletonRedisRegionFactory");
+        }
+    }
 
-	@Override
-	public void stop() {
-		log.debug("RedisRegionFactory 사용을 중지합니다...");
-
-		try {
-			if (jedisClient != null) {
-				if (ReferenceCount.decrementAndGet() == 0) {
-					jedisClient.flushDb();
-
-					if (isDebugEnabled)
-						log.debug("flush db");
-				}
-			}
-		} catch (Exception e) {
-			log.error("jedisClient region factory fail to stop.", e);
-		} finally {
-			log.info("RedisRegionFactory를 중지하였습니다.");
-			jedisClient = null;
-		}
-
-	}
+    private static final long serialVersionUID = -7477946174209489184L;
 }

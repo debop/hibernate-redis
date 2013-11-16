@@ -19,14 +19,12 @@ package org.hibernate.cache.redis.serializer;
 import java.util.*;
 
 /**
- * Serialization 툴 (복수의 값을 한번에 직렬화/역직렬화를 수행합니다)
+ * Serialization Helper class
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 4. 오후 11:38
  */
 public abstract class SerializationTool {
-
-    static final byte[] EMPTY_ARRAY = new byte[0];
 
     static boolean isEmpty(byte[] data) {
         return (data == null || data.length == 0);

@@ -32,10 +32,12 @@ import org.hibernate.cfg.Settings;
  */
 @Slf4j
 public class ReadWriteRedisEntityRegionAccessStrategy
-    extends AbstractReadWriteRedisAccessStrategy<RedisEntityRegion>
-    implements EntityRegionAccessStrategy {
+        extends AbstractReadWriteRedisAccessStrategy<RedisEntityRegion>
+        implements EntityRegionAccessStrategy {
 
-    /** Creates a read/write cache access strategy around the given cache region. */
+    /**
+     * Creates a read/write cache access strategy around the given cache region.
+     */
     public ReadWriteRedisEntityRegionAccessStrategy(RedisEntityRegion region, Settings settings) {
         super(region, settings);
     }
@@ -54,10 +56,7 @@ public class ReadWriteRedisEntityRegionAccessStrategy
     public boolean afterInsert(Object key, Object value, Object version) throws CacheException {
         region().writeLock(key);
         try {
-            Object loaded = region.get(key);
-            Lockable item = null;
-            if (loaded instanceof Lockable)
-                item = (Lockable) loaded;
+            Lockable item = (Lockable) region.get(key);
 
             if (item == null) {
                 region().put(key, new Item(value, version, region().nextTimestamp()));
@@ -88,10 +87,7 @@ public class ReadWriteRedisEntityRegionAccessStrategy
 
         region().writeLock(key);
         try {
-            Object loaded = region.get(key);
-            Lockable item = null;
-            if (loaded instanceof Lockable)
-                item = (Lockable) loaded;
+            Lockable item = (Lockable) region.get(key);
 
             if (item != null && item.isUnlockable(lock)) {
                 Lock lockItem = (Lock) item;

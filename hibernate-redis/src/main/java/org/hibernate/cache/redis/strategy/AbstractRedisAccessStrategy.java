@@ -47,13 +47,22 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
         return settings;
     }
 
-    public final boolean putFromLoad(Object key, Object value, long txTimestamp, Object version) throws CacheException {
+    public final boolean putFromLoad(Object key,
+                                     Object value,
+                                     long txTimestamp,
+                                     Object version) throws CacheException {
         return putFromLoad(key, value, txTimestamp, version, settings.isMinimalPutsEnabled());
     }
 
-    public abstract boolean putFromLoad(Object key, Object value, long txTimestamp, Object version, boolean minimalPutOverride) throws CacheException;
+    public abstract boolean putFromLoad(Object key,
+                                        Object value,
+                                        long txTimestamp,
+                                        Object version,
+                                        boolean minimalPutOverride) throws CacheException;
 
-    /** Region locks are not supported */
+    /**
+     * Region locks are not supported
+     */
     public final SoftLock lockRegion() {
         return null;
     }

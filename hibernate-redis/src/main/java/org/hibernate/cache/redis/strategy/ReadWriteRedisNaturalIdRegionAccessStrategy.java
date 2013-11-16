@@ -32,10 +32,12 @@ import org.hibernate.cfg.Settings;
  */
 @Slf4j
 public class ReadWriteRedisNaturalIdRegionAccessStrategy
-    extends AbstractReadWriteRedisAccessStrategy<RedisNaturalIdRegion>
-    implements NaturalIdRegionAccessStrategy {
+        extends AbstractReadWriteRedisAccessStrategy<RedisNaturalIdRegion>
+        implements NaturalIdRegionAccessStrategy {
 
-    /** Creates a read/write cache access strategy around the given cache region. */
+    /**
+     * Creates a read/write cache access strategy around the given cache region.
+     */
     public ReadWriteRedisNaturalIdRegionAccessStrategy(RedisNaturalIdRegion region, Settings settings) {
         super(region, settings);
     }
@@ -54,10 +56,7 @@ public class ReadWriteRedisNaturalIdRegionAccessStrategy
     public boolean afterInsert(Object key, Object value) throws CacheException {
         region().writeLock(key);
         try {
-            Object loaded = region().get(key);
-            Lockable item = null;
-            if (loaded instanceof Lockable)
-                item = (Lockable) loaded;
+            Lockable item = (Lockable) region().get(key);
 
             if (item == null) {
                 region().put(key, new Item(value, null, region().nextTimestamp()));
@@ -72,7 +71,6 @@ public class ReadWriteRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean update(Object key, Object value) throws CacheException {
-        log.trace("update cache item... key=[{}]", key);
         return false;
     }
 
@@ -80,10 +78,7 @@ public class ReadWriteRedisNaturalIdRegionAccessStrategy
     public boolean afterUpdate(Object key, Object value, SoftLock lock) throws CacheException {
         region().writeLock(key);
         try {
-            final Object loaded = region().get(key);
-            Lockable item = null;
-            if (loaded instanceof Lockable)
-                item = (Lockable) loaded;
+            Lockable item = (Lockable) region.get(key);
 
             if (item != null && item.isUnlockable(lock)) {
                 final Lock lockItem = (Lock) item;

@@ -20,7 +20,6 @@ import com.carrotsearch.junitbenchmarks.BenchmarkRule;
 import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.test.cache.MultiThreadTestTool;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -44,19 +43,11 @@ public class JedisClientTest {
     public TestRule benchmarkRun = new BenchmarkRule();
 
     private JedisPool jedisPool;
-    private JedisClient client;
-
-    @Before
-    public void before() {
-        jedisPool = new JedisPool("localhost");
-        client = new JedisClient(jedisPool);
-        client.setDatabase(1);
-    }
+    private JedisClient client = new JedisClient();
 
     @After
     public void after() {
         client.flushDb();
-        jedisPool.destroy();
     }
 
     @Test
@@ -66,12 +57,12 @@ public class JedisClientTest {
 
     @Test
     public void jedisPoolTest() {
-        MultiThreadTestTool.runTasks(1000, new Runnable() {
+        MultiThreadTestTool.runTasks(100, new Runnable() {
             @Override
             public void run() {
                 client.ping();
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(1);
                 } catch (InterruptedException ignored) {}
             }
         });

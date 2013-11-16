@@ -19,7 +19,7 @@ public class RedisRegionFactoryImplTest extends RedisTest {
     @Override
     protected void configCache(Configuration cfg) {
         cfg.setProperty(Environment.CACHE_REGION_FACTORY, RedisRegionFactory.class.getName());
-        cfg.setProperty(Environment.CACHE_PROVIDER_CONFIG, "redis.properties");
+        cfg.setProperty(Environment.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties");
     }
 
     private static final String ABSTRACT_READ_WRITE_REDIS_ACCESS_STRATEGY_CLASS_NAME =
@@ -29,8 +29,8 @@ public class RedisRegionFactoryImplTest extends RedisTest {
     protected Map getMapFromCacheEntry(final Object entry) {
         final Map map;
         if (entry.getClass()
-                 .getName()
-                 .equals(ABSTRACT_READ_WRITE_REDIS_ACCESS_STRATEGY_CLASS_NAME + "$Item")) {
+                .getName()
+                .equals(ABSTRACT_READ_WRITE_REDIS_ACCESS_STRATEGY_CLASS_NAME + "$Item")) {
             try {
                 Field field = entry.getClass().getDeclaredField("value");
                 field.setAccessible(true);

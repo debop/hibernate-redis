@@ -22,7 +22,6 @@ import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.regions.*;
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactoryImpl;
-import org.hibernate.cache.redis.util.JedisTool;
 import org.hibernate.cache.spi.*;
 import org.hibernate.cache.spi.access.AccessType;
 import org.hibernate.cfg.Settings;
@@ -60,9 +59,10 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
 
     protected final List<String> regionNames = new ArrayList<String>();
 
+    protected JedisClient jedisClient = null;
+
     public AbstractRedisRegionFactory(Properties props) {
         this.props = props;
-        manageExpiration(JedisTool.createJedisClient(props));
     }
 
     /**
@@ -95,11 +95,9 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     public EntityRegion buildEntityRegion(String regionName,
                                           Properties properties,
                                           CacheDataDescription metadata) throws CacheException {
-        log.trace("EntityRegion을 빌드합니다. Region=[{}]", regionName);
-
         regionNames.add(regionName);
         return new RedisEntityRegion(accessStrategyFactory,
-                                     JedisTool.createJedisClient(properties),
+                                     jedisClient,
                                      regionName,
                                      settings,
                                      metadata,
@@ -110,11 +108,9 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     public NaturalIdRegion buildNaturalIdRegion(String regionName,
                                                 Properties properties,
                                                 CacheDataDescription metadata) throws CacheException {
-        log.trace("NaturalIdRegion을 빌드합니다. Region=[{}]", regionName);
-
         regionNames.add(regionName);
         return new RedisNaturalIdRegion(accessStrategyFactory,
-                                        JedisTool.createJedisClient(properties),
+                                        jedisClient,
                                         regionName,
                                         settings,
                                         metadata,
@@ -125,11 +121,9 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     public CollectionRegion buildCollectionRegion(String regionName,
                                                   Properties properties,
                                                   CacheDataDescription metadata) throws CacheException {
-        log.trace("CollectionRegion을 빌드합니다. Region=[{}]", regionName);
-
         regionNames.add(regionName);
         return new RedisCollectionRegion(accessStrategyFactory,
-                                         JedisTool.createJedisClient(properties),
+                                         jedisClient,
                                          regionName,
                                          settings,
                                          metadata,
@@ -137,44 +131,23 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     }
 
     @Override
-    public QueryResultsRegion buildQueryResultsRegion(String regionName, Properties properties) throws CacheException {
-        log.trace("QueryResultsRegion을 빌드합니다. Region=[{}]", regionName);
-
+    public QueryResultsRegion buildQueryResultsRegion(String regionName,
+                                                      Properties properties) throws CacheException {
         regionNames.add(regionName);
         return new RedisQueryResultsRegion(accessStrategyFactory,
-                                           JedisTool.createJedisClient(properties),
+                                           jedisClient,
                                            regionName,
                                            properties);
     }
 
     @Override
-    public TimestampsRegion buildTimestampsRegion(String regionName, Properties properties) throws CacheException {
-        log.trace("TimestampsRegion을 빌드합니다. Region=[{}]", regionName);
-
+    public TimestampsRegion buildTimestampsRegion(String regionName,
+                                                  Properties properties) throws CacheException {
         regionNames.add(regionName);
         return new RedisTimestampsRegion(accessStrategyFactory,
-                                         JedisTool.createJedisClient(properties),
+                                         jedisClient,
                                          regionName,
                                          properties);
-    }
-
-    public void manageExpiration(final JedisClient client) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        Thread.sleep(1000L);
-                        for (String region : regionNames) {
-                            client.expire(region);
-                        }
-                    } catch (InterruptedException ignored) {
-                        break;
-                    } catch (Exception ignored) {
-                    }
-                }
-            }
-        }).start();
     }
 
     private static final long serialVersionUID = -5441842686229077097L;

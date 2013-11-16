@@ -92,7 +92,7 @@ public class HibernateCacheTest extends AbstractHibernateTest {
 
         sessionFactory.getCache().evictEntityRegion(Item.class);
         SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics(Item.class);
-        Session session = sessionFactory.openSession();
+        Session session;
 
         Item item = new Item();
         item.setName("redis");
@@ -181,6 +181,7 @@ public class HibernateCacheTest extends AbstractHibernateTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void massiveCaching() {
         sessionFactory.getCache().evictEntityRegion(Item.class);
 

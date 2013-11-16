@@ -16,12 +16,10 @@
 
 package org.hibernate.cache.redis;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
-import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.util.JedisTool;
 import org.hibernate.cfg.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
@@ -31,13 +29,8 @@ import java.util.Properties;
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 6. 오전 12:41
  */
+@Slf4j
 public class RedisRegionFactory extends AbstractRedisRegionFactory {
-
-    private static final Logger log = LoggerFactory.getLogger(RedisRegionFactory.class);
-    private static final boolean isTraceEnabled = log.isTraceEnabled();
-    private static final boolean isDebugEnabled = log.isDebugEnabled();
-
-    private JedisClient jedisClient;
 
     public RedisRegionFactory(Properties props) {
         super(props);
@@ -45,14 +38,14 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
 
     @Override
     public void start(Settings settings, Properties properties) throws CacheException {
-        log.info("Redis를 2차 캐시 저장소로 사용하는 RedisRegionFactory를 시작합니다...");
+        log.info("starting RedisRegionFactory...");
 
         this.settings = settings;
         try {
             if (jedisClient == null) {
                 this.jedisClient = JedisTool.createJedisClient(props);
             }
-            log.info("RedisRegionFactory를 시작했습니다...");
+            log.info("start RedisRegionFactory");
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -61,15 +54,16 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
     @Override
     public void stop() {
         if (jedisClient == null) return;
-        log.debug("RedisRegionFactory 사용을 중지합니다...");
+        log.debug("stopping RedisRegionFactory...");
 
         try {
-            jedisClient.flushDb();
             jedisClient = null;
-            log.info("RedisRegionFactory를 중지했습니다.");
+            log.info("stopped RedisRegionFactory.");
         } catch (Exception e) {
             log.error("jedisClient region factory fail to stop.", e);
             throw new CacheException(e);
         }
     }
+
+    private static final long serialVersionUID = 563532064197800959L;
 }

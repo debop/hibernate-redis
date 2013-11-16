@@ -35,11 +35,10 @@ import org.hibernate.cache.spi.access.NaturalIdRegionAccessStrategy;
 public class RedisAccessStrategyFactoryImpl implements RedisAccessStrategyFactory {
 
     @Override
-    public EntityRegionAccessStrategy createEntityRegionAccessStrategy(RedisEntityRegion entityRegion, AccessType accessType) {
-
-        if (log.isDebugEnabled())
-            log.debug("create EntityRegionAccessStrategy. regionName=[{}], accessType=[{}]",
-                      entityRegion.getName(), accessType.getExternalName());
+    public EntityRegionAccessStrategy createEntityRegionAccessStrategy(RedisEntityRegion entityRegion,
+                                                                       AccessType accessType) {
+        log.debug("create EntityRegionAccessStrategy. regionName=[{}], accessType=[{}]",
+                  entityRegion.getName(), accessType.getExternalName());
 
         switch (accessType) {
             case READ_ONLY:
@@ -61,9 +60,8 @@ public class RedisAccessStrategyFactoryImpl implements RedisAccessStrategyFactor
     @Override
     public CollectionRegionAccessStrategy createCollectionRegionAccessStrategy(RedisCollectionRegion collectionRegion,
                                                                                AccessType accessType) {
-        if (log.isDebugEnabled())
-            log.debug("create CollectionRegionAccessStrategy. regionName=[{}], accessType=[{}]",
-                      collectionRegion.getName(), accessType.getExternalName());
+        log.debug("create CollectionRegionAccessStrategy. regionName=[{}], accessType=[{}]",
+                  collectionRegion.getName(), accessType.getExternalName());
 
         switch (accessType) {
             case READ_ONLY:
@@ -85,10 +83,8 @@ public class RedisAccessStrategyFactoryImpl implements RedisAccessStrategyFactor
     @Override
     public NaturalIdRegionAccessStrategy createNaturalIdRegionAccessStrategy(RedisNaturalIdRegion naturalIdRegion,
                                                                              AccessType accessType) {
-
-        if (log.isDebugEnabled())
-            log.debug("create NaturalIdRegionAccessStrategy. regionName=[{}], accessType=[{}]",
-                      naturalIdRegion.getName(), accessType.getExternalName());
+        log.debug("create NaturalIdRegionAccessStrategy. regionName=[{}], accessType=[{}]",
+                  naturalIdRegion.getName(), accessType.getExternalName());
 
         switch (accessType) {
             case READ_ONLY:

@@ -32,7 +32,7 @@ import java.util.concurrent.Executors;
 public abstract class MultiThreadTestTool {
 
     private static ExecutorService newExecutorService() {
-        return Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+        return Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
 
     public static void runTasks(int count, final Runnable runnable) {
