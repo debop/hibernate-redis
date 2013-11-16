@@ -64,7 +64,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
                                boolean minimalPutOverride) throws CacheException {
         if (minimalPutOverride && jedisClient.exists(region.getName(), key))
             return false;
-        jedisClient.set(region.getName(), key, value);
+        jedisClient.set(region.getName(), key, value, region.getExpireInSeconds());
         return true;
     }
 
@@ -91,7 +91,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
 
     @Override
     public boolean update(Object key, Object value, Object currentVersion, Object previousVersion) throws CacheException {
-        jedisClient.set(region.getName(), key, value);
+        jedisClient.set(region.getName(), key, value, region.getExpireInSeconds());
         return true;
     }
 

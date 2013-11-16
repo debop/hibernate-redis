@@ -36,13 +36,15 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @Slf4j
 public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDataRegion>
-    extends AbstractRedisAccessStrategy<T> {
+        extends AbstractRedisAccessStrategy<T> {
 
     private final UUID uuid = UUID.randomUUID();
     private final AtomicLong nextLockId = new AtomicLong();
     private final Comparator versionComparator;
 
-    /** Creates a read/write cache access strategy around the given cache region. */
+    /**
+     * Creates a read/write cache access strategy around the given cache region.
+     */
     public AbstractReadWriteRedisAccessStrategy(T region, Settings settings) {
         super(region, settings);
         this.versionComparator = region.getCacheDataDescription().getVersionComparator();
@@ -55,13 +57,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
     public final Object get(Object key, long txTimestamp) throws CacheException {
         readLockIfNeeded(key);
         try {
-            Object loaded = region.get(key);
-            Lockable item = null;
-            if (loaded instanceof Lockable)
-                item = (Lockable) loaded;
-            else
-                return loaded;
-
+            Lockable item = (Lockable) region.get(key);
             boolean readable = item != null && item.isReadable(txTimestamp);
             return (readable) ? item.getValue() : null;
         } finally {
@@ -69,7 +65,9 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
         }
     }
 
-    /** Returns <code>false</code> and fails to put the value if there is an existing un-writeable item mapped to this key. */
+    /**
+     * Returns <code>false</code> and fails to put the value if there is an existing un-writeable item mapped to this key.
+     */
     @Override
     public final boolean putFromLoad(Object key,
                                      Object value,
@@ -77,39 +75,30 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
                                      Object version,
                                      boolean minimalPutOverride) throws CacheException {
         region.writeLock(key);
-
         try {
-            Object loaded = region.get(key);
-            Lockable item = null;
-            if (loaded instanceof Lockable)
-                item = (Lockable) loaded;
-
+            Lockable item = (Lockable) region.get(key);
             boolean writeable = (item == null) || item.isWriteable(txTimestamp, version, versionComparator);
             if (writeable) {
                 region.put(key, new Item(value, version, region.nextTimestamp()));
-                return true;
-            } else {
-                return false;
             }
+            return writeable;
         } finally {
             region.writeUnlock(key);
         }
     }
 
-    /** Soft-lock a cache item. */
+    /**
+     * Soft-lock a cache item.
+     */
     public final SoftLock lockItem(Object key, Object version) throws CacheException {
         region.writeLock(key);
-
         try {
-            Object loaded = region.get(key);
-            Lockable item = null;
-            if (loaded instanceof Lockable)
-                item = (Lockable) loaded;
+            Lockable item = (Lockable) region.get(key);
 
             long timeout = region.nextTimestamp() + region.getTimeout();
             final Lock lock = (item == null)
-                              ? new Lock(timeout, uuid, nextLockId(), version)
-                              : item.lock(timeout, uuid, nextLockId());
+                    ? new Lock(timeout, uuid, nextLockId(), version)
+                    : item.lock(timeout, uuid, nextLockId());
 
             region.put(key, lock);
             return lock;
@@ -118,16 +107,14 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
         }
     }
 
-    /** Soft-unlock a cache item. */
+    /**
+     * Soft-unlock a cache item.
+     */
     public final void unlockItem(Object key, SoftLock lock) throws CacheException {
         region.writeLock(key);
 
         try {
-            Object value = region.get(key);
-            Lockable item = null;
-            if (value instanceof Lockable) {
-                item = (Lockable) value;
-            }
+            Lockable item = (Lockable) region.get(key);
             if (item != null && item.isUnlockable(lock)) {
                 decrementLock(key, (Lock) item);
             } else {
@@ -143,17 +130,18 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
         return nextLockId.getAndIncrement();
     }
 
-    /** Unlock and re-put the given key, lock combination. */
+    /**
+     * Unlock and re-put the given key, lock combination.
+     */
     protected void decrementLock(Object key, Lock lock) {
-        log.trace("락을 해제합니다.... key=[{}], lock=[{}]", key, lock);
         lock.unlock(region.nextTimestamp());
         region.put(key, lock);
     }
 
-    /** Handle the timeout of a previous lock mapped to this key */
+    /**
+     * Handle the timeout of a previous lock mapped to this key
+     */
     protected void handleLockExpiry(Object key, Lockable lock) {
-        log.trace("락 유효기간에 대한 처리를 수행합니다. Key=[{}] Lockable=[{}}]", key, lock);
-
         final long ts = region.nextTimestamp() + region.getTimeout();
         // create new lock that times out immediately
         final Lock newLock = new Lock(ts, uuid, nextLockId.getAndIncrement(), null);
@@ -161,24 +149,32 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
         region.put(key, newLock);
     }
 
-    /** Read lock the entry for the given key if internal cache locks will not provide correct exclusion. */
+    /**
+     * Read lock the entry for the given key if internal cache locks will not provide correct exclusion.
+     */
     private void readLockIfNeeded(Object key) {
         if (region.locksAreIndependentOfCache()) {
             region.readLock(key);
         }
     }
 
-    /** Read unlock the entry for the given key if internal cache locks will not provide correct exclusion. */
+    /**
+     * Read unlock the entry for the given key if internal cache locks will not provide correct exclusion.
+     */
     private void readUnlockIfNeeded(Object key) {
         if (region.locksAreIndependentOfCache()) {
             region.readUnlock(key);
         }
     }
 
-    /** Interface type implemented by all wrapper objects in the cache. */
+    /**
+     * Interface type implemented by all wrapper objects in the cache.
+     */
     protected static interface Lockable {
 
-        /** Returns <code>true</code> if the enclosed value can be read by a transaction started at the given time. */
+        /**
+         * Returns <code>true</code> if the enclosed value can be read by a transaction started at the given time.
+         */
         public boolean isReadable(long txTimestamp);
 
         /**
@@ -187,10 +183,14 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
          */
         public boolean isWriteable(long txTimestamp, Object version, Comparator versionComparator);
 
-        /** Returns the enclosed value. */
+        /**
+         * Returns the enclosed value.
+         */
         public Object getValue();
 
-        /** Returns <code>true</code> if the given lock can be unlocked using the given SoftLock instance as a handle. */
+        /**
+         * Returns <code>true</code> if the given lock can be unlocked using the given SoftLock instance as a handle.
+         */
         public boolean isUnlockable(SoftLock lock);
 
         /**
@@ -200,7 +200,9 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
         public Lock lock(long timeout, UUID uuid, long lockId);
     }
 
-    /** Wrapper type representing unlocked items. */
+    /**
+     * Wrapper type representing unlocked items.
+     */
     protected final static class Item implements Serializable, Lockable {
 
         private static final long serialVersionUID = 1L;
@@ -208,41 +210,55 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
         private final Object version;
         private final long timestamp;
 
-        /** Creates an unlocked item wrapping the given value with a version and creation timestamp. */
+        /**
+         * Creates an unlocked item wrapping the given value with a version and creation timestamp.
+         */
         Item(Object value, Object version, long timestamp) {
             this.value = value;
             this.version = version;
             this.timestamp = timestamp;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public boolean isReadable(long txTimestamp) {
             return txTimestamp > timestamp;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @SuppressWarnings("unchecked")
         public boolean isWriteable(long txTimestamp, Object newVersion, Comparator versionComparator) {
             return version != null && versionComparator.compare(version, newVersion) < 0;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public Object getValue() {
             return value;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public boolean isUnlockable(SoftLock lock) {
             return false;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public Lock lock(long timeout, UUID uuid, long lockId) {
             return new Lock(timeout, uuid, lockId, version);
         }
     }
 
-    /** Wrapper type representing locked items. */
+    /**
+     * Wrapper type representing locked items.
+     */
     protected final static class Lock implements Serializable, Lockable, SoftLock {
 
         private static final long serialVersionUID = 2L;
@@ -256,7 +272,9 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
         private int multiplicity = 1;
         private long unlockTimestamp;
 
-        /** Creates a locked item with the given identifiers and object version. */
+        /**
+         * Creates a locked item with the given identifiers and object version.
+         */
         Lock(long timeout, UUID sourceUuid, long lockId, Object version) {
             this.timeout = timeout;
             this.lockId = lockId;
@@ -264,12 +282,16 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
             this.sourceUuid = sourceUuid;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public boolean isReadable(long txTimestamp) {
             return false;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @SuppressWarnings("unchecked")
         public boolean isWriteable(long txTimestamp, Object newVersion, Comparator versionComparator) {
             if (txTimestamp > timeout) {
@@ -282,21 +304,27 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
             }
 
             return version == null
-                   ? txTimestamp > unlockTimestamp
-                   : versionComparator.compare(version, newVersion) < 0;
+                    ? txTimestamp > unlockTimestamp
+                    : versionComparator.compare(version, newVersion) < 0;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public Object getValue() {
             return null;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public boolean isUnlockable(SoftLock lock) {
             return equals(lock);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean equals(Object o) {
             if (o == this) {
@@ -308,7 +336,9 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
             }
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public int hashCode() {
             int hash = (sourceUuid != null ? sourceUuid.hashCode() : 0);
@@ -319,12 +349,16 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
             return hash + temp;
         }
 
-        /** Returns true if this Lock has been concurrently locked by more than one transaction. */
+        /**
+         * Returns true if this Lock has been concurrently locked by more than one transaction.
+         */
         public boolean wasLockedConcurrently() {
             return concurrent;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         public Lock lock(long timeout, UUID uuid, long lockId) {
             concurrent = true;
             multiplicity++;
@@ -332,14 +366,18 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
             return this;
         }
 
-        /** Unlocks this Lock, and timestamps the unlock event. */
+        /**
+         * Unlocks this Lock, and timestamps the unlock event.
+         */
         public void unlock(long timestamp) {
             if (--multiplicity == 0) {
                 unlockTimestamp = timestamp;
             }
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public String toString() {
             return "Lock Source-UUID:" + sourceUuid + " Lock-ID:" + lockId;

@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Redis를 저장소로 사용하는 Data Region 의 기본 클래스입니다.
+ * Base DataRegion using Redis
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 5. 오후 8:48
@@ -46,7 +46,7 @@ public abstract class RedisDataRegion implements Region {
     protected final RedisAccessStrategyFactory accessStrategyFactory;
 
     /**
-     * 영역명
+     * Region name
      */
     private final String name;
 
@@ -69,7 +69,6 @@ public abstract class RedisDataRegion implements Region {
                               JedisClient jedisClient,
                               String regionName,
                               Properties props) {
-        log.trace("RedisDataRegion ctor. region name=[{}]", regionName);
         this.accessStrategyFactory = accessStrategyFactory;
         this.jedisClient = jedisClient;
         this.name = regionName;
@@ -82,38 +81,36 @@ public abstract class RedisDataRegion implements Region {
     }
 
     /**
-     * 영역 명
+     * Region name
      *
-     * @return 영역 명
+     * @return region name
      */
     public String getName() {
+
         return name;
     }
 
     /**
-     * 캐시 영역을 삭제합니다.
+     * delete region
      *
      * @throws org.hibernate.cache.CacheException
-     *
      */
     @Override
     public void destroy() throws CacheException {
         try {
-            log.debug("영역[{}]을 삭제합니다.", getName());
             if (!regionDeleted) {
                 jedisClient.deleteRegion(name);
                 regionDeleted = true;
+                log.debug("region[{}] is deleted.", getName());
             }
-        } catch (Exception ignored) {
-            log.info("동시에 여러 서버에서 요청 시 예외가 발생할 수 있습니다. 무시합니다.");
-        }
+        } catch (Exception ignored) {}
     }
 
     /**
-     * 지정한 키에 해당하는 캐시 항목이 존재하는지 파악합니다.
+     * confirm the specified key exists in current region
      *
-     * @param key 캐시 키
-     * @return 캐시 항목 존재 여부
+     * @param key cache key
+     * @return if cache key is exists in current region return true, else return false
      */
     @Override
     public boolean contains(Object key) {
@@ -129,7 +126,7 @@ public abstract class RedisDataRegion implements Region {
         try {
             return jedisClient.dbSize();
         } catch (Throwable t) {
-            log.warn("예외가 발생했습니다.", t);
+            log.warn("error", t);
             return -1;
         }
     }
@@ -139,7 +136,7 @@ public abstract class RedisDataRegion implements Region {
         try {
             return jedisClient.keysInRegion(name).size();
         } catch (Exception e) {
-            log.warn("예외가 발생했습니다.", e);
+            log.warn("error", e);
             return -1;
         }
     }
@@ -155,7 +152,7 @@ public abstract class RedisDataRegion implements Region {
         try {
             return jedisClient.hgetAll(name);
         } catch (Exception e) {
-            log.warn("CacheEntry를 만드는데 실패했습니다. EmptyMap을 반환합니다.", e);
+            log.warn("fail to build CacheEntry. return EmptyMap.", e);
             return Collections.emptyMap();
         }
     }

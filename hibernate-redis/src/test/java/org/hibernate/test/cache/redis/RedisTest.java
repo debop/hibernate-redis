@@ -1,9 +1,10 @@
 package org.hibernate.test.cache.redis;
 
-import com.carrotsearch.junitbenchmarks.BenchmarkRule;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.cache.redis.strategy.AbstractReadWriteRedisAccessStrategy;
+import org.hibernate.cache.redis.util.HibernateCacheUtil;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.engine.transaction.internal.jdbc.JdbcTransactionFactory;
@@ -11,9 +12,7 @@ import org.hibernate.stat.SecondLevelCacheStatistics;
 import org.hibernate.stat.Statistics;
 import org.hibernate.testing.junit4.BaseCoreFunctionalTestCase;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 
 import java.util.Map;
 
@@ -28,8 +27,8 @@ import static org.fest.assertions.Assertions.assertThat;
 @Slf4j
 public abstract class RedisTest extends BaseCoreFunctionalTestCase {
 
-    @Rule
-    public TestRule benchmarkRun = new BenchmarkRule();
+//    @Rule
+//    public TestRule benchmarkRun = new BenchmarkRule();
 
     @Override
     protected Class<?>[] getAnnotatedClasses() {
@@ -47,7 +46,7 @@ public abstract class RedisTest extends BaseCoreFunctionalTestCase {
     @Override
     protected void configure(Configuration cfg) {
         super.configure(cfg);
-        cfg.setProperty(Environment.CACHE_REGION_PREFIX, "");
+        cfg.setProperty(Environment.CACHE_REGION_PREFIX, "hibernate:");
         cfg.setProperty(Environment.USE_SECOND_LEVEL_CACHE, "true");
         cfg.setProperty(Environment.GENERATE_STATISTICS, "true");
         cfg.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
@@ -71,8 +70,9 @@ public abstract class RedisTest extends BaseCoreFunctionalTestCase {
         t.commit();
         s.clear();
 
+        String regionName = HibernateCacheUtil.getRegionName(sessionFactory(), Item.class);
         SecondLevelCacheStatistics slcs = s.getSessionFactory().getStatistics()
-                                           .getSecondLevelCacheStatistics(Item.class.getName());
+                .getSecondLevelCacheStatistics(regionName);
 
         assertThat(slcs.getElementCountInMemory()).isGreaterThan(0);
 
@@ -99,8 +99,10 @@ public abstract class RedisTest extends BaseCoreFunctionalTestCase {
     public void emptySecondLevelCacheEntry() throws Exception {
         sessionFactory().getCache().evictEntityRegion(Item.class.getName());
         Statistics stats = sessionFactory().getStatistics();
+
+        String regionName = HibernateCacheUtil.getRegionName(sessionFactory(), Item.class);
         stats.clear();
-        SecondLevelCacheStatistics statistics = stats.getSecondLevelCacheStatistics(Item.class.getName());
+        SecondLevelCacheStatistics statistics = stats.getSecondLevelCacheStatistics(regionName);
         Map cacheEntries = statistics.getEntries();
 
         assertThat(cacheEntries).isNotNull();
@@ -146,8 +148,12 @@ public abstract class RedisTest extends BaseCoreFunctionalTestCase {
         }
 
         // check the version value in the cache...
-        SecondLevelCacheStatistics slcs = sessionFactory().getStatistics()
-                .getSecondLevelCacheStatistics(VersionedItem.class.getName());
+        final String regionName = HibernateCacheUtil.getRegionName(sessionFactory(),
+                                                                   VersionedItem.class);
+        SecondLevelCacheStatistics slcs =
+                sessionFactory()
+                        .getStatistics()
+                        .getSecondLevelCacheStatistics(regionName);
 
         Map cacheEntries = slcs.getEntries();
         Object entry = cacheEntries.get(item.getId());
@@ -156,9 +162,11 @@ public abstract class RedisTest extends BaseCoreFunctionalTestCase {
 
         Long cachedVersionValue;
 
+        final String lockStr = AbstractReadWriteRedisAccessStrategy.class.getName() + "$Lock";
         boolean isLock = entry.getClass()
-                              .getName()
-                              .equals("org.hibernate.cache.redis.strategy.AbstractReadWriteRedisAccessStrategy$Lock");
+                .getName()
+                .equals(lockStr);
+
         if (isLock) {
             //
         } else {

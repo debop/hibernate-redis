@@ -32,36 +32,34 @@ import java.io.ObjectOutputStream;
 @Slf4j
 public class BinaryRedisSerializer<T> implements RedisSerializer<T> {
 
-	private static final byte[] EMPTY_BYTES = new byte[0];
+    @Override
+    public byte[] serialize(final T graph) {
+        if (graph == null) return EMPTY_BYTES;
 
-	@Override
-	public byte[] serialize(T graph) {
-		if (graph == null) return EMPTY_BYTES;
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(os)) {
+            oos.writeObject(graph);
+            oos.flush();
 
-		try (ByteArrayOutputStream os = new ByteArrayOutputStream();
-		     ObjectOutputStream oos = new ObjectOutputStream(os)) {
-			oos.writeObject(graph);
-			oos.flush();
+            return os.toByteArray();
+        } catch (Exception e) {
+            log.warn("Fail to serialize graph. graph=" + graph, e);
+            return EMPTY_BYTES;
+        }
+    }
 
-			return os.toByteArray();
-		} catch (Exception e) {
-			log.warn("Serialize 하는데 실패했습니다. graph=" + graph, e);
-			return EMPTY_BYTES;
-		}
-	}
+    @Override
+    @SuppressWarnings("unchecked")
+    public T deserialize(final byte[] bytes) {
+        if (SerializationTool.isEmpty(bytes))
+            return null;
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public T deserialize(byte[] bytes) {
-		if (SerializationTool.isEmpty(bytes))
-			return null;
-
-		try (ByteArrayInputStream is = new ByteArrayInputStream(bytes);
-		     ObjectInputStream ois = new ObjectInputStream(is)) {
-			return (T) ois.readObject();
-		} catch (Exception e) {
-			log.warn("Deseialize 하는데 실패했습니다.", e);
-			return (T) null;
-		}
-	}
+        try (ByteArrayInputStream is = new ByteArrayInputStream(bytes);
+             ObjectInputStream ois = new ObjectInputStream(is)) {
+            return (T) ois.readObject();
+        } catch (Exception e) {
+            log.warn("Fail to deserialize bytes.", e);
+            return null;
+        }
+    }
 }

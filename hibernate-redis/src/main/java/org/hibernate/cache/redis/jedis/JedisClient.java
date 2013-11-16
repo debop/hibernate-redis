@@ -23,8 +23,10 @@ import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.serializer.BinaryRedisSerializer;
 import org.hibernate.cache.redis.serializer.RedisSerializer;
 import org.hibernate.cache.redis.serializer.SerializationTool;
+import org.hibernate.cache.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Transaction;
 
 import java.util.*;
@@ -40,46 +42,58 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class JedisClient {
+
     public static final int DEFAULT_EXPIRY_IN_SECONDS = 120;
     public static final String DEFAULT_REGION_NAME = "hibernate";
+    public static final String EXPIRY_POSTFIX = ":expire";
+
+    public static String getExpireRegion(final String region) {
+        return region + EXPIRY_POSTFIX;
+    }
+
+    public static String getExpireKey(Object key) {
+        return (key != null) ? key.toString() : "";
+    }
 
     @Getter
     private final JedisPool jedisPool;
 
     @Getter
     @Setter
-    private int database;
-
-    @Getter
-    @Setter
     private int expiryInSeconds;
 
     @Getter
-    @Setter
+    private StringRedisSerializer regionSerializer = new StringRedisSerializer();
+
+    @Getter
     private RedisSerializer<Object> keySerializer = new BinaryRedisSerializer<Object>();
 
     @Getter
-    @Setter
     private RedisSerializer<Object> valueSerializer = new BinaryRedisSerializer<Object>();
 
     public JedisClient() {
-        this(new JedisPool("localhost"));
+        this(new JedisPool("localhost"), DEFAULT_EXPIRY_IN_SECONDS);
     }
 
     public JedisClient(JedisPool jedisPool) {
         this(jedisPool, DEFAULT_EXPIRY_IN_SECONDS);
     }
 
+    /**
+     * initialize JedisClient instance
+     *
+     * @param jedisPool       JedisPool instance
+     * @param expiryInSeconds expiration in seconds
+     */
     public JedisClient(JedisPool jedisPool, int expiryInSeconds) {
-        log.debug("JedisClient created. jedisPool=[{}], expiryInSeconds=[{}]",
-                  jedisPool, expiryInSeconds);
+        log.debug("JedisClient created. jedisPool=[{}], expiryInSeconds=[{}]", jedisPool, expiryInSeconds);
 
         this.jedisPool = jedisPool;
         this.expiryInSeconds = expiryInSeconds;
     }
 
     /**
-     * e     * 서버와의 통신 테스트, "PONG" 을 반환한다
+     * ping test for server alive
      */
     public String ping() {
         return run(new JedisCallback<String>() {
@@ -91,7 +105,7 @@ public class JedisClient {
     }
 
     /**
-     * db size를 구합니다.
+     * get Redis db size
      */
     public Long dbSize() {
         return run(new JedisCallback<Long>() {
@@ -103,34 +117,64 @@ public class JedisClient {
     }
 
     /**
-     * 키에 해당하는 캐시 값이 존재하는지 확인합니다.
+     * confirm the specified cache item in specfied region
      *
-     * @param region 영역 명
-     * @param key    캐시 키
+     * @param region region name
+     * @param key    cache key
      */
-    public Boolean exists(String region, Object key) {
-        log.trace("캐시값 존재여부를 확인합니다. region=[{}], key=[{}]", region, key);
+    public boolean exists(final String region, final Object key) {
+        log.trace("confirm cache item. region=[{}], key=[{}]", region, key);
 
         final byte[] rawRegion = rawRegion(region);
         final byte[] rawKey = rawKey(key);
 
-        return run(new JedisCallback<Boolean>() {
+        boolean valueExists = run(new JedisCallback<Boolean>() {
             @Override
             public Boolean execute(Jedis jedis) {
                 return jedis.hexists(rawRegion, rawKey);
             }
         });
+        return valueExists && !isExpired(region, key);
     }
 
     /**
-     * 키에 해당하는 캐시 값을 구합니다.
+     * decide the specified cache key is expired.
      *
-     * @param region 영역 명
-     * @param key    캐시 키
-     * @return 저장된 캐시 값, 없으면 null을 반환한다.
+     * @param region region name
+     * @param key    cache key
+     * @return is expired
      */
-    public Object get(String region, Object key) {
-        log.trace("캐시값을 조회합니다... region=[{}], key=[{}]", region, key);
+    public boolean isExpired(final String region, final Object key) {
+        if (key == null)
+            return true;
+        final String timestampStr = run(new JedisCallback<String>() {
+            @Override
+            public String execute(Jedis jedis) {
+                return jedis.hget(getExpireRegion(region), getExpireKey(key));
+            }
+        });
+        try {
+            if (timestampStr == null || timestampStr.isEmpty())
+                return false;
+            Long timestamp = Long.parseLong(timestampStr);
+            if (timestamp != 0 && timestamp <= System.currentTimeMillis()) {
+                // if cache is expired, delete cache
+                del(region, key);
+                return true;
+            }
+        } catch (Exception ignored) {}
+        return false;
+    }
+
+    /**
+     * Get cache
+     *
+     * @param region region name
+     * @param key    cache key
+     * @return return cached entity, if not exists return null.
+     */
+    public Object get(final String region, final Object key) {
+        log.trace("retrive cache... region=[{}], key=[{}]", region, key);
 
         final byte[] rawRegion = rawRegion(region);
         final byte[] rawKey = rawKey(key);
@@ -143,37 +187,66 @@ public class JedisClient {
         });
 
         Object value = deserializeValue(rawValue);
-        log.trace("캐시값을 조회했습니다. region=[{}], key=[{}], value=[{}]", region, key, value);
+        log.trace("retrieve cache entity. region=[{}], key=[{}], value=[{}]", region, key, value);
         return value;
     }
 
     /**
-     * 영역에 존재하는 모든 캐시 키를 반환합니다.
+     * retrieve all cached items in specified region
      *
-     * @param region 영역
-     * @return 저장된 캐시 키의 컬렉션
+     * @param region region
+     * @return collection of cached items
      */
     public Set<Object> keysInRegion(String region) {
-        log.trace("영역에 해당하는 모든 키를 가져옵니다. region=[{}]", region);
+        log.trace("retrieve all cached items in region=[{}]", region);
 
-        final byte[] rawRegion = rawRegion(region);
-        Set<byte[]> rawKeys = run(new JedisCallback<Set<byte[]>>() {
-            @Override
-            public Set<byte[]> execute(Jedis jedis) {
-                return jedis.hkeys(rawRegion);
+        try {
+            final byte[] rawRegion = rawRegion(region);
+            Set<byte[]> rawKeys = run(new JedisCallback<Set<byte[]>>() {
+                @Override
+                public Set<byte[]> execute(Jedis jedis) {
+                    return jedis.hkeys(rawRegion);
+                }
+            });
+
+            if (rawKeys != null && rawKeys.size() > 0) {
+                final Set<Object> keys = new HashSet<>();
+                for (final byte[] rawKey : rawKeys) {
+                    final Object key = deserializeKey(rawKey);
+                    if (!isExpired(region, key)) {
+                        keys.add(key);
+                    }
+                }
+                return keys;
             }
-        });
-        return deserializeKeys(rawKeys);
+        } catch (Exception ignored) { }
+        return new HashSet<Object>();
     }
 
     /**
-     * 지정된 영역의 모든 캐시 항목을 가져옵니다.
+     * get cache count in region
      *
-     * @param region 영역
-     * @return 모든 캐시 항목 정보
+     * @param region region
+     * @return cache item count in region
+     */
+    public Long keySizeInRegion(final String region) {
+        final byte[] rawRegion = rawRegion(region);
+        return run(new JedisCallback<Long>() {
+            @Override
+            public Long execute(Jedis jedis) {
+                return jedis.hlen(rawRegion);
+            }
+        });
+    }
+
+    /**
+     * get all cached items in specified region
+     *
+     * @param region region name
+     * @return map of keys and all cached items in specified region
      */
     public Map<Object, Object> hgetAll(String region) {
-        log.trace("영역에 해당하는 key-value 를 조회합니다. region=[{}]", region);
+        log.trace("retrive all keys and cached items in region=[{}]", region);
 
         final byte[] rawRegion = rawRegion(region);
         Map<byte[], byte[]> rawMap = run(new JedisCallback<Map<byte[], byte[]>>() {
@@ -193,14 +266,14 @@ public class JedisClient {
     }
 
     /**
-     * 지정한 키들의 값들을 한꺼번에 가져옵니다.
+     * multiple get cache items in specified region
      *
-     * @param region 영역 명
-     * @param keys   캐시 키 컬렉션
-     * @return 캐시 값의 컬렉션
+     * @param region region name
+     * @param keys   cache key collection to retrieve
+     * @return cache items
      */
-    public List<Object> mget(String region, Collection<?> keys) {
-        log.trace("영역에서 해당 키에 해당하는 값 들을 조회합니다. region=[{}], keys=[{}]", region, keys);
+    public List<Object> mget(final String region, final Collection<?> keys) {
+        log.trace("retrieve multiple cache items in region... region=[{}], keys=[{}]", region, keys);
 
         final byte[] rawRegion = rawRegion(region);
         final byte[][] rawKeys = rawKeys(keys);
@@ -215,39 +288,39 @@ public class JedisClient {
     }
 
     /**
-     * 캐시를 저장합니다.
+     * save cache
      *
-     * @param region 영역 명
-     * @param key    캐시 키
-     * @param value  캐시 값
+     * @param region region name
+     * @param key    cache key to save
+     * @param value  cache value to save
      */
     public void set(String region, Object key, Object value) {
         set(region, key, value, expiryInSeconds, TimeUnit.SECONDS);
     }
 
     /**
-     * 캐시를 저장합니다.
+     * save cache item
      *
-     * @param region           영역 명
-     * @param key              캐시 키
-     * @param value            캐시 값
-     * @param timeoutInSeconds 유효 기간
+     * @param region           region name
+     * @param key              cache key to save
+     * @param value            cache value to save
+     * @param timeoutInSeconds expire timeout in seconds
      */
     public void set(String region, Object key, Object value, long timeoutInSeconds) {
         set(region, key, value, timeoutInSeconds, TimeUnit.SECONDS);
     }
 
     /**
-     * 캐시를 저장합니다.
+     * save cache item
      *
-     * @param region  영역 명
-     * @param key     캐시 키
-     * @param value   캐시 값
-     * @param timeout 유효기간
-     * @param unit    유효기간 단위
+     * @param region  region name
+     * @param key     cache key to save
+     * @param value   cache value to save
+     * @param timeout expire timeout
+     * @param unit    expire timeout unit
      */
     public void set(final String region, final Object key, final Object value, long timeout, TimeUnit unit) {
-        log.trace("항목을 캐싱합니다. region=[{}], key=[{}], value=[{}], timeout=[{}], unit=[{}]",
+        log.trace("save cache item region=[{}], key=[{}], value=[{}], timeout=[{}], unit=[{}]",
                   region, key, value, timeout, unit);
 
         final byte[] rawRegion = rawRegion(region);
@@ -259,68 +332,62 @@ public class JedisClient {
             @Override
             public void execute(Transaction tx) {
                 tx.hset(rawRegion, rawKey, rawValue);
-                // Expire 될 정보를 Scored Set 에 저장한다.
                 if (seconds > 0) {
-                    final byte[] rawZkey = rawZkey(region);
-                    final long score = new Date().getTime() + seconds * 1000L;
-                    tx.zadd(rawZkey, score, rawKey);
+                    final long score = System.currentTimeMillis() + seconds * 1000;
+                    tx.hset(getExpireRegion(region), getExpireKey(key), String.valueOf(score));
                 }
             }
         });
     }
 
     /**
-     * 현 영역에 있는 캐시 항목 중 Expire 된 항목을 삭제합니다.
+     * delete cache item which is expired in region
      *
-     * @param region 영역 명
+     * @param region region name
      */
     public void expire(final String region) {
         // score 가 현재 시각보다 작은 값을 가진 member 를 추려내, 삭제한다.
-
-        final byte[] rawZkey = rawZkey(region);
-        final long score = new Date().getTime();
-        final byte[] rawRegion = rawRegion(region);
-
-        log.debug("region[{}]의 정보 중 expires 될 정보가 있다면 삭제합니다... expire time=[{}]", region, score);
-
-        run(new JedisCallback<Object>() {
-            @Override
-            public Object execute(Jedis jedis) {
-                // expire되어야 할 key를 조회합니다.
-                Set<byte[]> rawKeys = jedis.zrangeByScore(rawZkey, 0, score);
-
-                if (rawKeys != null) {
-                    // 해당 캐시를 실제로 삭제합니다.
-                    for (byte[] rawKey : rawKeys) {
-                        jedis.hdel(rawRegion, rawKey);
-                    }
-                    // Expire 된 key의 expiration 정보를 삭제합니다.
-                    jedis.zremrangeByScore(rawZkey, 0, score);
+        try {
+            final Set<Object> keys = keysInRegion(region);
+            final Set<String> expiredKeys = new HashSet<String>();
+            for (Object k : keys) {
+                if (isExpired(region, k)) {
+                    expiredKeys.add(getExpireKey(k));
                 }
-                return null;
             }
-        });
+            if (expiredKeys.size() > 0) {
+                run(new JedisCallback<Long>() {
+                    @Override
+                    public Long execute(Jedis jedis) {
+                        String[] keyArr = new String[expiredKeys.size()];
+                        keyArr = expiredKeys.toArray(keyArr);
+                        return jedis.hdel(getExpireKey(region), keyArr);
+                    }
+                });
+            }
+        } catch (Exception ignored) {
+            log.warn("Error in Cache Expiration Method.", ignored);
+        }
     }
 
     /**
-     * 지정된 키의 항목으로 삭제합니다.
+     * delete cache item in specified region.
      *
-     * @param region 영역 명
-     * @param key    삭제할 캐시 키
+     * @param region region name
+     * @param key    cache key to delete
+     * @return count of deleted key
      */
-    public Long del(String region, Object key) {
+    public Long del(final String region, final Object key) {
         log.trace("캐시를 삭제합니다. region=[{}], key=[{}]", region, key);
 
         final byte[] rawRegion = rawRegion(region);
         final byte[] rawKey = rawKey(key);
 
-        final byte[] rawZkey = rawZkey(region);
-
         runWithTx(new JedisTransactionalCallback() {
             @Override
             public void execute(Transaction tx) {
                 tx.hdel(rawRegion, rawKey);
-                tx.zrem(rawZkey, rawKey);
+                tx.hdel(getExpireRegion(region), getExpireKey(key));
             }
         });
 
@@ -328,49 +395,51 @@ public class JedisClient {
     }
 
     /**
-     * 지정된 키의 항목으로 삭제합니다.
+     * multiplu delete cache items in specified region
      *
-     * @param keys 삭제할 키의 컬렉션
+     * @param keys key collection to delete
      */
-    public void mdel(String region, Collection<?> keys) {
-        log.trace("복수의 캐시를 삭제합니다. region=[{}], keys=[{}]", region, keys);
+    public void mdel(final String region, final Collection<?> keys) {
 
         final byte[] rawRegion = rawRegion(region);
-        final byte[] rawZkey = rawZkey(region);
         final byte[][] rawKeys = rawKeys(keys);
 
+        final String expireRegion = getExpireRegion(region);
         runWithTx(new JedisTransactionalCallback() {
             @Override
             public void execute(Transaction tx) {
                 for (byte[] rawKey : rawKeys) {
                     tx.hdel(rawRegion, rawKey);
-                    tx.zrem(rawZkey, rawKey);
+                    // tx.zrem(rawZkey, rawKey);
+                }
+                for (Object key : keys) {
+                    tx.hdel(expireRegion, getExpireKey(key));
                 }
             }
         });
     }
 
     /**
-     * 해당 영역의 모든 캐시 항목을 삭제합니다.
+     * delete region
+     *
+     * @param region region name to delete
      */
     public void deleteRegion(final String region) throws CacheException {
-        log.debug("Region 전체를 삭제합니다... region=[{}]", region);
 
         final byte[] rawRegion = rawRegion(region);
-        final byte[] rawZkey = rawZkey(region);
+        log.debug("delete region region=[{}]", region);
 
         runWithTx(new JedisTransactionalCallback() {
             @Override
             public void execute(Transaction tx) {
                 tx.del(rawRegion);
-                tx.del(rawZkey);
+                tx.del(getExpireRegion(region));
             }
         });
     }
 
     /**
-     * DB의 모든 내용을 삭제합니다.
-     * NOTE: 다른 데이터와 같이 사용하는 DB인 경우 삭제될 위험이 있습니다.
+     * flush db
      */
     public String flushDb() {
         log.info("Redis DB 전체를 flush 합니다...");
@@ -386,12 +455,12 @@ public class JedisClient {
     /**
      * 키를 byte[] 로 직렬화합니다 *
      */
-    private byte[] rawKey(Object key) {
+    private byte[] rawKey(final Object key) {
         return getKeySerializer().serialize(key);
     }
 
     @SuppressWarnings("unchecked")
-    private byte[][] rawKeys(Collection<?> keys) {
+    private byte[][] rawKeys(final Collection<?> keys) {
         byte[][] rawKeys = new byte[keys.size()][];
         int i = 0;
         for (Object key : keys) {
@@ -400,47 +469,41 @@ public class JedisClient {
         return rawKeys;
     }
 
-    private byte[] rawZkey(String region) {
-        return rawRegion("z:" + region);
+    /**
+     * serialize region name
+     */
+    private byte[] rawRegion(final String region) {
+        return regionSerializer.serialize(region);
     }
 
     /**
-     * 키를 이용해 region 값을 직렬화합니다.
+     * deserialize key
      */
-    private byte[] rawRegion(String region) {
-        return region.getBytes();
-    }
-
-    /**
-     * byte[] 를 key 값으로 역직렬화 합니다
-     */
-    private Object deserializeKey(byte[] rawKey) {
+    private Object deserializeKey(final byte[] rawKey) {
         return getKeySerializer().deserialize(rawKey);
     }
 
     /**
-     * 캐시 값을 byte[]로 직렬화를 수행합니다.
+     * serialize cache value
      */
-    private byte[] rawValue(Object value) {
+    private byte[] rawValue(final Object value) {
         return getValueSerializer().serialize(value);
     }
 
     /**
-     * byte[] 를 역직렬화하여 원 객체로 변환합니다.
+     * deserialize raw value
      */
-    private Object deserializeValue(byte[] rawValue) {
+    private Object deserializeValue(final byte[] rawValue) {
         return getValueSerializer().deserialize(rawValue);
     }
 
     /**
-     * Redis 작업을 수행합니다.<br/>
-     * {@link redis.clients.jedis.JedisPool} 을 이용하여, {@link redis.clients.jedis.Jedis}를 풀링하여 사용하도록 합니다.
+     * execute the specified callback
      */
     private <T> T run(final JedisCallback<T> callback) {
 
         Jedis jedis = jedisPool.getResource();
         try {
-            jedis.select(database);
             return callback.execute(jedis);
         } finally {
             jedisPool.returnResource(jedis);
@@ -448,15 +511,16 @@ public class JedisClient {
     }
 
     /**
-     * 복수의 작업을 하나의 Transaction 하에서 수행하도록 합니다.<br />
-     * {@link redis.clients.jedis.JedisPool} 을 이용하여, {@link redis.clients.jedis.Jedis}를 풀링하여 사용하도록 합니다.
+     * execute the specified callback under transaction
+     * HINT: https://github.com/xetorthio/jedis/wiki/AdvancedUsage
+     *
+     * @param callback executable instance under transaction
      */
     private List<Object> runWithTx(final JedisTransactionalCallback callback) {
 
         Jedis jedis = jedisPool.getResource();
         try {
             Transaction tx = jedis.multi();
-            tx.select(database);
             callback.execute(tx);
             return tx.exec();
         } finally {
@@ -465,16 +529,38 @@ public class JedisClient {
     }
 
     /**
-     * Raw Key 값들을 역직렬화하여 Key Set을 반환합니다.
+     * execute the specified callback under Redis Pipeline
+     * HINT: https://github.com/xetorthio/jedis/wiki/AdvancedUsage
+     *
+     * @param callback executable instance unider Pipeline
      */
-    private Set<Object> deserializeKeys(Set<byte[]> rawKeys) {
+    private void runWithPipeline(final JedisPipelinedCallback callback) {
+        final Jedis jedis = jedisPool.getResource();
+        try {
+            final Pipeline pipeline = jedis.pipelined();
+            callback.execute(pipeline);
+            // use #sync(), not #exec()
+            pipeline.sync();
+        } finally {
+            jedisPool.returnResource(jedis);
+        }
+    }
+
+    /**
+     * deserize the specified raw key set.
+     *
+     * @return original key set.
+     */
+    private Set<Object> deserializeKeys(final Set<byte[]> rawKeys) {
         return SerializationTool.deserialize(rawKeys, getKeySerializer());
     }
 
     /**
-     * Raw Value 값들을 역직렬화하여 Value List를 반환합니다.
+     * deseriaize the specified raw value collection
+     *
+     * @return collection of original value
      */
-    private List<Object> deserializeValues(List<byte[]> rawValues) {
+    private List<Object> deserializeValues(final List<byte[]> rawValues) {
         return SerializationTool.deserialize(rawValues, getValueSerializer());
     }
 }

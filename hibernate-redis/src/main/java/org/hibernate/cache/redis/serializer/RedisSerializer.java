@@ -16,6 +16,9 @@
 
 package org.hibernate.cache.redis.serializer;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 /**
  * Serializer for Redis Key or Value
  *
@@ -24,9 +27,17 @@ package org.hibernate.cache.redis.serializer;
  */
 public interface RedisSerializer<T> {
 
-    /** Serialize Object */
-    byte[] serialize(T graph);
+    public byte[] EMPTY_BYTES = new byte[0];
 
-    /** Deserialize to object */
-    T deserialize(byte[] bytes);
+    public Charset UTF_8 = StandardCharsets.UTF_8;
+
+    /**
+     * Serialize Object
+     */
+    byte[] serialize(final T graph);
+
+    /**
+     * Deserialize to object
+     */
+    T deserialize(final byte[] bytes);
 }

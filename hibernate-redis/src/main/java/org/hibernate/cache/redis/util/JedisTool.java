@@ -18,9 +18,12 @@ package org.hibernate.cache.redis.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.redis.jedis.JedisClient;
+import org.hibernate.cfg.Environment;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.Protocol;
 
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -35,34 +38,51 @@ public final class JedisTool {
     private JedisTool() { }
 
     /**
-     * {@link redis.clients.jedis.JedisPool} 을 생성합니다.
+     * create {@link org.hibernate.cache.redis.jedis.JedisClient} instance.
+     */
+    public static JedisClient createJedisClient(Properties props) {
+        log.info("create JedisClient.");
+        Properties cacheProps = loadCacheProperties(props);
+        Integer expiryInSeconds = Integer.decode(cacheProps.getProperty("redis.expiryInSeconds", "120"));  // 120 seconds
+
+        return new JedisClient(createJedisPool(cacheProps), expiryInSeconds);
+    }
+
+    /**
+     * create {@link redis.clients.jedis.JedisPool} instance.
      */
     public static JedisPool createJedisPool(Properties props) {
 
         String host = props.getProperty("redis.host", "localhost");
-        Integer port = Integer.decode(props.getProperty("redis.port", "6379"));
-        Integer timeout = Integer.decode(props.getProperty("redis.timeout", "2000")); // msec
+        Integer port = Integer.decode(props.getProperty("redis.port", String.valueOf(Protocol.DEFAULT_PORT)));
+        Integer timeout = Integer.decode(props.getProperty("redis.timeout", String.valueOf(Protocol.DEFAULT_TIMEOUT))); // msec
         String password = props.getProperty("redis.password", null);
-        Integer database = Integer.decode(props.getProperty("redis.database", "0"));
+        Integer database = Integer.decode(props.getProperty("redis.database", String.valueOf(Protocol.DEFAULT_DATABASE)));
 
-        log.info("JedisPool을 생성합니다... host=[{}], port=[{}], timeout=[{}], password=[{}], database=[{}]",
+        log.info("create JedisPool. host=[{}], port=[{}], timeout=[{}], password=[{}], database=[{}]",
                  host, port, timeout, password, database);
 
         return new JedisPool(createJedisPoolConfig(), host, port, timeout, password, database);
     }
 
-    /**
-     * {@link org.hibernate.cache.redis.jedis.JedisClient} 를 생성합니다.
-     */
-    public static JedisClient createJedisClient(Properties props) {
-        Integer expiryInSeconds = Integer.decode(props.getProperty("redis.expiryInSeconds", "120"));  // 120 seconds
-        return new JedisClient(createJedisPool(props), expiryInSeconds);
-    }
-
     private static JedisPoolConfig createJedisPoolConfig() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxActive(32);
+        poolConfig.setMaxActive(64);
         poolConfig.setMinIdle(2);
         return poolConfig;
+    }
+
+    private static Properties loadCacheProperties(final Properties props) {
+        Properties cacheProps = new Properties();
+        String cachePath = props.getProperty(Environment.CACHE_PROVIDER_CONFIG,
+                                             "hibernate-redis.properties");
+        try {
+            log.info("Loading cache properties... path=[{}]", cachePath);
+            InputStream is = JedisTool.class.getClassLoader().getResourceAsStream(cachePath);
+            cacheProps.load(is);
+        } catch (Exception e) {
+            log.warn("Fail to load cache properties. cachePath=" + cachePath, e);
+        }
+        return cacheProps;
     }
 }
