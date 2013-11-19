@@ -320,8 +320,8 @@ public class JedisClient {
      * @param unit    expire timeout unit
      */
     public void set(final String region, final Object key, final Object value, long timeout, TimeUnit unit) {
-        log.trace("save cache item region=[{}], key=[{}], value=[{}], timeout=[{}], unit=[{}]",
-                  region, key, value, timeout, unit);
+        log.trace("save cache item region=[{}], key=[{}], timeout=[{}], unit=[{}]",
+                  region, key, timeout, unit);
 
         final byte[] rawRegion = rawRegion(region);
         final byte[] rawKey = rawKey(key);
