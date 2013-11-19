@@ -6,8 +6,8 @@
 
     <groupId>org.hibernate</groupId>
     <artifactId>hibernate-redis-parent</artifactId>
-    <version>1.4.0.RELEASE</version>
-    <packaging>pom</packaging>
+	<version>1.4.1.RELEASE</version>
+	<packaging>pom</packaging>
 
     <modules>
         <module>hibernate-redis</module>
