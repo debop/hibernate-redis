@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory;
+import org.hibernate.cache.redis.util.JedisTool;
 import org.hibernate.cache.redis.util.Timestamper;
 import org.hibernate.cache.spi.Region;
 
@@ -40,7 +41,7 @@ public abstract class RedisDataRegion implements Region {
     private static final String CACHE_LOCK_TIMEOUT_PROPERTY = "io.redis.hibernate.cache_lock_timeout";
     private static final int DEFAULT_CACHE_LOCK_TIMEOUT = 60 * 1000; // 60 seconds
 
-    private static final String EXPIRE_IN_SECONDS = "redis.expireInSeconds";
+    private static final String EXPIRE_IN_SECONDS = "redis.expiryInSeconds";
 
     @Getter
     protected final RedisAccessStrategyFactory accessStrategyFactory;
@@ -77,7 +78,8 @@ public abstract class RedisDataRegion implements Region {
                 Integer.decode(props.getProperty(CACHE_LOCK_TIMEOUT_PROPERTY,
                                                  String.valueOf(DEFAULT_CACHE_LOCK_TIMEOUT)));
 
-        this.expireInSeconds = Integer.decode(props.getProperty(EXPIRE_IN_SECONDS, "120"));
+        int defaultExpires = Integer.decode(JedisTool.getProperty(EXPIRE_IN_SECONDS, "120"));
+        this.expireInSeconds = JedisTool.getExpireInSeconds(name, defaultExpires);
     }
 
     /**
@@ -97,13 +99,15 @@ public abstract class RedisDataRegion implements Region {
      */
     @Override
     public void destroy() throws CacheException {
-        try {
-            if (!regionDeleted) {
-                jedisClient.deleteRegion(name);
-                regionDeleted = true;
-                log.debug("region[{}] is deleted.", getName());
-            }
-        } catch (Exception ignored) {}
+        // NOTE: delete all cached item is not neccessory.
+        // NOTE: if you use multi servers, you don't need clear cache.
+//        try {
+//            if (!regionDeleted) {
+//                jedisClient.deleteRegion(name);
+//                regionDeleted = true;
+//                log.debug("region[{}] is deleted.", getName());
+//            }
+//        } catch (Exception ignored) {}
     }
 
     /**

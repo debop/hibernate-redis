@@ -27,13 +27,16 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * org.hibernate.cache.redis.util.JedisTool
+ * Helper class for Redis
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 2. 오전 1:53
  */
 @Slf4j
 public final class JedisTool {
+
+    public static final String EXPIRY_PROPERTY_PREFIX = "redis.expiryInSeconds.";
+    private static Properties cacheProperties = null;
 
     private JedisTool() { }
 
@@ -44,6 +47,7 @@ public final class JedisTool {
         log.info("create JedisClient.");
         Properties cacheProps = loadCacheProperties(props);
         Integer expiryInSeconds = Integer.decode(cacheProps.getProperty("redis.expiryInSeconds", "120"));  // 120 seconds
+        cacheProperties = cacheProps;
 
         return new JedisClient(createJedisPool(cacheProps), expiryInSeconds);
     }
@@ -85,4 +89,35 @@ public final class JedisTool {
         }
         return cacheProps;
     }
+
+    /**
+     * Get expire time out for the specified region
+     *
+     * @param regionName    region name defined at Entity
+     * @param defaultExpiry default expiry in seconds
+     * @return expiry in seconds
+     */
+    public static int getExpireInSeconds(final String regionName, final int defaultExpiry) {
+        if (cacheProperties == null)
+            return defaultExpiry;
+        return Integer.valueOf(getProperty(EXPIRY_PROPERTY_PREFIX + regionName, String.valueOf(defaultExpiry)));
+    }
+
+    /**
+     * retrieve property value in hibernate-redis.properties
+     *
+     * @param name         property key
+     * @param defaultValue default value
+     * @return property value
+     */
+    public static String getProperty(final String name, final String defaultValue) {
+        if (cacheProperties == null)
+            return defaultValue;
+        try {
+            return cacheProperties.getProperty(name, defaultValue);
+        } catch (Exception ignored) {
+            return defaultValue;
+        }
+    }
+
 }

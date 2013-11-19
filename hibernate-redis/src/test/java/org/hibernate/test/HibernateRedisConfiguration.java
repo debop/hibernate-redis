@@ -35,7 +35,7 @@ public class HibernateRedisConfiguration {
     }
 
     public String[] getMappedPackageNames() {
-        return new String[] {
+        return new String[]{
                 Account.class.getPackage().getName()
         };
     }
@@ -53,7 +53,7 @@ public class HibernateRedisConfiguration {
         props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
         props.put(Environment.USE_QUERY_CACHE, true);
         props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
-        props.put(Environment.CACHE_REGION_PREFIX, "hibernate:");
+        props.put(Environment.CACHE_REGION_PREFIX, "hibernate");
         props.setProperty(Environment.GENERATE_STATISTICS, "true");
         props.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
         props.setProperty(Environment.TRANSACTION_STRATEGY, JdbcTransactionFactory.class.getName());
