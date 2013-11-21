@@ -182,10 +182,21 @@ public class JedisClient {
         byte[] rawValue = run(new JedisCallback<byte[]>() {
             @Override
             public byte[] execute(Jedis jedis) {
+                // check cache is expired
+                String timestampStr = jedis.hget(getExpireRegion(region), getExpireKey(key));
+                if (timestampStr == null || timestampStr.isEmpty())
+                    return jedis.hget(rawRegion, rawKey);
+
+                Long timestamp = Long.parseLong(timestampStr);
+                if (timestamp != 0 && timestamp <= System.currentTimeMillis()) {
+                    // if cache is expired, delete cache
+                    jedis.hdel(rawRegion, rawKey);
+                    jedis.hdel(getExpireRegion(region), getExpireKey(key));
+                    return null;
+                }
                 return jedis.hget(rawRegion, rawKey);
             }
         });
-
         Object value = deserializeValue(rawValue);
         log.trace("retrieve cache entity. region=[{}], key=[{}], value=[{}]", region, key, value);
         return value;
