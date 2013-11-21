@@ -26,12 +26,12 @@ import org.hibernate.cache.spi.*;
 import org.hibernate.cache.spi.access.AccessType;
 import org.hibernate.cfg.Settings;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 /**
- * Abstract implementation of an Redis specific RegionFactory.
+ * Region Factory for Redis
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 5. 오후 11:59
@@ -57,7 +57,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
 
     protected final RedisAccessStrategyFactory accessStrategyFactory = new RedisAccessStrategyFactoryImpl();
 
-    protected final List<String> regionNames = new ArrayList<String>();
+    protected final Set<String> regionNames = new HashSet<String>();
 
     protected JedisClient jedisClient = null;
 

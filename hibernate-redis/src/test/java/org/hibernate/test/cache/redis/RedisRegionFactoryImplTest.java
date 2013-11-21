@@ -29,15 +29,13 @@ public class RedisRegionFactoryImplTest extends RedisTest {
     protected Map getMapFromCacheEntry(final Object entry) {
         final Map map;
         if (entry.getClass()
-                .getName()
-                .equals(ABSTRACT_READ_WRITE_REDIS_ACCESS_STRATEGY_CLASS_NAME + "$Item")) {
+                 .getName()
+                 .equals(ABSTRACT_READ_WRITE_REDIS_ACCESS_STRATEGY_CLASS_NAME + "$Item")) {
             try {
                 Field field = entry.getClass().getDeclaredField("value");
                 field.setAccessible(true);
                 map = (Map) field.get(entry);
-            } catch (NoSuchFieldException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
+            } catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         } else {

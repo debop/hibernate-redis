@@ -41,7 +41,7 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
     }
 
     @Override
-    public void start(Settings settings, Properties properties) throws CacheException {
+    public synchronized void start(Settings settings, Properties properties) throws CacheException {
         log.info("starting SingletonRedisRegionFactory...");
 
         this.settings = settings;
@@ -57,7 +57,7 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
     }
 
     @Override
-    public void stop() {
+    public synchronized void stop() {
         log.debug("stopping SingletonRedisRegionFactory...");
 
         if (ReferenceCount.decrementAndGet() == 0) {
