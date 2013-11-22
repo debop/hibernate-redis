@@ -1,6 +1,5 @@
 package org.hibernate.test.domain;
 
-import com.google.common.base.Objects;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,9 +27,13 @@ public class PhoneNumber implements Serializable {
 		return false;
 	}
 
-	public int hashCode() {
-		return Objects.hashCode(numberType, personId, phone);
-	}
+    @Override
+    public int hashCode() {
+        int result = (int) (personId ^ (personId >>> 32));
+        result = 31 * result + (numberType != null ? numberType.hashCode() : 0);
+        result = 31 * result + (int) (phone ^ (phone >>> 32));
+        return result;
+    }
 
 	public String toString() {
 		return numberType + ":" + phone;
