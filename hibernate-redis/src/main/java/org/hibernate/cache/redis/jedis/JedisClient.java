@@ -221,7 +221,7 @@ public class JedisClient {
             });
 
             if (rawKeys != null && rawKeys.size() > 0) {
-                final Set<Object> keys = new HashSet<>();
+                final Set<Object> keys = new HashSet<Object>();
                 for (final byte[] rawKey : rawKeys) {
                     final Object key = deserializeKey(rawKey);
                     if (!isExpired(region, key)) {

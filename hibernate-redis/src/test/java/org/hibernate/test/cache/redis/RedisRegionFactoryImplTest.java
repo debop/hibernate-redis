@@ -35,9 +35,12 @@ public class RedisRegionFactoryImplTest extends RedisTest {
                 Field field = entry.getClass().getDeclaredField("value");
                 field.setAccessible(true);
                 map = (Map) field.get(entry);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
+
         } else {
             map = (Map) entry;
         }

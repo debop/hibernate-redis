@@ -14,7 +14,7 @@
     </modules>
 
     <properties>
-        <jdk.version>1.7</jdk.version>
+	    <jdk.version>1.6</jdk.version>
 	    <hibernate.version>4.2.7.SP1</hibernate.version>
 	    <springframework.version>3.2.5.RELEASE</springframework.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
