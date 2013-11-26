@@ -2,7 +2,7 @@ hibernate-redis
 ===============
 
 [hibernate][1] (3.6.x-Final) 2nd level cache using redis.
-use [org.hibernate.cache.redis.jedis][2]  2.2.1 or higher
+use [jedis][2]  2.2.1 or higher
 
 
 ### Usage
@@ -62,6 +62,6 @@ run "redis-cli monitor" command in terminal. you can see put cached items, retri
 read [HibernateCacheTest.java][3] for more usage.
 
 [1]: http://www.hibernate.org/
-[2]: https://github.com/xetorthio/org.hibernate.cache.redis.jedis
+[2]: https://github.com/xetorthio/jedis
 [3]: https://github.com/debop/hibernate-redis/blob/master/hibernate-redis/src/test/java/org/hibernate/test/cache/HibernateCacheTest.java
 [4]: http://projects.spring.io/spring-data-jpa/
