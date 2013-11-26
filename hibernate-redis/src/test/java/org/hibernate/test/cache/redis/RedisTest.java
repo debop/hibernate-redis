@@ -46,7 +46,7 @@ public abstract class RedisTest extends BaseCoreFunctionalTestCase {
     @Override
     protected void configure(Configuration cfg) {
         super.configure(cfg);
-        cfg.setProperty(Environment.CACHE_REGION_PREFIX, "hibernate:");
+        cfg.setProperty(Environment.CACHE_REGION_PREFIX, "hibernate");
         cfg.setProperty(Environment.USE_SECOND_LEVEL_CACHE, "true");
         cfg.setProperty(Environment.GENERATE_STATISTICS, "true");
         cfg.setProperty(Environment.USE_STRUCTURED_CACHE, "true");

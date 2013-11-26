@@ -46,7 +46,7 @@ public abstract class RedisTest extends BaseCacheRegionFactoryTestCase {
     public void configure(Configuration cfg) {
         super.configure(cfg);
         cfg.setProperty(Environment.TRANSACTION_STRATEGY, JDBCTransactionFactory.class.getName());
-	}
+    }
 
     @Override
     protected Class getCacheRegionFactory() {
@@ -60,12 +60,12 @@ public abstract class RedisTest extends BaseCacheRegionFactoryTestCase {
 
     @Override
     protected String getConfigResourceLocation() {
-        return "redis.properties";
+        return "hibernate-redis.properties";
     }
 
     @Override
     protected boolean useTransactionManager() {
-        return false;
+        return true; // return false;
     }
 
     @Override
@@ -80,7 +80,7 @@ public abstract class RedisTest extends BaseCacheRegionFactoryTestCase {
         s.clear();
 
         SecondLevelCacheStatistics slcs = s.getSessionFactory().getStatistics()
-                                           .getSecondLevelCacheStatistics(Item.class.getName());
+                .getSecondLevelCacheStatistics(Item.class.getName());
 
         assertThat(slcs.getElementCountInMemory()).isGreaterThan(0);
 
@@ -154,7 +154,7 @@ public abstract class RedisTest extends BaseCacheRegionFactoryTestCase {
         }
 
         // check the version value in the cache...
-		SecondLevelCacheStatistics slcs = getSessions().getStatistics()
+        SecondLevelCacheStatistics slcs = getSessions().getStatistics()
                 .getSecondLevelCacheStatistics(VersionedItem.class.getName());
 
         Map cacheEntries = slcs.getEntries();
@@ -165,12 +165,12 @@ public abstract class RedisTest extends BaseCacheRegionFactoryTestCase {
         Long cachedVersionValue;
 
         boolean isLock = entry.getClass()
-                              .getName()
-                              .equals("org.hibernate.cache.redis.strategy.AbstractReadWriteRedisAccessStrategy$Lock");
+                .getName()
+                .equals("org.hibernate.cache.redis.strategy.AbstractReadWriteRedisAccessStrategy$Lock");
         if (isLock) {
             //
         } else {
-			cachedVersionValue = (Long) getMapFromCachedEntry(entry).get("_version");
+            cachedVersionValue = (Long) getMapFromCachedEntry(entry).get("_version");
             assertThat(cachedVersionValue.longValue()).isEqualTo(initialVersion.longValue());
         }
 

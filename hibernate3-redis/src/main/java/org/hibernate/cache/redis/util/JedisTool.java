@@ -85,7 +85,7 @@ public final class JedisTool {
             InputStream is = JedisTool.class.getClassLoader().getResourceAsStream(cachePath);
             cacheProps.load(is);
         } catch (Exception e) {
-            log.warn("Fail to load cache properties. cachePath=" + cachePath, e);
+            log.warn("Fail to load cache properties in Hibernate3. cachePath=" + cachePath, e);
         }
         return cacheProps;
     }
