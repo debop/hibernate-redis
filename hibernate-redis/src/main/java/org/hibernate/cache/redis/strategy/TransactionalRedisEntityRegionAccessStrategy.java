@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.jedis.JedisClient;
+import org.hibernate.cache.redis.regions.RedisDataRegion;
 import org.hibernate.cache.redis.regions.RedisEntityRegion;
 import org.hibernate.cache.spi.EntityRegion;
 import org.hibernate.cache.spi.access.EntityRegionAccessStrategy;
@@ -38,12 +39,12 @@ public class TransactionalRedisEntityRegionAccessStrategy
         implements EntityRegionAccessStrategy {
 
     @Getter
-    private final JedisClient jedisClient;
+    private final JedisClient redis;
 
     public TransactionalRedisEntityRegionAccessStrategy(RedisEntityRegion region,
                                                         Settings settings) {
         super(region, settings);
-        this.jedisClient = region.getJedisClient();
+        this.redis = region.getRedis();
     }
 
     @Override
@@ -53,7 +54,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
-        return jedisClient.get(region.getName(), key);
+        return redis.get(region.getName(), RedisDataRegion.keyToString(key));
     }
 
     @Override
@@ -62,9 +63,9 @@ public class TransactionalRedisEntityRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) throws CacheException {
-        if (minimalPutOverride && jedisClient.exists(region.getName(), key))
+        if (minimalPutOverride && redis.exists(region.getName(), RedisDataRegion.keyToString(key)))
             return false;
-        jedisClient.set(region.getName(), key, value, region.getExpireInSeconds());
+        redis.set(region.getName(), RedisDataRegion.keyToString(key), value, region.getExpireInSeconds());
         return true;
     }
 
@@ -80,7 +81,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
 
     @Override
     public boolean insert(Object key, Object value, Object version) throws CacheException {
-        jedisClient.set(region.getName(), key, value);
+        redis.set(region.getName(), RedisDataRegion.keyToString(key), value);
         return true;
     }
 
@@ -91,7 +92,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
 
     @Override
     public boolean update(Object key, Object value, Object currentVersion, Object previousVersion) throws CacheException {
-        jedisClient.set(region.getName(), key, value, region.getExpireInSeconds());
+        redis.set(region.getName(), RedisDataRegion.keyToString(key), value, region.getExpireInSeconds());
         return true;
     }
 
@@ -103,6 +104,6 @@ public class TransactionalRedisEntityRegionAccessStrategy
 
     @Override
     public void remove(Object key) throws CacheException {
-        jedisClient.del(region.getName(), key);
+        redis.del(region.getName(), RedisDataRegion.keyToString(key));
     }
 }

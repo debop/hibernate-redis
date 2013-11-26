@@ -44,7 +44,7 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
     public Object get(Object key) throws CacheException {
         if (key == null) return null;
         try {
-            return jedisClient.get(getName(), key);
+            return redis.get(getName(), keyToString(key));
         } catch (Exception e) {
             return new CacheException(e);
         }
@@ -53,7 +53,7 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
     @Override
     public void put(Object key, Object value) throws CacheException {
         try {
-            jedisClient.set(getName(), key, value, getExpireInSeconds());
+            redis.set(getName(), keyToString(key), value, getExpireInSeconds());
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -62,7 +62,7 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
     @Override
     public void evict(Object key) throws CacheException {
         try {
-            jedisClient.del(getName(), key);
+            redis.del(getName(), keyToString(key));
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -71,7 +71,7 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
     @Override
     public void evictAll() throws CacheException {
         try {
-            jedisClient.deleteRegion(getName());
+            redis.deleteRegion(getName());
         } catch (Exception e) {
             throw new CacheException(e);
         }

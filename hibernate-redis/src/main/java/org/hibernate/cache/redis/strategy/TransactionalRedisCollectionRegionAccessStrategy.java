@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.regions.RedisCollectionRegion;
+import org.hibernate.cache.redis.regions.RedisDataRegion;
 import org.hibernate.cache.spi.CollectionRegion;
 import org.hibernate.cache.spi.access.CollectionRegionAccessStrategy;
 import org.hibernate.cache.spi.access.SoftLock;
@@ -38,12 +39,12 @@ public class TransactionalRedisCollectionRegionAccessStrategy
         implements CollectionRegionAccessStrategy {
 
     @Getter
-    private final JedisClient jedisClient;
+    private final JedisClient redis;
 
     public TransactionalRedisCollectionRegionAccessStrategy(RedisCollectionRegion region,
                                                             Settings settings) {
         super(region, settings);
-        this.jedisClient = region.getJedisClient();
+        this.redis = region.getRedis();
     }
 
     @Override
@@ -54,7 +55,7 @@ public class TransactionalRedisCollectionRegionAccessStrategy
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
         try {
-            return jedisClient.get(region.getName(), key);
+            return redis.get(region.getName(), RedisDataRegion.keyToString(key));
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -67,10 +68,10 @@ public class TransactionalRedisCollectionRegionAccessStrategy
                                Object version,
                                boolean minimalPutOverride) throws CacheException {
         try {
-            if (minimalPutOverride && jedisClient.exists(region.getName(), key)) {
+            if (minimalPutOverride && redis.exists(region.getName(), RedisDataRegion.keyToString(key))) {
                 return false;
             } else {
-                jedisClient.set(region.getName(), key, value);
+                redis.set(region.getName(), RedisDataRegion.keyToString(key), value, region.getExpireInSeconds());
                 return true;
             }
         } catch (Exception e) {
@@ -91,7 +92,7 @@ public class TransactionalRedisCollectionRegionAccessStrategy
     @Override
     public void remove(Object key) throws CacheException {
         try {
-            jedisClient.del(region.getName(), key);
+            redis.del(region.getName(), key);
         } catch (Exception e) {
             throw new CacheException(e);
         }

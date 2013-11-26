@@ -98,7 +98,7 @@ public class RedisAccessStrategyFactoryImpl implements RedisAccessStrategyFactor
                 return new NonStrictReadWriteRedisNaturalIdRegionAccessStrategy(naturalIdRegion, naturalIdRegion.getSettings());
             case TRANSACTIONAL:
                 return new TransactionalRedisNaturalIdRegionAccessStrategy(naturalIdRegion,
-                                                                           naturalIdRegion.getJedisClient(),
+                                                                           naturalIdRegion.getRedis(),
                                                                            naturalIdRegion.getSettings());
             default:
                 throw new IllegalArgumentException("unrecognized access strategy type [" + accessType + "]");
