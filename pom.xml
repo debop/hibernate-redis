@@ -10,6 +10,7 @@
 	<packaging>pom</packaging>
 
     <modules>
+        <module>hibernate-redis-common</module>
         <module>hibernate-redis</module>
         <module>hibernate3-redis</module>
     </modules>
@@ -33,6 +34,12 @@
                 <artifactId>hibernate-testing</artifactId>
                 <version>${hibernate.version}</version>
                 <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-redis-common</artifactId>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- Redis -->

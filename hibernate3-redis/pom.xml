@@ -39,6 +39,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-redis-common</artifactId>
+        </dependency>
+
         <!-- Redis -->
         <dependency>
             <groupId>redis.clients</groupId>

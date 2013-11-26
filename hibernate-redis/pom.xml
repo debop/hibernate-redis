@@ -15,7 +15,7 @@
     <url>http://maven.apache.org</url>
 
     <properties>
-        <hibernate.version>4.2.7.SP1</hibernate.version>
+        <hibernate.version>4.2.7.Final</hibernate.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -36,6 +36,11 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-testing</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-redis-common</artifactId>
         </dependency>
 
         <!-- Redis -->

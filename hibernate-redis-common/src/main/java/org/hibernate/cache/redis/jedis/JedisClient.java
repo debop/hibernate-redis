@@ -19,7 +19,6 @@ package org.hibernate.cache.redis.jedis;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.serializer.BinaryRedisSerializer;
 import org.hibernate.cache.redis.serializer.RedisSerializer;
 import org.hibernate.cache.redis.serializer.SerializationTool;
@@ -35,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * RedisClient implements using Jedis library
  * <p/>
- * 참고 : https://github.com/xetorthio/jedis/wiki/AdvancedUsage
+ * 참고 : https://github.com/xetorthio/org.hibernate.cache.redis.jedis/wiki/AdvancedUsage
  *
  * @author 배성혁 ( sunghyouk.bae@gmail.com )
  * @since 13. 4. 9 오후 10:20
@@ -435,7 +434,7 @@ public class JedisClient {
      *
      * @param region region name to delete
      */
-    public void deleteRegion(final String region) throws CacheException {
+    public void deleteRegion(final String region) throws JedisCacheException {
 
         final byte[] rawRegion = rawRegion(region);
         log.debug("delete region region=[{}]", region);
@@ -481,7 +480,7 @@ public class JedisClient {
     }
 
     /**
-     * serialize region name
+     * serializer region name
      */
     private byte[] rawRegion(final String region) {
         return regionSerializer.serialize(region);
@@ -495,7 +494,7 @@ public class JedisClient {
     }
 
     /**
-     * serialize cache value
+     * serializer cache value
      */
     private byte[] rawValue(final Object value) {
         return getValueSerializer().serialize(value);
@@ -523,7 +522,7 @@ public class JedisClient {
 
     /**
      * execute the specified callback under transaction
-     * HINT: https://github.com/xetorthio/jedis/wiki/AdvancedUsage
+     * HINT: https://github.com/xetorthio/org.hibernate.cache.redis.jedis/wiki/AdvancedUsage
      *
      * @param callback executable instance under transaction
      */
@@ -541,7 +540,7 @@ public class JedisClient {
 
     /**
      * execute the specified callback under Redis Pipeline
-     * HINT: https://github.com/xetorthio/jedis/wiki/AdvancedUsage
+     * HINT: https://github.com/xetorthio/org.hibernate.cache.redis.jedis/wiki/AdvancedUsage
      *
      * @param callback executable instance unider Pipeline
      */

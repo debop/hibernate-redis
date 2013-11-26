@@ -18,12 +18,12 @@ package org.hibernate.cache.redis.regions;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.cache.spi.Region;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.redis.util.JedisTool;
 import org.hibernate.cache.redis.util.Timestamper;
-import org.hibernate.cache.spi.Region;
 
 import java.util.Collections;
 import java.util.Map;

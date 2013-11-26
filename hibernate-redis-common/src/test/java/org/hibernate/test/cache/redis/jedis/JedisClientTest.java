@@ -20,7 +20,6 @@ import com.carrotsearch.junitbenchmarks.BenchmarkRule;
 import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.test.cache.MultiThreadTestTool;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -33,7 +32,7 @@ import java.util.Set;
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
- * {@link JedisClient} 테스트
+ * {@link org.hibernate.cache.redis.jedis.JedisClient} 테스트
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 1. 오후 3:05

@@ -1,10 +1,7 @@
 package org.hibernate.test.cache.redis;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.redis.RedisRegionFactory;
 import org.hibernate.cache.redis.strategy.ItemValueExtractor;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
 
 import java.util.Map;
 
