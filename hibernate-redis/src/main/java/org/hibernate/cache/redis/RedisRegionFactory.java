@@ -42,8 +42,8 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
 
         this.settings = settings;
         try {
-            if (jedisClient == null) {
-                this.jedisClient = JedisTool.createJedisClient(props);
+            if (redis == null) {
+                this.redis = JedisTool.createJedisClient(props);
             }
             log.info("RedisRegionFactory is started");
         } catch (Exception e) {
@@ -54,11 +54,11 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
 
     @Override
     public void stop() {
-        if (jedisClient == null) return;
+        if (redis == null) return;
         log.debug("stopping RedisRegionFactory...");
 
         try {
-            jedisClient = null;
+            redis = null;
             log.info("RedisRegionFactory is stopped.");
         } catch (Exception e) {
             log.error("Fail to stop RedisRegionFactory.", e);

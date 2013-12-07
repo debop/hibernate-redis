@@ -59,7 +59,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
 
     protected final Set<String> regionNames = new HashSet<String>();
 
-    protected JedisClient jedisClient = null;
+    protected JedisClient redis = null;
 
     public AbstractRedisRegionFactory(Properties props) {
         this.props = props;
@@ -97,7 +97,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
                                           CacheDataDescription metadata) throws CacheException {
         regionNames.add(regionName);
         return new RedisEntityRegion(accessStrategyFactory,
-                                     jedisClient,
+                                     redis,
                                      regionName,
                                      settings,
                                      metadata,
@@ -110,7 +110,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
                                                 CacheDataDescription metadata) throws CacheException {
         regionNames.add(regionName);
         return new RedisNaturalIdRegion(accessStrategyFactory,
-                                        jedisClient,
+                                        redis,
                                         regionName,
                                         settings,
                                         metadata,
@@ -123,7 +123,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
                                                   CacheDataDescription metadata) throws CacheException {
         regionNames.add(regionName);
         return new RedisCollectionRegion(accessStrategyFactory,
-                                         jedisClient,
+                                         redis,
                                          regionName,
                                          settings,
                                          metadata,
@@ -135,7 +135,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
                                                       Properties properties) throws CacheException {
         regionNames.add(regionName);
         return new RedisQueryResultsRegion(accessStrategyFactory,
-                                           jedisClient,
+                                           redis,
                                            regionName,
                                            properties);
     }
@@ -145,7 +145,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
                                                   Properties properties) throws CacheException {
         regionNames.add(regionName);
         return new RedisTimestampsRegion(accessStrategyFactory,
-                                         jedisClient,
+                                         redis,
                                          regionName,
                                          properties);
     }

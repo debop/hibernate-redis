@@ -107,7 +107,7 @@ public abstract class RedisDataRegion implements Region {
         // NOTE: if you use multi servers, you don't need clear cache.
 //        try {
 //            if (!regionDeleted) {
-//                jedisClient.deleteRegion(name);
+//                redis.deleteRegion(name);
 //                regionDeleted = true;
 //                log.debug("region[{}] is deleted.", getName());
 //            }

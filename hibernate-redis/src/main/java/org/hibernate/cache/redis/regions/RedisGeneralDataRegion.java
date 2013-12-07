@@ -34,10 +34,10 @@ import java.util.Properties;
 public abstract class RedisGeneralDataRegion extends RedisDataRegion implements GeneralDataRegion {
 
     protected RedisGeneralDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
-                                     JedisClient jedisClient,
+                                     JedisClient redis,
                                      String regionName,
                                      Properties props) {
-        super(accessStrategyFactory, jedisClient, regionName, props);
+        super(accessStrategyFactory, redis, regionName, props);
     }
 
     @Override

@@ -45,12 +45,12 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     protected final CacheDataDescription metadata;
 
     public RedisTransactionalDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
-                                        JedisClient jedisClient,
+                                        JedisClient redis,
                                         String regionName,
                                         Settings settings,
                                         CacheDataDescription metadata,
                                         Properties props) {
-        super(accessStrategyFactory, jedisClient, regionName, props);
+        super(accessStrategyFactory, redis, regionName, props);
 
         this.settings = settings;
         this.metadata = metadata;

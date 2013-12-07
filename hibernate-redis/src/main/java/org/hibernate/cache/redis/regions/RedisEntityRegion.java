@@ -41,11 +41,11 @@ import java.util.Properties;
 public class RedisEntityRegion extends RedisTransactionalDataRegion implements EntityRegion {
 
     public RedisEntityRegion(RedisAccessStrategyFactory accessStrategyFactory,
-                             JedisClient jedisClient,
+                             JedisClient redis,
                              String regionName,
                              Settings settings,
                              CacheDataDescription metadata, Properties props) {
-        super(accessStrategyFactory, jedisClient, regionName, settings, metadata, props);
+        super(accessStrategyFactory, redis, regionName, settings, metadata, props);
     }
 
     @Override

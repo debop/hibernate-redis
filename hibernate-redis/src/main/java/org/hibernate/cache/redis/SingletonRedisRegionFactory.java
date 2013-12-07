@@ -46,8 +46,8 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
 
         this.settings = settings;
         try {
-            if (jedisClient == null) {
-                this.jedisClient = JedisTool.createJedisClient(props);
+            if (redis == null) {
+                this.redis = JedisTool.createJedisClient(props);
             }
             ReferenceCount.incrementAndGet();
             log.info("Started SingletonRedisRegionFactory");
@@ -61,7 +61,7 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
         log.debug("stopping SingletonRedisRegionFactory...");
 
         if (ReferenceCount.decrementAndGet() == 0) {
-            jedisClient = null;
+            redis = null;
             log.info("stopped SingletonRedisRegionFactory");
         }
     }
