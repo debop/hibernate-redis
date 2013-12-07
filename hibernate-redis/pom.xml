@@ -15,12 +15,10 @@
     <url>http://maven.apache.org</url>
 
     <properties>
-        <hibernate.version>4.2.7.SP1</hibernate.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
-
         <!-- Hibernate -->
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -36,11 +34,6 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-testing</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-redis-common</artifactId>
         </dependency>
 
         <!-- Redis -->

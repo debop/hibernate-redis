@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.hibernate.test.cache.redis.jedis;
+package org.hibernate.test.cache.jedis;
 
 import com.carrotsearch.junitbenchmarks.BenchmarkRule;
 import org.hibernate.cache.redis.jedis.JedisClient;

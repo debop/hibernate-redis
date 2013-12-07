@@ -24,10 +24,14 @@ import java.util.concurrent.atomic.AtomicLong;
  * across a cluster should not ever be large...
  */
 public final class Timestamper {
-    /** Value for left shifting System.currentTimeMillis, freeing some space for the counter */
+    /**
+     * Value for left shifting System.currentTimeMillis, freeing some space for the counter
+     */
     public static final int BIN_DIGITS = 12;
 
-    /** What is one milliseconds, based on "counter value reserved space", for this Timestamper */
+    /**
+     * What is one milliseconds, based on "counter value reserved space", for this Timestamper
+     */
     public static final int ONE_MS = 1 << BIN_DIGITS;
     private static final AtomicLong VALUE = new AtomicLong();
 
