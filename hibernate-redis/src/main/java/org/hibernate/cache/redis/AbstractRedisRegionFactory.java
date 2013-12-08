@@ -59,8 +59,14 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
 
     protected final RedisAccessStrategyFactory accessStrategyFactory = new RedisAccessStrategyFactoryImpl();
 
+    /**
+     * Region names
+     */
     protected final Set<String> regionNames = new HashSet<String>();
 
+    /**
+     * JedisClient instance.
+     */
     protected JedisClient redis = null;
 
     public AbstractRedisRegionFactory(Properties props) {
