@@ -33,6 +33,8 @@ import java.util.Set;
 /**
  * Region Factory for Redis
  *
+ * TODO: 예전처럼 Thread를 이용해서 주기적으로 Expire를 수행하는 것이 성능에 더 좋을 듯하다...
+ *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 5. 오후 11:59
  */
