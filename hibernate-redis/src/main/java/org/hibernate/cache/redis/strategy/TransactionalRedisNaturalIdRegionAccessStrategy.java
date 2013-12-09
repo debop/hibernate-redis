@@ -38,13 +38,13 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
         implements NaturalIdRegionAccessStrategy {
 
     @Getter
-    private final JedisClient jedisClient;
+    private final JedisClient redis;
 
     public TransactionalRedisNaturalIdRegionAccessStrategy(RedisNaturalIdRegion region,
-                                                           JedisClient jedis,
+                                                           JedisClient redis,
                                                            Settings settings) {
         super(region, settings);
-        this.jedisClient = jedis;
+        this.redis = redis;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) throws CacheException {
-        return jedisClient.get(region.getName(), key);
+        return redis.get(region.getName(), key);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean insert(Object key, Object value) throws CacheException {
-        jedisClient.set(region.getName(), key, value, region.getExpireInSeconds());
+        redis.set(region.getName(), key, value, region.getExpireInSeconds());
         return true;
     }
 
@@ -84,16 +84,16 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) throws CacheException {
-        if (minimalPutOverride && jedisClient.exists(region.getName(), key))
+        if (minimalPutOverride && redis.exists(region.getName(), key))
             return false;
-        jedisClient.set(region.getName(), key, value, region.getExpireInSeconds());
+        redis.set(region.getName(), key, value, region.getExpireInSeconds());
         return true;
     }
 
 
     @Override
     public void remove(Object key) throws CacheException {
-        jedisClient.del(region.getName(), key);
+        redis.del(region.getName(), key);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean update(Object key, Object value) throws CacheException {
-        jedisClient.set(region.getName(), key, value, region.getExpireInSeconds());
+        redis.set(region.getName(), key, value, region.getExpireInSeconds());
         return true;
     }
 }

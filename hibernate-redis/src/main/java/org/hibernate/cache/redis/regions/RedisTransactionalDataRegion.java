@@ -45,12 +45,12 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     protected final CacheDataDescription metadata;
 
     public RedisTransactionalDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
-                                        JedisClient jedisClient,
+                                        JedisClient redis,
                                         String regionName,
                                         Settings settings,
                                         CacheDataDescription metadata,
                                         Properties props) {
-        super(accessStrategyFactory, jedisClient, regionName, props);
+        super(accessStrategyFactory, redis, regionName, props);
 
         this.settings = settings;
         this.metadata = metadata;
@@ -72,7 +72,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
     public Object get(Object key) throws CacheException {
         try {
-            return jedisClient.get(getName(), key);
+            return redis.get(getName(), keyToString(key));
         } catch (Exception e) {
             return new CacheException(e);
         }
@@ -81,7 +81,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
     public void put(Object key, Object value) throws CacheException {
         try {
-            jedisClient.set(getName(), key, value, getExpireInSeconds());
+            redis.set(getName(), keyToString(key), value, getExpireInSeconds());
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -89,7 +89,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
     public void remove(Object key) throws CacheException {
         try {
-            jedisClient.del(getName(), key);
+            redis.del(getName(), keyToString(key));
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -98,7 +98,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
     public void clear() throws CacheException {
         try {
-            jedisClient.deleteRegion(getName());
+            redis.deleteRegion(getName());
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -122,7 +122,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
     public void evict(Object key) throws CacheException {
         try {
-            jedisClient.del(getName(), key);
+            redis.del(getName(), keyToString(key));
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -130,7 +130,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
     public void evictAll() throws CacheException {
         try {
-            jedisClient.deleteRegion(getName());
+            redis.deleteRegion(getName());
         } catch (Exception e) {
             throw new CacheException(e);
         }

@@ -17,7 +17,7 @@ import java.io.Serializable;
  * @since 13. 4. 6. 오전 12:52
  */
 @Entity
-@Cache(region = "common", usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(region = "redis:common", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Item implements Serializable {

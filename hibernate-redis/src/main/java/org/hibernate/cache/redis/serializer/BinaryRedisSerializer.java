@@ -16,6 +16,7 @@
 
 package org.hibernate.cache.redis.serializer;
 
+import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
@@ -36,14 +37,17 @@ public class BinaryRedisSerializer<T> implements RedisSerializer<T> {
     public byte[] serialize(final T graph) {
         if (graph == null) return EMPTY_BYTES;
 
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream();
-             ObjectOutputStream oos = new ObjectOutputStream(os)) {
+        try {
+            @Cleanup
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            @Cleanup
+            ObjectOutputStream oos = new ObjectOutputStream(os);
             oos.writeObject(graph);
             oos.flush();
 
             return os.toByteArray();
         } catch (Exception e) {
-            log.warn("Fail to serialize graph. graph=" + graph, e);
+            log.warn("Fail to serializer graph. graph=" + graph, e);
             return EMPTY_BYTES;
         }
     }
@@ -53,9 +57,11 @@ public class BinaryRedisSerializer<T> implements RedisSerializer<T> {
     public T deserialize(final byte[] bytes) {
         if (SerializationTool.isEmpty(bytes))
             return null;
-
-        try (ByteArrayInputStream is = new ByteArrayInputStream(bytes);
-             ObjectInputStream ois = new ObjectInputStream(is)) {
+        try {
+            @Cleanup
+            ByteArrayInputStream is = new ByteArrayInputStream(bytes);
+            @Cleanup
+            ObjectInputStream ois = new ObjectInputStream(is);
             return (T) ois.readObject();
         } catch (Exception e) {
             log.warn("Fail to deserialize bytes.", e);

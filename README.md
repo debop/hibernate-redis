@@ -1,7 +1,7 @@
 hibernate-redis
 ===============
 
-[hibernate][1] (4.2.x-Final) 2nd level cache using redis.
+[hibernate][1] (3.6.x-Final, 4.2.x-Final) 2nd level cache using redis.
 use [jedis][2]  2.2.1 or higher
 
 
@@ -10,6 +10,7 @@ use [jedis][2]  2.2.1 or higher
 ##### referencing hibernate-redis
 
 I'm does not know register hibernate-redis to maven. just using source or jar in lib.
+and use [lombok][lombok] for getter/setter.
 
 ##### setup hibernate configuration
 
@@ -55,7 +56,7 @@ add @org.hibernate.annotations.Cache annotation to Entity class like this
 
 ##### How to monitor hibernate-cache is running
 
-run "redis-cli monitor" command in terminal. you can see put cached items, retrieve cached items.
+run "redis-cli monitor" command in terminal. you can see putting cached items, retrieving cached items.
 
 ##### Sample code
 
@@ -65,3 +66,4 @@ read [HibernateCacheTest.java][3] for more usage.
 [2]: https://github.com/xetorthio/jedis
 [3]: https://github.com/debop/hibernate-redis/blob/master/hibernate-redis/src/test/java/org/hibernate/test/cache/HibernateCacheTest.java
 [4]: http://projects.spring.io/spring-data-jpa/
+[lombok]: http://www.projectlombok.org/

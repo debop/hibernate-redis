@@ -43,6 +43,10 @@ public abstract class RedisDataRegion implements Region {
 
     private static final String EXPIRE_IN_SECONDS = "redis.expiryInSeconds";
 
+    public static String keyToString(final Object key) {
+        return (key != null) ? key.toString() : "";
+    }
+
     @Getter
     protected final RedisAccessStrategyFactory accessStrategyFactory;
 
@@ -55,7 +59,7 @@ public abstract class RedisDataRegion implements Region {
      * Redis client instance deal hibernate data region.
      */
     @Getter
-    protected final JedisClient jedisClient;
+    protected final JedisClient redis;
 
     @Getter
     private final int cacheLockTimeout; // milliseconds
@@ -67,11 +71,11 @@ public abstract class RedisDataRegion implements Region {
     protected boolean regionDeleted = false;
 
     protected RedisDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
-                              JedisClient jedisClient,
+                              JedisClient redis,
                               String regionName,
                               Properties props) {
         this.accessStrategyFactory = accessStrategyFactory;
-        this.jedisClient = jedisClient;
+        this.redis = redis;
         this.name = regionName;
 
         this.cacheLockTimeout =
@@ -103,7 +107,7 @@ public abstract class RedisDataRegion implements Region {
         // NOTE: if you use multi servers, you don't need clear cache.
 //        try {
 //            if (!regionDeleted) {
-//                jedisClient.deleteRegion(name);
+//                redis.deleteRegion(name);
 //                regionDeleted = true;
 //                log.debug("region[{}] is deleted.", getName());
 //            }
@@ -119,7 +123,7 @@ public abstract class RedisDataRegion implements Region {
     @Override
     public boolean contains(Object key) {
         try {
-            return jedisClient.exists(name, key);
+            return redis.exists(name, keyToString(key));
         } catch (Exception e) {
             return false;
         }
@@ -128,7 +132,7 @@ public abstract class RedisDataRegion implements Region {
     @Override
     public long getSizeInMemory() {
         try {
-            return jedisClient.dbSize();
+            return redis.dbSize();
         } catch (Throwable t) {
             log.warn("error", t);
             return -1;
@@ -138,7 +142,7 @@ public abstract class RedisDataRegion implements Region {
     @Override
     public long getElementCountInMemory() {
         try {
-            return jedisClient.keysInRegion(name).size();
+            return redis.keysInRegion(name).size();
         } catch (Exception e) {
             log.warn("error", e);
             return -1;
@@ -154,7 +158,7 @@ public abstract class RedisDataRegion implements Region {
     @Override
     public Map toMap() {
         try {
-            return jedisClient.hgetAll(name);
+            return redis.hgetAll(name);
         } catch (Exception e) {
             log.warn("fail to build CacheEntry. return EmptyMap.", e);
             return Collections.emptyMap();

@@ -41,13 +41,14 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
     }
 
     @Override
-    public void start(Settings settings, Properties properties) throws CacheException {
+    public synchronized void start(Settings settings, Properties properties) throws CacheException {
         log.info("starting SingletonRedisRegionFactory...");
 
         this.settings = settings;
         try {
-            if (jedisClient == null) {
-                this.jedisClient = JedisTool.createJedisClient(props);
+            if (redis == null) {
+                this.redis = JedisTool.createJedisClient(props);
+                manageExpiration(redis);
             }
             ReferenceCount.incrementAndGet();
             log.info("Started SingletonRedisRegionFactory");
@@ -57,12 +58,16 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
     }
 
     @Override
-    public void stop() {
+    public synchronized void stop() {
         log.debug("stopping SingletonRedisRegionFactory...");
 
         if (ReferenceCount.decrementAndGet() == 0) {
-            jedisClient = null;
-            log.info("stopped SingletonRedisRegionFactory");
+            try {
+                redis = null;
+                if (expirationThread != null)
+                    expirationThread.interrupt();
+                log.info("stopped SingletonRedisRegionFactory");
+            } catch (Exception ignored) { }
         }
     }
 

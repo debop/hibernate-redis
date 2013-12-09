@@ -17,7 +17,7 @@ import javax.persistence.Version;
  * @since 13. 4. 6. 오전 12:53
  */
 @Entity
-@Cache(region = "common", usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(region = "redis:common", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class VersionedItem {

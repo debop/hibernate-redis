@@ -31,9 +31,9 @@ import java.util.Properties;
 public class RedisQueryResultsRegion extends RedisGeneralDataRegion implements QueryResultsRegion {
 
     public RedisQueryResultsRegion(RedisAccessStrategyFactory accessStrategyFactory,
-                                   JedisClient jedisClient,
+                                   JedisClient redis,
                                    String regionName,
                                    Properties props) {
-        super(accessStrategyFactory, jedisClient, regionName, props);
+        super(accessStrategyFactory, redis, regionName, props);
     }
 }

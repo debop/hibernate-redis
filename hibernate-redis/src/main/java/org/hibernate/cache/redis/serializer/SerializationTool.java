@@ -40,8 +40,8 @@ public abstract class SerializationTool {
         int valueCount = rawValues.size();
         Collection<Object> values =
                 List.class.isAssignableFrom(clazz)
-                        ? new ArrayList<Object>(valueCount)
-                        : new HashSet<Object>(valueCount);
+                ? new ArrayList<Object>(valueCount)
+                : new HashSet<Object>(valueCount);
 
         for (byte[] bs : rawValues) {
             values.add(redisSerializer.deserialize(bs));

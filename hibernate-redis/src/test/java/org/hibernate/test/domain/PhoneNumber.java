@@ -1,10 +1,10 @@
 package org.hibernate.test.domain;
 
+import com.google.common.base.Objects;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * org.hibernate.test.domain.PhoneNumber
@@ -29,7 +29,7 @@ public class PhoneNumber implements Serializable {
 	}
 
 	public int hashCode() {
-		return Objects.hash(numberType, personId, phone);
+		return Objects.hashCode(numberType, personId, phone);
 	}
 
 	public String toString() {

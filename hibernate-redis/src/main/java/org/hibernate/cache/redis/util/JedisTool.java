@@ -114,7 +114,9 @@ public final class JedisTool {
         if (cacheProperties == null)
             return defaultValue;
         try {
-            return cacheProperties.getProperty(name, defaultValue);
+            String value = cacheProperties.getProperty(name, defaultValue);
+            log.debug("get property. name=[{}], value=[{}], defaultValue=[{}]", name, value, defaultValue);
+            return value;
         } catch (Exception ignored) {
             return defaultValue;
         }

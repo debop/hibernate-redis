@@ -31,9 +31,9 @@ import java.util.Properties;
 public class RedisTimestampsRegion extends RedisGeneralDataRegion implements TimestampsRegion {
 
     public RedisTimestampsRegion(RedisAccessStrategyFactory accessStrategyFactory,
-                                 JedisClient jedisClient,
+                                 JedisClient redis,
                                  String regionName,
                                  Properties props) {
-        super(accessStrategyFactory, jedisClient, regionName, props);
+        super(accessStrategyFactory, redis, regionName, props);
     }
 }

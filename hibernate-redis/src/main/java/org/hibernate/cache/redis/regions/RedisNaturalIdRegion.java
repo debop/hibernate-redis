@@ -39,12 +39,12 @@ import java.util.Properties;
 public class RedisNaturalIdRegion extends RedisTransactionalDataRegion implements NaturalIdRegion {
 
     public RedisNaturalIdRegion(RedisAccessStrategyFactory accessStrategyFactory,
-                                JedisClient jedisClient,
+                                JedisClient redis,
                                 String regionName,
                                 Settings settings,
                                 CacheDataDescription metadata,
                                 Properties props) {
-        super(accessStrategyFactory, jedisClient, regionName, settings, metadata, props);
+        super(accessStrategyFactory, redis, regionName, settings, metadata, props);
     }
 
     @Override
