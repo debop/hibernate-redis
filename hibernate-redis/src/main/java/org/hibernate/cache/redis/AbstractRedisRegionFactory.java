@@ -32,7 +32,7 @@ import java.util.Set;
 
 /**
  * Region Factory for Redis
- *
+ * <p/>
  * TODO: 예전처럼 Thread를 이용해서 주기적으로 Expire를 수행하는 것이 성능에 더 좋을 듯하다...
  *
  * @author sunghyouk.bae@gmail.com
@@ -68,6 +68,11 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
      * JedisClient instance.
      */
     protected JedisClient redis = null;
+
+    /**
+     * expiration management thread
+     */
+    protected static Thread expirationThread = null;
 
     public AbstractRedisRegionFactory(Properties props) {
         this.props = props;
@@ -156,6 +161,32 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
                                          redis,
                                          regionName,
                                          properties);
+    }
+
+    protected synchronized void manageExpiration(final JedisClient redis) {
+        if (expirationThread != null && expirationThread.isAlive())
+            return;
+
+        expirationThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(1000L);
+                        for (final String region : regionNames) {
+                            if (redis != null) {
+                                redis.expire(region);
+                            }
+                        }
+                    } catch (InterruptedException ignored) {
+                        break;
+                    } catch (Exception ignored) {
+                        log.debug("Error occurred in expiration management thread. but it was ignored", ignored);
+                    }
+                }
+            }
+        });
+        expirationThread.start();
     }
 
     private static final long serialVersionUID = -5441842686229077097L;

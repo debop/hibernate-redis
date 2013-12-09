@@ -44,6 +44,7 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
         try {
             if (redis == null) {
                 this.redis = JedisTool.createJedisClient(props);
+                manageExpiration(redis);
             }
             log.info("RedisRegionFactory is started");
         } catch (Exception e) {
@@ -58,6 +59,8 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
         log.debug("stopping RedisRegionFactory...");
 
         try {
+            if (expirationThread != null)
+                expirationThread.interrupt();
             redis = null;
             log.info("RedisRegionFactory is stopped.");
         } catch (Exception e) {

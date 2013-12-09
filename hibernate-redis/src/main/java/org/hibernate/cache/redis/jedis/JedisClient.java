@@ -44,15 +44,15 @@ public class JedisClient {
 
     public static final int DEFAULT_EXPIRY_IN_SECONDS = 120;
     public static final String DEFAULT_REGION_NAME = "hibernate";
-    public static final String EXPIRY_POSTFIX = ":expire";
-
-    public static String getExpireRegion(final String region) {
-        return region + EXPIRY_POSTFIX;
-    }
-
-    public static String getExpireKey(Object key) {
-        return (key != null) ? key.toString() : "";
-    }
+//    public static final String EXPIRY_POSTFIX = ":expire";
+//
+//    public static String getExpireRegion(final String region) {
+//        return region + EXPIRY_POSTFIX;
+//    }
+//
+//    public static String getExpireKey(Object key) {
+//        return (key != null) ? key.toString() : "";
+//    }
 
     @Getter
     private final JedisPool jedisPool;
@@ -127,42 +127,12 @@ public class JedisClient {
         final byte[] rawRegion = rawRegion(region);
         final byte[] rawKey = rawKey(key);
 
-        boolean valueExists = run(new JedisCallback<Boolean>() {
+        return run(new JedisCallback<Boolean>() {
             @Override
             public Boolean execute(Jedis jedis) {
                 return jedis.hexists(rawRegion, rawKey);
             }
         });
-        return valueExists && !isExpired(region, key);
-    }
-
-    /**
-     * decide the specified cache key is expired.
-     *
-     * @param region region name
-     * @param key    cache key
-     * @return is expired
-     */
-    public boolean isExpired(final String region, final Object key) {
-        if (key == null)
-            return true;
-        final String timestampStr = run(new JedisCallback<String>() {
-            @Override
-            public String execute(Jedis jedis) {
-                return jedis.hget(getExpireRegion(region), getExpireKey(key));
-            }
-        });
-        try {
-            if (timestampStr == null || timestampStr.isEmpty())
-                return false;
-            Long timestamp = Long.parseLong(timestampStr);
-            if (timestamp != 0 && timestamp <= System.currentTimeMillis()) {
-                // if cache is expired, delete cache
-                del(region, key);
-                return true;
-            }
-        } catch (Exception ignored) {}
-        return false;
     }
 
     /**
@@ -181,18 +151,6 @@ public class JedisClient {
         byte[] rawValue = run(new JedisCallback<byte[]>() {
             @Override
             public byte[] execute(Jedis jedis) {
-                // check cache is expired
-                String timestampStr = jedis.hget(getExpireRegion(region), getExpireKey(key));
-                if (timestampStr == null || timestampStr.isEmpty())
-                    return jedis.hget(rawRegion, rawKey);
-
-                Long timestamp = Long.parseLong(timestampStr);
-                if (timestamp != 0 && timestamp <= System.currentTimeMillis()) {
-                    // if cache is expired, delete cache
-                    jedis.hdel(rawRegion, rawKey);
-                    jedis.hdel(getExpireRegion(region), getExpireKey(key));
-                    return null;
-                }
                 return jedis.hget(rawRegion, rawKey);
             }
         });
@@ -219,16 +177,8 @@ public class JedisClient {
                 }
             });
 
-            if (rawKeys != null && rawKeys.size() > 0) {
-                final Set<Object> keys = new HashSet<Object>();
-                for (final byte[] rawKey : rawKeys) {
-                    final Object key = deserializeKey(rawKey);
-                    if (!isExpired(region, key)) {
-                        keys.add(key);
-                    }
-                }
-                return keys;
-            }
+            if (rawKeys != null)
+                return deserializeKeys(rawKeys);
         } catch (Exception ignored) { }
         return new HashSet<Object>();
     }
@@ -343,8 +293,9 @@ public class JedisClient {
             public void execute(Transaction tx) {
                 tx.hset(rawRegion, rawKey, rawValue);
                 if (seconds > 0) {
-                    final long score = System.currentTimeMillis() + seconds * 1000;
-                    tx.hset(getExpireRegion(region), getExpireKey(key), String.valueOf(score));
+                    final byte[] rawZkey = rawZkey(region);
+                    final long score = System.currentTimeMillis() + seconds * 1000L;
+                    tx.zadd(rawZkey, score, rawKey);
                 }
             }
         });
@@ -358,22 +309,31 @@ public class JedisClient {
     public void expire(final String region) {
         // score 가 현재 시각보다 작은 값을 가진 member 를 추려내, 삭제한다.
         try {
-            final Set<Object> keys = keysInRegion(region);
-            final Set<String> expiredKeys = new HashSet<String>();
-            for (Object k : keys) {
-                if (isExpired(region, k)) {
-                    expiredKeys.add(getExpireKey(k));
+            final byte[] rawZkey = rawZkey(region);
+            final long score = System.currentTimeMillis();
+            final byte[] rawRegion = rawRegion(region);
+
+            final Set<byte[]> rawKeys = run(new JedisCallback<Set<byte[]>>() {
+                @Override
+                public Set<byte[]> execute(Jedis jedis) {
+                    return jedis.zrangeByScore(rawZkey, 0, score);
                 }
-            }
-            if (expiredKeys.size() > 0) {
-                run(new JedisCallback<Long>() {
+            });
+
+            if (rawKeys != null && rawKeys.size() > 0) {
+                log.debug("region[{}]의 정보 중 expires 될 정보는 삭제합니다. expire time=[{}]", region, score);
+
+                runWithPipeline(new JedisPipelinedCallback() {
                     @Override
-                    public Long execute(Jedis jedis) {
-                        String[] keyArr = new String[expiredKeys.size()];
-                        keyArr = expiredKeys.toArray(keyArr);
-                        return jedis.hdel(getExpireKey(region), keyArr);
+                    public void execute(Pipeline pipeline) {
+                        // 해당 캐시를 실제로 삭제합니다.
+                        for (final byte[] rawKey : rawKeys) {
+                            pipeline.hdel(rawRegion, rawKey);
+                        }
+                        pipeline.zremrangeByScore(rawZkey, 0, score);
                     }
                 });
+
             }
         } catch (Exception ignored) {
             log.warn("Error in Cache Expiration Method.", ignored);
@@ -392,12 +352,13 @@ public class JedisClient {
 
         final byte[] rawRegion = rawRegion(region);
         final byte[] rawKey = rawKey(key);
+        final byte[] rawZkey = rawZkey(region);
 
         runWithTx(new JedisTransactionalCallback() {
             @Override
             public void execute(Transaction tx) {
                 tx.hdel(rawRegion, rawKey);
-                tx.hdel(getExpireRegion(region), getExpireKey(key));
+                tx.zrem(rawZkey, rawKey);
             }
         });
 
@@ -412,18 +373,15 @@ public class JedisClient {
     public void mdel(final String region, final Collection<?> keys) {
 
         final byte[] rawRegion = rawRegion(region);
+        final byte[] rawZkey = rawZkey(region);
         final byte[][] rawKeys = rawKeys(keys);
 
-        final String expireRegion = getExpireRegion(region);
         runWithTx(new JedisTransactionalCallback() {
             @Override
             public void execute(Transaction tx) {
                 for (byte[] rawKey : rawKeys) {
                     tx.hdel(rawRegion, rawKey);
-                    // tx.zrem(rawZkey, rawKey);
-                }
-                for (Object key : keys) {
-                    tx.hdel(expireRegion, getExpireKey(key));
+                    tx.zrem(rawZkey, rawKey);
                 }
             }
         });
@@ -437,13 +395,14 @@ public class JedisClient {
     public void deleteRegion(final String region) throws JedisCacheException {
 
         final byte[] rawRegion = rawRegion(region);
+        final byte[] rawZkey = rawZkey(region);
         log.debug("delete region region=[{}]", region);
 
         runWithTx(new JedisTransactionalCallback() {
             @Override
             public void execute(Transaction tx) {
                 tx.del(rawRegion);
-                tx.del(getExpireRegion(region));
+                tx.del(rawZkey);
             }
         });
     }
@@ -477,6 +436,10 @@ public class JedisClient {
             rawKeys[i++] = getKeySerializer().serialize(key);
         }
         return rawKeys;
+    }
+
+    private byte[] rawZkey(final String region) {
+        return rawRegion("z:" + region);
     }
 
     /**
