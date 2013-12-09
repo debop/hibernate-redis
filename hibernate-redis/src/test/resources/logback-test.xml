@@ -9,8 +9,8 @@
         </encoder>
     </appender>
 
-    <logger name="org.hibernate.cache.redis" level="DEBUG"/>
-    <root level="INFO">
+	<logger name="org.hibernate.cache.redis" level="TRACE"/>
+	<root level="INFO">
         <appender-ref ref="console"/>
     </root>
 

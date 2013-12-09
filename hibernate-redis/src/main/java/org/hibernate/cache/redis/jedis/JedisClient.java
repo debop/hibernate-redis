@@ -44,15 +44,6 @@ public class JedisClient {
 
     public static final int DEFAULT_EXPIRY_IN_SECONDS = 120;
     public static final String DEFAULT_REGION_NAME = "hibernate";
-//    public static final String EXPIRY_POSTFIX = ":expire";
-//
-//    public static String getExpireRegion(final String region) {
-//        return region + EXPIRY_POSTFIX;
-//    }
-//
-//    public static String getExpireKey(Object key) {
-//        return (key != null) ? key.toString() : "";
-//    }
 
     @Getter
     private final JedisPool jedisPool;
