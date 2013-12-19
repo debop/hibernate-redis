@@ -17,7 +17,6 @@
 package org.hibernate.cache.redis.regions;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.spi.GeneralDataRegion;
@@ -41,39 +40,42 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
     }
 
     @Override
-    public Object get(Object key) throws CacheException {
+    public Object get(Object key) {
         if (key == null) return null;
+        log.debug("get cache item... key=[{}]", key);
+
         try {
-            return redis.get(getName(), keyToString(key));
+            return redis.get(getName(), key);
         } catch (Exception e) {
-            return new CacheException(e);
+            log.warn("Fail to get cache item... key=" + key, e);
+            return null;
         }
     }
 
     @Override
-    public void put(Object key, Object value) throws CacheException {
+    public void put(Object key, Object value) {
         try {
-            redis.set(getName(), keyToString(key), value, getExpireInSeconds());
+            redis.set(getName(), key, value, getExpireInSeconds());
         } catch (Exception e) {
-            throw new CacheException(e);
+            log.warn("Fail to put cache item... key=" + key, e);
         }
     }
 
     @Override
-    public void evict(Object key) throws CacheException {
+    public void evict(Object key) {
         try {
-            redis.del(getName(), keyToString(key));
+            redis.del(getName(), key);
         } catch (Exception e) {
-            throw new CacheException(e);
+            log.warn("Fail to remove cache item... key=" + key, e);
         }
     }
 
     @Override
-    public void evictAll() throws CacheException {
+    public void evictAll() {
         try {
             redis.deleteRegion(getName());
         } catch (Exception e) {
-            throw new CacheException(e);
+            log.warn("Fail to remove cache items... region=" + getName(), e);
         }
     }
 }

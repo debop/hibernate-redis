@@ -18,7 +18,6 @@ package org.hibernate.cache.redis.strategy;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.regions.RedisNaturalIdRegion;
 import org.hibernate.cache.spi.NaturalIdRegion;
@@ -48,33 +47,34 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
     }
 
     @Override
-    public boolean afterInsert(Object key, Object value) throws CacheException {
+    public boolean afterInsert(Object key, Object value) {
         return false;
     }
 
     @Override
-    public boolean afterUpdate(Object key, Object value, SoftLock lock) throws CacheException {
+    public boolean afterUpdate(Object key, Object value, SoftLock lock) {
         return false;
     }
 
     @Override
-    public Object get(Object key, long txTimestamp) throws CacheException {
-        return redis.get(region.getName(), key);
+    public Object get(Object key, long txTimestamp) {
+        log.debug("retrieve cache item in transactional. key=[{}]", key);
+        return region.get(key);
     }
 
     @Override
     public NaturalIdRegion getRegion() {
-        return region();
+        return region;
     }
 
     @Override
-    public boolean insert(Object key, Object value) throws CacheException {
-        redis.set(region.getName(), key, value, region.getExpireInSeconds());
+    public boolean insert(Object key, Object value) {
+        region.put(key, value);
         return true;
     }
 
     @Override
-    public SoftLock lockItem(Object key, Object version) throws CacheException {
+    public SoftLock lockItem(Object key, Object version) {
         return null;
     }
 
@@ -83,27 +83,28 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
                                Object value,
                                long txTimestamp,
                                Object version,
-                               boolean minimalPutOverride) throws CacheException {
-        if (minimalPutOverride && redis.exists(region.getName(), key))
+                               boolean minimalPutOverride) {
+        if (minimalPutOverride && region.contains(key))
             return false;
-        redis.set(region.getName(), key, value, region.getExpireInSeconds());
+
+        region.put(key, value);
         return true;
     }
 
 
     @Override
-    public void remove(Object key) throws CacheException {
-        redis.del(region.getName(), key);
+    public void remove(Object key) {
+        region.remove(key);
     }
 
     @Override
-    public void unlockItem(Object key, SoftLock lock) throws CacheException {
+    public void unlockItem(Object key, SoftLock lock) {
         // nothing to do
     }
 
     @Override
-    public boolean update(Object key, Object value) throws CacheException {
-        redis.set(region.getName(), key, value, region.getExpireInSeconds());
+    public boolean update(Object key, Object value) {
+        region.put(key, value);
         return true;
     }
 }

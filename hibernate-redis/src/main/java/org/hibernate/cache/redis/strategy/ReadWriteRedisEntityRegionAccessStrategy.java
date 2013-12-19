@@ -17,7 +17,6 @@
 package org.hibernate.cache.redis.strategy;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.regions.RedisEntityRegion;
 import org.hibernate.cache.spi.EntityRegion;
 import org.hibernate.cache.spi.access.EntityRegionAccessStrategy;
@@ -44,22 +43,22 @@ public class ReadWriteRedisEntityRegionAccessStrategy
 
     @Override
     public EntityRegion getRegion() {
-        return region();
+        return region;
     }
 
     @Override
-    public boolean insert(Object key, Object value, Object version) throws CacheException {
+    public boolean insert(Object key, Object value, Object version) {
         return false;
     }
 
     @Override
-    public boolean afterInsert(Object key, Object value, Object version) throws CacheException {
-        region().writeLock(key);
+    public boolean afterInsert(Object key, Object value, Object version) {
+        region.writeLock(key);
         try {
             Lockable item = (Lockable) region.get(key);
 
             if (item == null) {
-                region().put(key, new Item(value, version, region().nextTimestamp()));
+                region.put(key, new Item(value, version, region.nextTimestamp()));
                 return true;
             } else {
                 return false;
@@ -73,7 +72,7 @@ public class ReadWriteRedisEntityRegionAccessStrategy
     public boolean update(Object key,
                           Object value,
                           Object currentVersion,
-                          Object previousVersion) throws CacheException {
+                          Object previousVersion) {
         return false;
     }
 
@@ -82,10 +81,10 @@ public class ReadWriteRedisEntityRegionAccessStrategy
                                Object value,
                                Object currentVersion,
                                Object previousVersion,
-                               SoftLock lock) throws CacheException {
+                               SoftLock lock) {
         log.trace("afterUpdate key=[{}]", key);
 
-        region().writeLock(key);
+        region.writeLock(key);
         try {
             Lockable item = (Lockable) region.get(key);
 
@@ -95,7 +94,7 @@ public class ReadWriteRedisEntityRegionAccessStrategy
                     decrementLock(key, lockItem);
                     return false;
                 } else {
-                    region().put(key, new Item(value, currentVersion, region().nextTimestamp()));
+                    region.put(key, new Item(value, currentVersion, region.nextTimestamp()));
                     return true;
                 }
             } else {
@@ -103,7 +102,7 @@ public class ReadWriteRedisEntityRegionAccessStrategy
                 return false;
             }
         } finally {
-            region().writeUnlock(key);
+            region.writeUnlock(key);
         }
     }
 }

@@ -70,37 +70,39 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
         return metadata;
     }
 
-    public Object get(Object key) throws CacheException {
+    public Object get(Object key) {
+        log.debug("get cache item... key=[{}]", key);
         try {
-            return redis.get(getName(), keyToString(key));
+            return redis.get(getName(), key);
         } catch (Exception e) {
-            return new CacheException(e);
+            log.warn("Fail to get cache item... key=" + key, e);
+            return null;
         }
     }
 
 
-    public void put(Object key, Object value) throws CacheException {
+    public void put(Object key, Object value) {
         try {
-            redis.set(getName(), keyToString(key), value, getExpireInSeconds());
+            redis.set(getName(), key, value, getExpireInSeconds());
         } catch (Exception e) {
-            throw new CacheException(e);
+            log.warn("Fail to put cache item... key=" + key, e);
         }
     }
 
     public void remove(Object key) throws CacheException {
         try {
-            redis.del(getName(), keyToString(key));
+            redis.del(getName(), key);
         } catch (Exception e) {
-            throw new CacheException(e);
+            log.warn("Fail to remove cache item... key=" + key, e);
         }
     }
 
 
-    public void clear() throws CacheException {
+    public void clear() {
         try {
             redis.deleteRegion(getName());
         } catch (Exception e) {
-            throw new CacheException(e);
+            log.warn("Fail to clear region... name=" + getName(), e);
         }
     }
 
@@ -120,11 +122,11 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
         // nothing to do.
     }
 
-    public void evict(Object key) throws CacheException {
+    public void evict(Object key) {
         try {
-            redis.del(getName(), keyToString(key));
+            redis.del(getName(), key);
         } catch (Exception e) {
-            throw new CacheException(e);
+            log.warn("Fail to evict cache item... key=" + key, e);
         }
     }
 
@@ -132,7 +134,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
         try {
             redis.deleteRegion(getName());
         } catch (Exception e) {
-            throw new CacheException(e);
+            log.warn("Fail to evict all cache items... region=" + getName(), e);
         }
     }
 

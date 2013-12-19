@@ -30,8 +30,8 @@ import org.hibernate.cfg.Settings;
  */
 @Slf4j
 public class ReadWriteRedisCollectionRegionAccessStrategy
-    extends AbstractReadWriteRedisAccessStrategy<RedisCollectionRegion>
-    implements CollectionRegionAccessStrategy {
+        extends AbstractReadWriteRedisAccessStrategy<RedisCollectionRegion>
+        implements CollectionRegionAccessStrategy {
 
     public ReadWriteRedisCollectionRegionAccessStrategy(RedisCollectionRegion region, Settings settings) {
         super(region, settings);
@@ -39,6 +39,6 @@ public class ReadWriteRedisCollectionRegionAccessStrategy
 
     @Override
     public CollectionRegion getRegion() {
-        return region();
+        return region;
     }
 }

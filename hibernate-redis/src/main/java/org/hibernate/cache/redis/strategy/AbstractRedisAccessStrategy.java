@@ -17,7 +17,6 @@
 package org.hibernate.cache.redis.strategy;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.regions.RedisTransactionalDataRegion;
 import org.hibernate.cache.spi.access.SoftLock;
 import org.hibernate.cfg.Settings;
@@ -39,10 +38,6 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
         this.settings = settings;
     }
 
-    protected T region() {
-        return region;
-    }
-
     protected Settings settings() {
         return settings;
     }
@@ -50,7 +45,7 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
     public final boolean putFromLoad(Object key,
                                      Object value,
                                      long txTimestamp,
-                                     Object version) throws CacheException {
+                                     Object version) {
         return putFromLoad(key, value, txTimestamp, version, settings.isMinimalPutsEnabled());
     }
 
@@ -58,7 +53,7 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
                                         Object value,
                                         long txTimestamp,
                                         Object version,
-                                        boolean minimalPutOverride) throws CacheException;
+                                        boolean minimalPutOverride);
 
     /**
      * Region locks are not supported
@@ -71,9 +66,9 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
      * Region locks are not supported - perform a cache clear as a precaution.
      *
      * @param lock soft lock instance
-     * @throws CacheException
+     * @
      */
-    public final void unlockRegion(SoftLock lock) throws CacheException {
+    public final void unlockRegion(SoftLock lock) {
         region.clear();
     }
 
@@ -81,16 +76,16 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
      * A no-op since this is an asynchronous cache access strategy.
      *
      * @param key key
-     * @throws CacheException
+     * @
      */
-    public void remove(Object key) throws CacheException { }
+    public void remove(Object key) { }
 
     /**
      * Called to evict data from the entire region
      *
-     * @throws CacheException
+     * @
      */
-    public final void removeAll() throws CacheException {
+    public final void removeAll() {
         region.clear();
     }
 
@@ -98,18 +93,18 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
      * Remove the given mapping without regard to transactional safety
      *
      * @param key key
-     * @throws CacheException
+     * @
      */
-    public final void evict(Object key) throws CacheException {
+    public final void evict(Object key) {
         region.remove(key);
     }
 
     /**
      * Remove all mappings without regard to transactional safety
      *
-     * @throws CacheException
+     * @
      */
-    public final void evictAll() throws CacheException {
+    public final void evictAll() {
         region.clear();
     }
 }

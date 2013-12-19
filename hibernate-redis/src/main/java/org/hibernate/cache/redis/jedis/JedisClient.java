@@ -134,7 +134,7 @@ public class JedisClient {
      * @return return cached entity, if not exists return null.
      */
     public Object get(final String region, final Object key) {
-        log.trace("retrive cache... region=[{}], key=[{}]", region, key);
+        log.trace("retrieve cache... region=[{}], key=[{}]", region, key);
 
         final byte[] rawRegion = rawRegion(region);
         final byte[] rawKey = rawKey(key);

@@ -1,7 +1,7 @@
 package org.hibernate.test.cache;
 
-import com.carrotsearch.junitbenchmarks.BenchmarkRule;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.cache.redis.util.HibernateCacheUtil;
@@ -12,9 +12,7 @@ import org.hibernate.test.domain.Account;
 import org.hibernate.test.domain.Item;
 import org.hibernate.test.domain.Person;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 
 import java.util.List;
 
@@ -30,8 +28,8 @@ import static org.fest.assertions.Assertions.assertThat;
 @Slf4j
 public class HibernateCacheTest extends AbstractHibernateTest {
 
-    @Rule
-    public TestRule benchmarkRun = new BenchmarkRule();
+//    @Rule
+//    public TestRule benchmarkRun = new BenchmarkRule();
 
 
     @Before
@@ -93,6 +91,7 @@ public class HibernateCacheTest extends AbstractHibernateTest {
         SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics(Item.class);
         Session session;
 
+        log.debug("Item 저장 - #1");
         Item item = new Item();
         item.setName("redis");
         item.setDescription("redis cache item");
@@ -102,6 +101,7 @@ public class HibernateCacheTest extends AbstractHibernateTest {
         session.flush();
         session.close();
 
+        log.debug("Item 조회 - #1");
         session = sessionFactory.openSession();
         Item loaded = (Item) session.get(Item.class, item.getId());
         assertThat(loaded).isNotNull();
@@ -111,20 +111,69 @@ public class HibernateCacheTest extends AbstractHibernateTest {
         assertThat(slcs.getPutCount()).isEqualTo(1);
         assertThat(slcs.getElementCountInMemory()).isEqualTo(1);
 
+
+        log.debug("Item Update - #1");
         session = sessionFactory.openSession();
         loaded.setDescription("Update description...");
+        session.merge(loaded);
         session.save(loaded);
         session.flush();
         session.close();
 
+        log.debug("Item 조회 - #2");
         session = sessionFactory.openSession();
         loaded = (Item) session.get(Item.class, item.getId());
         assertThat(loaded).isNotNull();
+        assertThat(loaded.getId()).isEqualTo(item.getId());
         session.close();
 
         log.info(slcs.toString());
         assertThat(slcs.getPutCount()).isEqualTo(1);
         assertThat(slcs.getElementCountInMemory()).isEqualTo(1);
+    }
+
+    @Test
+    public void hqlLoad() throws Exception {
+        sessionFactory.getCache().evictEntityRegion(Item.class);
+        SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics(Item.class);
+        Session session;
+
+        log.debug("Item 저장 - #1");
+        Item item = new Item();
+        item.setName("redis");
+        item.setDescription("redis cache item");
+
+        session = sessionFactory.openSession();
+        session.save(item);
+        session.flush();
+        session.close();
+
+        log.debug("Item 조회 - #1");
+        session = sessionFactory.openSession();
+        Query query = session.createQuery("select e from Item e where e.id=:id").setParameter("id", item.getId()).setCacheable(true);
+        Item loaded = (Item) query.uniqueResult();
+        assertThat(loaded).isNotNull();
+        session.close();
+
+        log.debug("Item 조회 - #2");
+        session = sessionFactory.openSession();
+        query = session.createQuery("select e from Item e where e.id=:id").setParameter("id", item.getId()).setCacheable(true);
+        loaded = (Item) query.uniqueResult();
+        assertThat(loaded).isNotNull();
+        session.close();
+
+        log.debug("Item 조회 - #3");
+        session = sessionFactory.openSession();
+        loaded = (Item) session.get(Item.class, item.getId());
+        assertThat(loaded).isNotNull();
+        session.close();
+
+        log.debug("Item 조회 - #4");
+        session = sessionFactory.openSession();
+        query = session.createQuery("select e from Item e where e.id=:id").setParameter("id", item.getId());
+        loaded = (Item) query.uniqueResult();
+        assertThat(loaded).isNotNull();
+        session.close();
     }
 
     @Test

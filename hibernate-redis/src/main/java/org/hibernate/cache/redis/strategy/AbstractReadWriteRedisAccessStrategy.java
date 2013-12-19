@@ -17,7 +17,6 @@
 package org.hibernate.cache.redis.strategy;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.regions.RedisTransactionalDataRegion;
 import org.hibernate.cache.spi.access.SoftLock;
 import org.hibernate.cfg.Settings;
@@ -54,26 +53,31 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      * Returns <code>null</code> if the item is not readable.  Locked items are not readable, nor are items created
      * after the start of this transaction.
      */
-    public final Object get(Object key, long txTimestamp) throws CacheException {
+    public final Object get(Object key, long txTimestamp) {
         readLockIfNeeded(key);
         try {
             Lockable item = (Lockable) region.get(key);
             boolean readable = item != null && item.isReadable(txTimestamp);
+
+            log.debug("readable=[{}]", readable);
+            if (readable)
+                log.debug("retrieve cache item. item.getValue()=[{}]", item.getValue());
+
             return (readable) ? item.getValue() : null;
+        } catch (Exception e) {
+            log.warn("Fail to retrieve redis cache item", e);
+            return null;
         } finally {
             readUnlockIfNeeded(key);
         }
     }
 
-    /**
-     * Returns <code>false</code> and fails to put the value if there is an existing un-writeable item mapped to this key.
-     */
     @Override
     public final boolean putFromLoad(Object key,
                                      Object value,
                                      long txTimestamp,
                                      Object version,
-                                     boolean minimalPutOverride) throws CacheException {
+                                     boolean minimalPutOverride) {
         region.writeLock(key);
         try {
             Lockable item = (Lockable) region.get(key);
@@ -82,6 +86,9 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
                 region.put(key, new Item(value, version, region.nextTimestamp()));
             }
             return writeable;
+        } catch (Exception e) {
+            log.warn("Fail to put cache item", e);
+            return false;
         } finally {
             region.writeUnlock(key);
         }
@@ -90,15 +97,15 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
     /**
      * Soft-lock a cache item.
      */
-    public final SoftLock lockItem(Object key, Object version) throws CacheException {
+    public final SoftLock lockItem(Object key, Object version) {
         region.writeLock(key);
         try {
             Lockable item = (Lockable) region.get(key);
 
             long timeout = region.nextTimestamp() + region.getTimeout();
             final Lock lock = (item == null)
-                    ? new Lock(timeout, uuid, nextLockId(), version)
-                    : item.lock(timeout, uuid, nextLockId());
+                              ? new Lock(timeout, uuid, nextLockId(), version)
+                              : item.lock(timeout, uuid, nextLockId());
 
             region.put(key, lock);
             return lock;
@@ -110,7 +117,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
     /**
      * Soft-unlock a cache item.
      */
-    public final void unlockItem(Object key, SoftLock lock) throws CacheException {
+    public final void unlockItem(Object key, SoftLock lock) {
         region.writeLock(key);
 
         try {
@@ -223,7 +230,8 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
          * {@inheritDoc}
          */
         public boolean isReadable(long txTimestamp) {
-            return txTimestamp > timestamp;
+            log.trace("txTimestamp=[{}], timestamp=[{}]", txTimestamp, timestamp);
+            return txTimestamp >= timestamp;
         }
 
         /**
@@ -304,8 +312,8 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
             }
 
             return version == null
-                    ? txTimestamp > unlockTimestamp
-                    : versionComparator.compare(version, newVersion) < 0;
+                   ? txTimestamp > unlockTimestamp
+                   : versionComparator.compare(version, newVersion) < 0;
         }
 
         /**

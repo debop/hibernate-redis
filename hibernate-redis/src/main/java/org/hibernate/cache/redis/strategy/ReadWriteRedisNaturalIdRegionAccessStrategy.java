@@ -17,7 +17,6 @@
 package org.hibernate.cache.redis.strategy;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.regions.RedisNaturalIdRegion;
 import org.hibernate.cache.spi.NaturalIdRegion;
 import org.hibernate.cache.spi.access.NaturalIdRegionAccessStrategy;
@@ -44,39 +43,39 @@ public class ReadWriteRedisNaturalIdRegionAccessStrategy
 
     @Override
     public NaturalIdRegion getRegion() {
-        return region();
+        return region;
     }
 
     @Override
-    public boolean insert(Object key, Object value) throws CacheException {
+    public boolean insert(Object key, Object value) {
         return false;
     }
 
     @Override
-    public boolean afterInsert(Object key, Object value) throws CacheException {
-        region().writeLock(key);
+    public boolean afterInsert(Object key, Object value) {
+        region.writeLock(key);
         try {
-            Lockable item = (Lockable) region().get(key);
+            Lockable item = (Lockable) region.get(key);
 
             if (item == null) {
-                region().put(key, new Item(value, null, region().nextTimestamp()));
+                region.put(key, new Item(value, null, region.nextTimestamp()));
                 return true;
             } else {
                 return false;
             }
         } finally {
-            region().writeUnlock(key);
+            region.writeUnlock(key);
         }
     }
 
     @Override
-    public boolean update(Object key, Object value) throws CacheException {
+    public boolean update(Object key, Object value) {
         return false;
     }
 
     @Override
-    public boolean afterUpdate(Object key, Object value, SoftLock lock) throws CacheException {
-        region().writeLock(key);
+    public boolean afterUpdate(Object key, Object value, SoftLock lock) {
+        region.writeLock(key);
         try {
             Lockable item = (Lockable) region.get(key);
 
@@ -86,7 +85,7 @@ public class ReadWriteRedisNaturalIdRegionAccessStrategy
                     decrementLock(key, lockItem);
                     return false;
                 } else {
-                    region().put(key, new Item(value, null, region().nextTimestamp()));
+                    region.put(key, new Item(value, null, region.nextTimestamp()));
                     return true;
                 }
             } else {
@@ -94,7 +93,7 @@ public class ReadWriteRedisNaturalIdRegionAccessStrategy
                 return false;
             }
         } finally {
-            region().writeUnlock(key);
+            region.writeUnlock(key);
         }
     }
 }
