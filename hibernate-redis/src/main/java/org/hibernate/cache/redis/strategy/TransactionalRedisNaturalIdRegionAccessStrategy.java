@@ -58,7 +58,8 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) {
-        return redis.get(region.getName(), key);
+        log.debug("retrieve cache item in transactional. key=[{}]", key);
+        return region.get(key);
     }
 
     @Override

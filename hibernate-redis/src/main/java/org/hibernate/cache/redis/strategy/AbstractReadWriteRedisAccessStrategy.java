@@ -58,9 +58,11 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
         try {
             Lockable item = (Lockable) region.get(key);
             boolean readable = item != null && item.isReadable(txTimestamp);
+
             log.debug("readable=[{}]", readable);
             if (readable)
                 log.debug("retrieve cache item. item.getValue()=[{}]", item.getValue());
+
             return (readable) ? item.getValue() : null;
         } catch (Exception e) {
             log.warn("Fail to retrieve redis cache item", e);

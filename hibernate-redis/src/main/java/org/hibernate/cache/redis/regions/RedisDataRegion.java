@@ -43,11 +43,6 @@ public abstract class RedisDataRegion implements Region {
 
     private static final String EXPIRE_IN_SECONDS = "redis.expiryInSeconds";
 
-    public static String keyToString(final Object key) {
-        return key.toString();
-        // return (key != null) ? key.toString() : "";
-    }
-
     @Getter
     protected final RedisAccessStrategyFactory accessStrategyFactory;
 
@@ -124,7 +119,7 @@ public abstract class RedisDataRegion implements Region {
     @Override
     public boolean contains(Object key) {
         try {
-            return redis.exists(name, keyToString(key));
+            return redis.exists(name, key);
         } catch (Exception e) {
             return false;
         }

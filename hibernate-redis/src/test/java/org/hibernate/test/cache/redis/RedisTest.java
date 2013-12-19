@@ -12,7 +12,6 @@ import org.hibernate.stat.SecondLevelCacheStatistics;
 import org.hibernate.stat.Statistics;
 import org.hibernate.testing.junit4.BaseCoreFunctionalTestCase;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Map;
@@ -33,7 +32,7 @@ public abstract class RedisTest extends BaseCoreFunctionalTestCase {
 
     @Override
     protected Class<?>[] getAnnotatedClasses() {
-        return new Class<?>[] {
+        return new Class<?>[]{
                 Item.class,
                 VersionedItem.class
         };
@@ -73,7 +72,7 @@ public abstract class RedisTest extends BaseCoreFunctionalTestCase {
 
         String regionName = HibernateCacheUtil.getRegionName(sessionFactory(), Item.class);
         SecondLevelCacheStatistics slcs = s.getSessionFactory().getStatistics()
-                .getSecondLevelCacheStatistics(regionName);
+                                           .getSecondLevelCacheStatistics(regionName);
 
         assertThat(slcs.getElementCountInMemory()).isGreaterThan(0);
 
@@ -112,7 +111,6 @@ public abstract class RedisTest extends BaseCoreFunctionalTestCase {
 
     @SuppressWarnings({ "UnnecessaryBoxing", "UnnecessaryUnboxing", "UnusedAssignment" })
     @Test
-    @Ignore("Not use CacheKey, cannot use SecondLevelCacheStatistics")
     public void staleWritesLeaveCacheConsistent() {
         Session s = openSession();
         Transaction txn = s.beginTransaction();
@@ -166,8 +164,8 @@ public abstract class RedisTest extends BaseCoreFunctionalTestCase {
 
         final String lockStr = AbstractReadWriteRedisAccessStrategy.class.getName() + "$Lock";
         boolean isLock = entry.getClass()
-                .getName()
-                .equals(lockStr);
+                              .getName()
+                              .equals(lockStr);
 
         if (isLock) {
             //

@@ -71,10 +71,11 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     }
 
     public Object get(Object key) {
+        log.debug("get cache item... key=[{}]", key);
         try {
-            return redis.get(getName(), keyToString(key));
+            return redis.get(getName(), key);
         } catch (Exception e) {
-            log.warn("Fail to get cache item... key=" + keyToString(key), e);
+            log.warn("Fail to get cache item... key=" + key, e);
             return null;
         }
     }
@@ -82,17 +83,17 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
     public void put(Object key, Object value) {
         try {
-            redis.set(getName(), keyToString(key), value, getExpireInSeconds());
+            redis.set(getName(), key, value, getExpireInSeconds());
         } catch (Exception e) {
-            log.warn("Fail to put cache item... key=" + keyToString(key), e);
+            log.warn("Fail to put cache item... key=" + key, e);
         }
     }
 
     public void remove(Object key) throws CacheException {
         try {
-            redis.del(getName(), keyToString(key));
+            redis.del(getName(), key);
         } catch (Exception e) {
-            log.warn("Fail to remove cache item... key=" + keyToString(key), e);
+            log.warn("Fail to remove cache item... key=" + key, e);
         }
     }
 
@@ -123,9 +124,9 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
     public void evict(Object key) {
         try {
-            redis.del(getName(), keyToString(key));
+            redis.del(getName(), key);
         } catch (Exception e) {
-            log.warn("Fail to evict cache item... key=" + keyToString(key), e);
+            log.warn("Fail to evict cache item... key=" + key, e);
         }
     }
 
