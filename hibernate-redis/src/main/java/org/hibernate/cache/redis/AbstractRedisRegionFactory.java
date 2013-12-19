@@ -175,13 +175,17 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
                         Thread.sleep(1000L);
                         for (final String region : regionNames) {
                             if (redis != null) {
-                                redis.expire(region);
+                                try {
+                                    redis.expire(region);
+                                } catch (Exception ignored) {
+                                    log.warn("Error occurred in expiration management thread. but it was ignored", ignored);
+                                }
                             }
                         }
                     } catch (InterruptedException ignored) {
                         break;
                     } catch (Exception ignored) {
-                        log.debug("Error occurred in expiration management thread. but it was ignored", ignored);
+                        log.warn("Error occurred in expiration management thread. but it was ignored", ignored);
                     }
                 }
             }

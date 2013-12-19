@@ -17,7 +17,6 @@
 package org.hibernate.cache.redis.strategy;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.regions.RedisTransactionalDataRegion;
 import org.hibernate.cache.spi.access.SoftLock;
 import org.hibernate.cfg.Settings;
@@ -54,7 +53,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      * Returns <code>null</code> if the item is not readable.  Locked items are not readable, nor are items created
      * after the start of this transaction.
      */
-    public final Object get(Object key, long txTimestamp) throws CacheException {
+    public final Object get(Object key, long txTimestamp) {
         readLockIfNeeded(key);
         try {
             Lockable item = (Lockable) region.get(key);
@@ -76,7 +75,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
                                      Object value,
                                      long txTimestamp,
                                      Object version,
-                                     boolean minimalPutOverride) throws CacheException {
+                                     boolean minimalPutOverride) {
         region.writeLock(key);
         try {
             Lockable item = (Lockable) region.get(key);

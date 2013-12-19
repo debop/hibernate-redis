@@ -17,7 +17,6 @@
 package org.hibernate.cache.redis.strategy;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.regions.RedisNaturalIdRegion;
 import org.hibernate.cache.spi.NaturalIdRegion;
 import org.hibernate.cache.spi.access.NaturalIdRegionAccessStrategy;
@@ -32,8 +31,8 @@ import org.hibernate.cfg.Settings;
  */
 @Slf4j
 public class ReadOnlyRedisNaturalIdRegionAccessStrategy
-    extends AbstractRedisAccessStrategy<RedisNaturalIdRegion>
-    implements NaturalIdRegionAccessStrategy {
+        extends AbstractRedisAccessStrategy<RedisNaturalIdRegion>
+        implements NaturalIdRegionAccessStrategy {
 
     public ReadOnlyRedisNaturalIdRegionAccessStrategy(RedisNaturalIdRegion region, Settings settings) {
         super(region, settings);
@@ -41,12 +40,12 @@ public class ReadOnlyRedisNaturalIdRegionAccessStrategy
 
     @Override
     public NaturalIdRegion getRegion() {
-        return region();
+        return region;
     }
 
     @Override
-    public Object get(Object key, long txTimestamp) throws CacheException {
-        return region().get(key);
+    public Object get(Object key, long txTimestamp) {
+        return region.get(key);
     }
 
     @Override
@@ -54,8 +53,8 @@ public class ReadOnlyRedisNaturalIdRegionAccessStrategy
                                Object value,
                                long txTimestamp,
                                Object version,
-                               boolean minimalPutOverride) throws CacheException {
-        if (minimalPutOverride && region().contains(key))
+                               boolean minimalPutOverride) {
+        if (minimalPutOverride && region.contains(key))
             return false;
 
         region.put(key, value);
@@ -63,33 +62,33 @@ public class ReadOnlyRedisNaturalIdRegionAccessStrategy
     }
 
     @Override
-    public SoftLock lockItem(Object key, Object version) throws CacheException {
+    public SoftLock lockItem(Object key, Object version) {
         return null;
     }
 
     @Override
-    public void unlockItem(Object key, SoftLock lock) throws CacheException {
-        region().remove(key);
+    public void unlockItem(Object key, SoftLock lock) {
+        region.remove(key);
     }
 
     @Override
-    public boolean insert(Object key, Object value) throws CacheException {
+    public boolean insert(Object key, Object value) {
         return false;
     }
 
     @Override
-    public boolean afterInsert(Object key, Object value) throws CacheException {
-        region().put(key, value);
+    public boolean afterInsert(Object key, Object value) {
+        region.put(key, value);
         return true;
     }
 
     @Override
-    public boolean update(Object key, Object value) throws CacheException {
+    public boolean update(Object key, Object value) {
         throw new UnsupportedOperationException("Can't write to a readonly object");
     }
 
     @Override
-    public boolean afterUpdate(Object key, Object value, SoftLock lock) throws CacheException {
+    public boolean afterUpdate(Object key, Object value, SoftLock lock) {
         throw new UnsupportedOperationException("Can't write to a readonly object");
     }
 }

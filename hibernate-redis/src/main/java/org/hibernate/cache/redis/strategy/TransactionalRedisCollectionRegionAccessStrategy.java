@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.regions.RedisCollectionRegion;
-import org.hibernate.cache.redis.regions.RedisDataRegion;
 import org.hibernate.cache.spi.CollectionRegion;
 import org.hibernate.cache.spi.access.CollectionRegionAccessStrategy;
 import org.hibernate.cache.spi.access.SoftLock;
@@ -49,16 +48,12 @@ public class TransactionalRedisCollectionRegionAccessStrategy
 
     @Override
     public CollectionRegion getRegion() {
-        return region();
+        return region;
     }
 
     @Override
-    public Object get(Object key, long txTimestamp) throws CacheException {
-        try {
-            return redis.get(region.getName(), RedisDataRegion.keyToString(key));
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
+    public Object get(Object key, long txTimestamp) {
+        return region.get(key);
     }
 
     @Override
@@ -66,33 +61,28 @@ public class TransactionalRedisCollectionRegionAccessStrategy
                                Object value,
                                long txTimestamp,
                                Object version,
-                               boolean minimalPutOverride) throws CacheException {
-        try {
-            if (minimalPutOverride && redis.exists(region.getName(), RedisDataRegion.keyToString(key))) {
-                return false;
-            } else {
-                redis.set(region.getName(), RedisDataRegion.keyToString(key), value, region.getExpireInSeconds());
-                return true;
-            }
-        } catch (Exception e) {
-            throw new CacheException(e);
-        }
+                               boolean minimalPutOverride) {
+        if (minimalPutOverride && region.contains(key))
+            return false;
+
+        region.put(key, value);
+        return true;
     }
 
     @Override
-    public SoftLock lockItem(Object key, Object version) throws CacheException {
+    public SoftLock lockItem(Object key, Object version) {
         return null;
     }
 
     @Override
-    public void unlockItem(Object key, SoftLock lock) throws CacheException {
+    public void unlockItem(Object key, SoftLock lock) {
         // nothing to do.
     }
 
     @Override
-    public void remove(Object key) throws CacheException {
+    public void remove(Object key) {
         try {
-            redis.del(region.getName(), key);
+            region.remove(key);
         } catch (Exception e) {
             throw new CacheException(e);
         }

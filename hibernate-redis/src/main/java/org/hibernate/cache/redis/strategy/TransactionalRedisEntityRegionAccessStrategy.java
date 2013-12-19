@@ -18,9 +18,7 @@ package org.hibernate.cache.redis.strategy;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.jedis.JedisClient;
-import org.hibernate.cache.redis.regions.RedisDataRegion;
 import org.hibernate.cache.redis.regions.RedisEntityRegion;
 import org.hibernate.cache.spi.EntityRegion;
 import org.hibernate.cache.spi.access.EntityRegionAccessStrategy;
@@ -49,12 +47,12 @@ public class TransactionalRedisEntityRegionAccessStrategy
 
     @Override
     public EntityRegion getRegion() {
-        return region();
+        return region;
     }
 
     @Override
-    public Object get(Object key, long txTimestamp) throws CacheException {
-        return redis.get(region.getName(), RedisDataRegion.keyToString(key));
+    public Object get(Object key, long txTimestamp) {
+        return region.get(key);
     }
 
     @Override
@@ -62,48 +60,48 @@ public class TransactionalRedisEntityRegionAccessStrategy
                                Object value,
                                long txTimestamp,
                                Object version,
-                               boolean minimalPutOverride) throws CacheException {
-        if (minimalPutOverride && redis.exists(region.getName(), RedisDataRegion.keyToString(key)))
+                               boolean minimalPutOverride) {
+        if (minimalPutOverride && region.contains(key))
             return false;
-        redis.set(region.getName(), RedisDataRegion.keyToString(key), value, region.getExpireInSeconds());
+
+        region.put(key, value);
         return true;
     }
 
     @Override
-    public SoftLock lockItem(Object key, Object version) throws CacheException {
+    public SoftLock lockItem(Object key, Object version) {
         return null;
     }
 
     @Override
-    public void unlockItem(Object key, SoftLock lock) throws CacheException {
+    public void unlockItem(Object key, SoftLock lock) {
         // nothing to do
     }
 
     @Override
-    public boolean insert(Object key, Object value, Object version) throws CacheException {
-        redis.set(region.getName(), RedisDataRegion.keyToString(key), value);
+    public boolean insert(Object key, Object value, Object version) {
+        region.put(key, value);
         return true;
     }
 
     @Override
-    public boolean afterInsert(Object key, Object value, Object version) throws CacheException {
+    public boolean afterInsert(Object key, Object value, Object version) {
         return false;
     }
 
     @Override
-    public boolean update(Object key, Object value, Object currentVersion, Object previousVersion) throws CacheException {
-        redis.set(region.getName(), RedisDataRegion.keyToString(key), value, region.getExpireInSeconds());
+    public boolean update(Object key, Object value, Object currentVersion, Object previousVersion) {
+        region.put(key, value);
         return true;
     }
 
     @Override
-    public boolean afterUpdate(Object key, Object value, Object currentVersion, Object previousVersion, SoftLock lock)
-            throws CacheException {
+    public boolean afterUpdate(Object key, Object value, Object currentVersion, Object previousVersion, SoftLock lock) {
         return false;
     }
 
     @Override
-    public void remove(Object key) throws CacheException {
-        redis.del(region.getName(), RedisDataRegion.keyToString(key));
+    public void remove(Object key) {
+        region.remove(key);
     }
 }
