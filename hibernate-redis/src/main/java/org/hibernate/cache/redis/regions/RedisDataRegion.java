@@ -44,7 +44,8 @@ public abstract class RedisDataRegion implements Region {
     private static final String EXPIRE_IN_SECONDS = "redis.expiryInSeconds";
 
     public static String keyToString(final Object key) {
-        return (key != null) ? key.toString() : "";
+        return key.toString();
+        // return (key != null) ? key.toString() : "";
     }
 
     @Getter

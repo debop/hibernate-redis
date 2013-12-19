@@ -93,6 +93,7 @@ public class HibernateCacheTest extends AbstractHibernateTest {
         SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics(Item.class);
         Session session;
 
+        log.debug("Item 저장 - #1");
         Item item = new Item();
         item.setName("redis");
         item.setDescription("redis cache item");
@@ -102,6 +103,7 @@ public class HibernateCacheTest extends AbstractHibernateTest {
         session.flush();
         session.close();
 
+        log.debug("Item 조회 - #1");
         session = sessionFactory.openSession();
         Item loaded = (Item) session.get(Item.class, item.getId());
         assertThat(loaded).isNotNull();
@@ -111,12 +113,16 @@ public class HibernateCacheTest extends AbstractHibernateTest {
         assertThat(slcs.getPutCount()).isEqualTo(1);
         assertThat(slcs.getElementCountInMemory()).isEqualTo(1);
 
+
+        log.debug("Item Update - #1");
         session = sessionFactory.openSession();
         loaded.setDescription("Update description...");
+        session.merge(loaded);
         session.save(loaded);
         session.flush();
         session.close();
 
+        log.debug("Item 조회 - #2");
         session = sessionFactory.openSession();
         loaded = (Item) session.get(Item.class, item.getId());
         assertThat(loaded).isNotNull();
