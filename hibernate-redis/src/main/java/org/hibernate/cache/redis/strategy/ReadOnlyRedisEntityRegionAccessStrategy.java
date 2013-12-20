@@ -85,7 +85,8 @@ public class ReadOnlyRedisEntityRegionAccessStrategy
 
     @Override
     public boolean update(Object key, Object value, Object currentVersion, Object previousVersion) {
-        throw new UnsupportedOperationException("Can't write to a readonly object");
+        log.warn("Can't write to a readonly object");
+        return false;
     }
 
     @Override
@@ -94,6 +95,7 @@ public class ReadOnlyRedisEntityRegionAccessStrategy
                                Object currentVersion,
                                Object previousVersion,
                                SoftLock lock) {
-        throw new UnsupportedOperationException("Can't write to a readonly object");
+        log.warn("Can't write to a readonly object");
+        return false;
     }
 }

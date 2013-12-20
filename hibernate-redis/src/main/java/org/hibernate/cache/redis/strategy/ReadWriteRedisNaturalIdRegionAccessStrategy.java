@@ -78,22 +78,30 @@ public class ReadWriteRedisNaturalIdRegionAccessStrategy
         region.writeLock(key);
         try {
             Lockable item = (Lockable) region.get(key);
-
-            if (item != null && item.isUnlockable(lock)) {
-                final Lock lockItem = (Lock) item;
-                if (lockItem.wasLockedConcurrently()) {
-                    decrementLock(key, lockItem);
-                    return false;
-                } else {
-                    region.put(key, new Item(value, null, region.nextTimestamp()));
-                    return true;
-                }
-            } else {
-                handleLockExpiry(key, item);
-                return false;
-            }
+            region.put(key, new Item(value, null, region.nextTimestamp()));
+            return true;
         } finally {
             region.writeUnlock(key);
         }
+//        region.writeLock(key);
+//        try {
+//            Lockable item = (Lockable) region.get(key);
+//
+//            if (item != null && item.isUnlockable(lock)) {
+//                final Lock lockItem = (Lock) item;
+//                if (lockItem.wasLockedConcurrently()) {
+//                    decrementLock(key, lockItem);
+//                    return false;
+//                } else {
+//                    region.put(key, new Item(value, null, region.nextTimestamp()));
+//                    return true;
+//                }
+//            } else {
+//                handleLockExpiry(key, item);
+//                return false;
+//            }
+//        } finally {
+//            region.writeUnlock(key);
+//        }
     }
 }

@@ -56,7 +56,8 @@ public class JedisClient {
     private StringRedisSerializer regionSerializer = new StringRedisSerializer();
 
     @Getter
-    private RedisSerializer<Object> keySerializer = new BinaryRedisSerializer<Object>();
+    private StringRedisSerializer keySerializer = new StringRedisSerializer();
+    // private RedisSerializer<Object> keySerializer = new BinaryRedisSerializer<Object>();
 
     @Getter
     private RedisSerializer<Object> valueSerializer = new BinaryRedisSerializer<Object>();
@@ -416,7 +417,7 @@ public class JedisClient {
      * 키를 byte[] 로 직렬화합니다 *
      */
     private byte[] rawKey(final Object key) {
-        return getKeySerializer().serialize(key);
+        return getKeySerializer().serialize(key.toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -424,7 +425,7 @@ public class JedisClient {
         byte[][] rawKeys = new byte[keys.size()][];
         int i = 0;
         for (Object key : keys) {
-            rawKeys[i++] = getKeySerializer().serialize(key);
+            rawKeys[i++] = getKeySerializer().serialize(key.toString());
         }
         return rawKeys;
     }
@@ -516,7 +517,11 @@ public class JedisClient {
      * @return original key set.
      */
     private Set<Object> deserializeKeys(final Set<byte[]> rawKeys) {
-        return SerializationTool.deserialize(rawKeys, getKeySerializer());
+        Set<Object> keys = new HashSet<Object>();
+        for (byte[] rawKey : rawKeys) {
+            keys.add(deserializeKey(rawKey));
+        }
+        return keys;
     }
 
     /**

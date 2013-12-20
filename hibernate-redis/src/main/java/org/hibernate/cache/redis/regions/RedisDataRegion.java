@@ -40,7 +40,6 @@ public abstract class RedisDataRegion implements Region {
 
     private static final String CACHE_LOCK_TIMEOUT_PROPERTY = "io.redis.hibernate.cache_lock_timeout";
     private static final int DEFAULT_CACHE_LOCK_TIMEOUT = 60 * 1000; // 60 seconds
-
     private static final String EXPIRE_IN_SECONDS = "redis.expiryInSeconds";
 
     @Getter
@@ -101,13 +100,6 @@ public abstract class RedisDataRegion implements Region {
     public void destroy() throws CacheException {
         // NOTE: delete all cached item is not neccessory.
         // NOTE: if you use multi servers, you don't need clear cache.
-//        try {
-//            if (!regionDeleted) {
-//                redis.deleteRegion(name);
-//                regionDeleted = true;
-//                log.debug("region[{}] is deleted.", getName());
-//            }
-//        } catch (Exception ignored) {}
     }
 
     /**

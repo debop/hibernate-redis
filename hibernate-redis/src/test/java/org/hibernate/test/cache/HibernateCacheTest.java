@@ -114,17 +114,34 @@ public class HibernateCacheTest extends AbstractHibernateTest {
 
         log.debug("Item Update - #1");
         session = sessionFactory.openSession();
+        // session.merge(loaded);
         loaded.setDescription("Update description...");
-        session.merge(loaded);
-        session.save(loaded);
+        session.saveOrUpdate(loaded);
         session.flush();
         session.close();
 
         log.debug("Item 조회 - #2");
         session = sessionFactory.openSession();
-        loaded = (Item) session.get(Item.class, item.getId());
+        loaded = (Item) session.get(Item.class, loaded.getId());
         assertThat(loaded).isNotNull();
         assertThat(loaded.getId()).isEqualTo(item.getId());
+        assertThat(loaded.getDescription()).isNotEqualTo(item.getDescription());
+        session.close();
+
+        log.debug("Item 조회 - #3");
+        session = sessionFactory.openSession();
+        loaded = (Item) session.get(Item.class, loaded.getId());
+        assertThat(loaded).isNotNull();
+        assertThat(loaded.getId()).isEqualTo(item.getId());
+        assertThat(loaded.getDescription()).isNotEqualTo(item.getDescription());
+        session.close();
+
+        log.debug("Item 조회 - #4");
+        session = sessionFactory.openSession();
+        loaded = (Item) session.get(Item.class, loaded.getId());
+        assertThat(loaded).isNotNull();
+        assertThat(loaded.getId()).isEqualTo(item.getId());
+        assertThat(loaded.getDescription()).isNotEqualTo(item.getDescription());
         session.close();
 
         log.info(slcs.toString());
@@ -170,7 +187,7 @@ public class HibernateCacheTest extends AbstractHibernateTest {
 
         log.debug("Item 조회 - #4");
         session = sessionFactory.openSession();
-        query = session.createQuery("select e from Item e where e.id=:id").setParameter("id", item.getId());
+        query = session.createQuery("select e from Item e where e.id=:id").setParameter("id", item.getId()).setCacheable(true);
         loaded = (Item) query.uniqueResult();
         assertThat(loaded).isNotNull();
         session.close();

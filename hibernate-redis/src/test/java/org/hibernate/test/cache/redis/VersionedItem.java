@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Version;
+import java.io.Serializable;
 
 /**
  * org.hibernate.test.cache.redis.VersionedItem
@@ -20,7 +21,7 @@ import javax.persistence.Version;
 @Cache(region = "redis:common", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
-public class VersionedItem {
+public class VersionedItem implements Serializable {
 
     @Id
     @GeneratedValue
@@ -32,4 +33,6 @@ public class VersionedItem {
     private String name;
 
     private String description;
+
+    private static final long serialVersionUID = 4832353095588069337L;
 }

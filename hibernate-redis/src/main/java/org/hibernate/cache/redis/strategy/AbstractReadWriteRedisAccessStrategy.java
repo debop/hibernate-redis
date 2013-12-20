@@ -54,14 +54,17 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      * after the start of this transaction.
      */
     public final Object get(Object key, long txTimestamp) {
+        log.debug("get cache item... key=[{}], txTimestamp=[{}]", key, txTimestamp);
+
         readLockIfNeeded(key);
         try {
             Lockable item = (Lockable) region.get(key);
             boolean readable = item != null && item.isReadable(txTimestamp);
 
-            log.debug("readable=[{}]", readable);
+            log.debug("cache item readable=[{}], item=[{}]", readable, item);
+
             if (readable)
-                log.debug("retrieve cache item. item.getValue()=[{}]", item.getValue());
+                log.debug("retrieve cache item. value=[{}]", item.getValue());
 
             return (readable) ? item.getValue() : null;
         } catch (Exception e) {
@@ -78,6 +81,9 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
                                      long txTimestamp,
                                      Object version,
                                      boolean minimalPutOverride) {
+        log.debug("set cache item after entity loading... key=[{}], value=[{}], txTimestamp=[{}], version=[{}], minimalPutOverride=[{}]",
+                  key, value, txTimestamp, version, minimalPutOverride);
+
         region.writeLock(key);
         try {
             Lockable item = (Lockable) region.get(key);
@@ -98,6 +104,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      * Soft-lock a cache item.
      */
     public final SoftLock lockItem(Object key, Object version) {
+        log.debug("lock cache item... key=[{}], version=[{}]", key, version);
         region.writeLock(key);
         try {
             Lockable item = (Lockable) region.get(key);
@@ -118,10 +125,13 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      * Soft-unlock a cache item.
      */
     public final void unlockItem(Object key, SoftLock lock) {
+        log.debug("unlock cache item... key=[{}], lock=[{}]", key, lock);
+
         region.writeLock(key);
 
         try {
             Lockable item = (Lockable) region.get(key);
+
             if (item != null && item.isUnlockable(lock)) {
                 decrementLock(key, (Lock) item);
             } else {
