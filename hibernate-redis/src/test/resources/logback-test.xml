@@ -12,7 +12,7 @@
     <logger name="org.hibernate.cache.redis" level="TRACE"/>
     <logger name="org.hibernate.test" level="TRACE"/>
 
-    <logger name="org.hibernate.SQL.logStatement" level="INFO"/>
+    <logger name="org.hibernate.SQL" level="INFO"/>
 
     <root level="TRACE">
         <appender-ref ref="console"/>

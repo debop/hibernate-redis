@@ -18,7 +18,6 @@ package org.hibernate.cache.redis.strategy;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.regions.RedisCollectionRegion;
 import org.hibernate.cache.spi.CollectionRegion;
@@ -85,7 +84,7 @@ public class TransactionalRedisCollectionRegionAccessStrategy
         try {
             region.remove(key);
         } catch (Exception e) {
-            throw new CacheException(e);
+            log.warn("Fail to remove cache item... region=[{}], key=[{}]", region.getName(), key);
         }
     }
 }

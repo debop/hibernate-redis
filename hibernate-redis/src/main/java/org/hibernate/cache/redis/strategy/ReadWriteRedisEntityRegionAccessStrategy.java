@@ -53,6 +53,8 @@ public class ReadWriteRedisEntityRegionAccessStrategy
 
     @Override
     public boolean afterInsert(Object key, Object value, Object version) {
+        log.trace("afterInsert key=[{}], value=[{}], version=[{}]", key, value, version);
+
         region.writeLock(key);
         try {
             Lockable item = (Lockable) region.get(key);
@@ -92,26 +94,5 @@ public class ReadWriteRedisEntityRegionAccessStrategy
         } finally {
             region.writeUnlock(key);
         }
-
-//        region.writeLock(key);
-//        try {
-//            Lockable item = (Lockable) region.get(key);
-//
-//            if (item != null && item.isUnlockable(lock)) {
-//                Lock lockItem = (Lock) item;
-//                if (lockItem.wasLockedConcurrently()) {
-//                    decrementLock(key, lockItem);
-//                    return false;
-//                } else {
-//                    region.put(key, new Item(value, currentVersion, region.nextTimestamp()));
-//                    return true;
-//                }
-//            } else {
-//                handleLockExpiry(key, item);
-//                return false;
-//            }
-//        } finally {
-//            region.writeUnlock(key);
-//        }
     }
 }

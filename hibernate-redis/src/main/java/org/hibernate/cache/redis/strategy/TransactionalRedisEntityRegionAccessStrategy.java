@@ -52,7 +52,7 @@ public class TransactionalRedisEntityRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) {
-        log.debug("retrive cache item in transactional. key=[{}]", key);
+        log.debug("retrieve cache item in transactional. key=[{}], txTimestamp=[{}]", key, txTimestamp);
         return region.get(key);
     }
 
