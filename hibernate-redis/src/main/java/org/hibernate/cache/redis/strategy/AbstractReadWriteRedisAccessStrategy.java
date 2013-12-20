@@ -244,7 +244,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
          */
         public boolean isReadable(long txTimestamp) {
             log.trace("txTimestamp=[{}], timestamp=[{}]", txTimestamp, timestamp);
-            return txTimestamp >= timestamp;
+            return txTimestamp > timestamp;
         }
 
         /**
