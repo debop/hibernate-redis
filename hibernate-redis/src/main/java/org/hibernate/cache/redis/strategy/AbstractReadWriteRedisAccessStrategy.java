@@ -105,20 +105,23 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      */
     public final SoftLock lockItem(Object key, Object version) {
         log.debug("lock cache item... key=[{}], version=[{}]", key, version);
-        region.writeLock(key);
-        try {
-            Lockable item = (Lockable) region.get(key);
-
-            long timeout = region.nextTimestamp() + region.getTimeout();
-            final Lock lock = (item == null)
-                              ? new Lock(timeout, uuid, nextLockId(), version)
-                              : item.lock(timeout, uuid, nextLockId());
-
-            region.put(key, lock);
-            return lock;
-        } finally {
-            region.writeUnlock(key);
-        }
+        region.remove(key);
+        return null;
+//        region.writeLock(key);
+//        try {
+//            Lockable item = (Lockable) region.get(key);
+//
+//            long timeout = region.nextTimestamp() + region.getTimeout();
+//            final Lock lock = (item == null)
+//                              ? new Lock(timeout, uuid, nextLockId(), version)
+//                              : item.lock(timeout, uuid, nextLockId());
+//
+//            log.debug("put lock item... key=[{}], lock=[{}]", key, lock);
+//            region.put(key, lock);
+//            return lock;
+//        } finally {
+//            region.writeUnlock(key);
+//        }
     }
 
     /**
@@ -126,20 +129,20 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      */
     public final void unlockItem(Object key, SoftLock lock) {
         log.debug("unlock cache item... key=[{}], lock=[{}]", key, lock);
-
-        region.writeLock(key);
-
-        try {
-            Lockable item = (Lockable) region.get(key);
-
-            if (item != null && item.isUnlockable(lock)) {
-                decrementLock(key, (Lock) item);
-            } else {
-                handleLockExpiry(key, item);
-            }
-        } finally {
-            region.writeUnlock(key);
-        }
+        region.remove(key);
+//        region.writeLock(key);
+//
+//        try {
+//            Lockable item = (Lockable) region.get(key);
+//
+//            if (item != null && item.isUnlockable(lock)) {
+//                decrementLock(key, (Lock) item);
+//            } else {
+//                handleLockExpiry(key, item);
+//            }
+//        } finally {
+//            region.writeUnlock(key);
+//        }
     }
 
 
