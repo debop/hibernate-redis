@@ -54,16 +54,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      */
     public final Object get(Object key, long txTimestamp) {
         log.debug("get cache item... key=[{}], txTimestamp=[{}]", key, txTimestamp);
-
-        readLockIfNeeded(key);
-        try {
-            return region.get(key);
-        } catch (Exception e) {
-            log.warn("Fail to retrieve redis cache item", e);
-            return null;
-        } finally {
-            readUnlockIfNeeded(key);
-        }
+        return region.get(key);
     }
 
     @Override
@@ -75,17 +66,8 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
         log.debug("set cache item after entity loading... key=[{}], value=[{}], txTimestamp=[{}], version=[{}], minimalPutOverride=[{}]",
                   key, value, txTimestamp, version, minimalPutOverride);
 
-        region.writeLock(key);
-        try {
-            Object item = region.get(key);
-            region.put(key, value);
-            return true;
-        } catch (Exception e) {
-            log.warn("Fail to put cache item", e);
-            return false;
-        } finally {
-            region.writeUnlock(key);
-        }
+        region.put(key, value);
+        return true;
     }
 
     /**
@@ -93,7 +75,6 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      */
     public final SoftLock lockItem(Object key, Object version) {
         log.debug("lock cache item... key=[{}], version=[{}]", key, version);
-        // region.remove(key);
         return null;
     }
 
@@ -102,7 +83,6 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      */
     public final void unlockItem(Object key, SoftLock lock) {
         log.debug("unlock cache item... key=[{}], lock=[{}]", key, lock);
-        // region.remove(key);
     }
 
 

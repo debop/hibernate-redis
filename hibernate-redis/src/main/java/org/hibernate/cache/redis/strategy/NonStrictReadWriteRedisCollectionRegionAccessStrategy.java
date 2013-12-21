@@ -16,6 +16,7 @@
 
 package org.hibernate.cache.redis.strategy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.redis.regions.RedisCollectionRegion;
 import org.hibernate.cache.spi.CollectionRegion;
 import org.hibernate.cache.spi.access.CollectionRegionAccessStrategy;
@@ -28,6 +29,7 @@ import org.hibernate.cfg.Settings;
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 5. 오후 10:42
  */
+@Slf4j
 public class NonStrictReadWriteRedisCollectionRegionAccessStrategy
     extends AbstractRedisAccessStrategy<RedisCollectionRegion>
     implements CollectionRegionAccessStrategy {
@@ -68,11 +70,13 @@ public class NonStrictReadWriteRedisCollectionRegionAccessStrategy
 
     @Override
     public void unlockItem(Object key, SoftLock lock) {
+        log.debug("unlock cache item... key=[{}], lock=[{}]", key, lock);
         region.remove(key);
     }
 
     @Override
     public void remove(Object key) {
+        log.debug("unlock cache item... key=[{}]", key);
         region.remove(key);
     }
 }
