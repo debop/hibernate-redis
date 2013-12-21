@@ -82,6 +82,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
 
     public void put(Object key, Object value) {
+        log.debug("put cache item... key=[{}], value=[{}], expire=[{}]", key, value, getExpireInSeconds());
         try {
             redis.set(getName(), key, value, getExpireInSeconds());
         } catch (Exception e) {
@@ -90,6 +91,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     }
 
     public void remove(Object key) throws CacheException {
+        log.debug("remove cache item... key=[{}]", key);
         try {
             redis.del(getName(), key);
         } catch (Exception e) {
@@ -99,6 +101,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
 
     public void clear() {
+        log.debug("clear cache item... region=[{}]", getName());
         try {
             redis.deleteRegion(getName());
         } catch (Exception e) {
@@ -123,6 +126,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     }
 
     public void evict(Object key) {
+        log.debug("evict cache item... key=[{}]", key);
         try {
             redis.del(getName(), key);
         } catch (Exception e) {
@@ -131,6 +135,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     }
 
     public void evictAll() throws CacheException {
+        log.debug("evictAll cache items... region=[{}]", getName());
         try {
             redis.deleteRegion(getName());
         } catch (Exception e) {

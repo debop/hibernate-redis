@@ -62,8 +62,13 @@ public class TransactionalRedisCollectionRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) {
-        if (minimalPutOverride && region.contains(key))
+        log.debug("put after load... key=[{}], value=[{}], txTimestamp=[{}], minimalPutOverride=[{}]",
+                  key, value, txTimestamp, minimalPutOverride);
+
+        if (minimalPutOverride && region.contains(key)) {
+            log.debug("minimalPutOverride and already contains cache item. key=[{}]", key);
             return false;
+        }
 
         region.put(key, value);
         return true;
@@ -71,16 +76,19 @@ public class TransactionalRedisCollectionRegionAccessStrategy
 
     @Override
     public SoftLock lockItem(Object key, Object version) {
+        log.debug("lock item... key=[{}], version=[{}]", key, version);
         return null;
     }
 
     @Override
     public void unlockItem(Object key, SoftLock lock) {
+        log.debug("unlock item... key=[{}], lock=[{}]", key, lock);
         // nothing to do.
     }
 
     @Override
     public void remove(Object key) {
+        log.debug("remove cache item... key=[{}]", key);
         try {
             region.remove(key);
         } catch (Exception e) {

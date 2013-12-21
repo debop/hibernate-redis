@@ -18,9 +18,6 @@ public class ItemValueExtractor extends AbstractReadWriteRedisAccessStrategy<Red
     }
 
     public static <T> T getValue(final Object entry) {
-        if (!(entry instanceof Item)) {
-            throw new IllegalArgumentException("Entry needs to be of type " + Item.class.getName());
-        }
-        return (T) ((Item) entry).getValue();
+        return (T) entry;
     }
 }

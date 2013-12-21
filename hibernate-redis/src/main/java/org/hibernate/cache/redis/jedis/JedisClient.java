@@ -56,8 +56,7 @@ public class JedisClient {
     private StringRedisSerializer regionSerializer = new StringRedisSerializer();
 
     @Getter
-    private StringRedisSerializer keySerializer = new StringRedisSerializer();
-    // private RedisSerializer<Object> keySerializer = new BinaryRedisSerializer<Object>();
+    private RedisSerializer<Object> keySerializer = new BinaryRedisSerializer<Object>();
 
     @Getter
     private RedisSerializer<Object> valueSerializer = new BinaryRedisSerializer<Object>();
@@ -272,7 +271,7 @@ public class JedisClient {
      * @param unit    expire timeout unit
      */
     public void set(final String region, final Object key, final Object value, long timeout, TimeUnit unit) {
-        log.trace("save cache item region=[{}], key=[{}], timeout=[{}], unit=[{}], value=[{}]",
+        log.debug("save cache item region=[{}], key=[{}], timeout=[{}], unit=[{}], value=[{}]",
                   region, key, timeout, unit, value);
 
         final byte[] rawRegion = rawRegion(region);
@@ -284,7 +283,7 @@ public class JedisClient {
             @Override
             public void execute(Transaction tx) {
                 tx.hset(rawRegion, rawKey, rawValue);
-                if (seconds > 0) {
+                if (seconds > 0 && !region.contains("UpdateTimestampsCache")) {
                     final byte[] rawZkey = rawZkey(region);
                     final long score = System.currentTimeMillis() + seconds * 1000L;
                     tx.zadd(rawZkey, score, rawKey);
@@ -417,7 +416,7 @@ public class JedisClient {
      * 키를 byte[] 로 직렬화합니다 *
      */
     private byte[] rawKey(final Object key) {
-        return getKeySerializer().serialize(key.toString());
+        return getKeySerializer().serialize(key);
     }
 
     @SuppressWarnings("unchecked")
@@ -425,7 +424,7 @@ public class JedisClient {
         byte[][] rawKeys = new byte[keys.size()][];
         int i = 0;
         for (Object key : keys) {
-            rawKeys[i++] = getKeySerializer().serialize(key.toString());
+            rawKeys[i++] = getKeySerializer().serialize(key);
         }
         return rawKeys;
     }

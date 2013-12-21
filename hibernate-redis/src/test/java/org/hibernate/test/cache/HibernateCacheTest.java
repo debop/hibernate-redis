@@ -292,10 +292,6 @@ public class HibernateCacheTest extends AbstractHibernateTest {
         tx.commit();
         session.close();
 
-        log.info(slcs.toString());
-        assertThat(slcs.getPutCount()).isEqualTo(count);
-        assertThat(slcs.getElementCountInMemory()).isEqualTo(count);
-
         session = sessionFactory.openSession();
         tx = session.beginTransaction();
         items = (List<Item>) session.createCriteria(Item.class).list();
@@ -303,6 +299,7 @@ public class HibernateCacheTest extends AbstractHibernateTest {
             session.delete(item);
         }
         tx.commit();
+        session.flush();
         session.close();
     }
 }

@@ -35,7 +35,7 @@ public class HibernateRedisConfiguration {
     }
 
     public String[] getMappedPackageNames() {
-        return new String[]{
+        return new String[] {
                 Account.class.getPackage().getName()
         };
     }
@@ -60,7 +60,6 @@ public class HibernateRedisConfiguration {
         props.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
         props.setProperty(Environment.TRANSACTION_STRATEGY, JdbcTransactionFactory.class.getName());
 
-
         return props;
     }
 
@@ -72,24 +71,20 @@ public class HibernateRedisConfiguration {
     }
 
     @Bean
-    public SessionFactory sessionFactory() {
+    public SessionFactory sessionFactory() throws IOException {
 
         LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
         factoryBean.setPackagesToScan(getMappedPackageNames());
         factoryBean.setDataSource(dataSource());
         factoryBean.setHibernateProperties(hibernateProperties());
 
-        try {
-            factoryBean.afterPropertiesSet();
-        } catch (IOException e) {
-            throw new RuntimeException("Fail to build SessionFactory!!!", e);
-        }
+        factoryBean.afterPropertiesSet();
 
         return factoryBean.getObject();
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager() {
+    public PlatformTransactionManager transactionManager() throws IOException {
         return new HibernateTransactionManager(sessionFactory());
     }
 
