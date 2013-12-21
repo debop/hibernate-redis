@@ -1,7 +1,7 @@
 package org.hibernate.test;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.redis.RedisRegionFactory;
+import org.hibernate.cache.redis.SingletonRedisRegionFactory;
 import org.hibernate.cfg.Environment;
 import org.hibernate.test.domain.Account;
 import org.hibernate.test.jpa.repository.EventRepository;
@@ -68,7 +68,7 @@ public class JpaRedisConfiguration {
         // Secondary Cache
         props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
         props.put(Environment.USE_QUERY_CACHE, true);
-        props.put(Environment.CACHE_REGION_FACTORY, RedisRegionFactory.class.getName());
+        props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
         props.put(Environment.CACHE_REGION_PREFIX, "");
         props.put(Environment.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties");
 
