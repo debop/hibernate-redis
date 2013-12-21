@@ -22,7 +22,6 @@ import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.regions.*;
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactoryImpl;
-import org.hibernate.cache.redis.util.Timestamper;
 import org.hibernate.cache.spi.*;
 import org.hibernate.cache.spi.access.AccessType;
 import org.hibernate.cfg.Settings;
@@ -102,7 +101,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     }
 
     public long nextTimestamp() {
-        return Timestamper.next();
+        return System.currentTimeMillis();
     }
 
     @Override
