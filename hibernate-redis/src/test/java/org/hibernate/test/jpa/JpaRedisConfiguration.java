@@ -1,4 +1,4 @@
-package org.hibernate.test;
+package org.hibernate.test.jpa;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.redis.SingletonRedisRegionFactory;
@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * org.hibernate.test.JpaRedisConfiguration
+ * org.hibernate.test.jpa.JpaRedisConfiguration
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 21. 오후 5:51
@@ -98,13 +98,13 @@ public class JpaRedisConfiguration {
      */
     @Bean
     public EntityManagerFactory entityManagerFactory() throws IOException {
-        log.info("EntityManagerFactory Bean을 생성합니다...");
+        JpaRedisConfiguration.log.info("EntityManagerFactory Bean을 생성합니다...");
 
         LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
 
         String[] packagenames = getMappedPackageNames();
         if (packagenames != null && packagenames.length > 0) {
-            log.debug("JPA용 entity를 scan합니다. packages=[{}]", packagenames);
+            JpaRedisConfiguration.log.debug("JPA용 entity를 scan합니다. packages=[{}]", packagenames);
             factoryBean.setPackagesToScan(packagenames);
         }
 
@@ -118,7 +118,7 @@ public class JpaRedisConfiguration {
         setupEntityManagerFactory(factoryBean);
 
         factoryBean.afterPropertiesSet();
-        log.info("EntityManagerFactory Bean을 생성했습니다!!!");
+        JpaRedisConfiguration.log.info("EntityManagerFactory Bean을 생성했습니다!!!");
 
         return factoryBean.getObject();
     }

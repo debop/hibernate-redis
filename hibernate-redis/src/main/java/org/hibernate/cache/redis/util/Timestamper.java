@@ -32,7 +32,7 @@ public final class Timestamper {
      * @return uniquely & increasing value
      */
     public static long next() {
-        return System.currentTimeMillis() - 36000000L;
+        return System.currentTimeMillis();
     }
 }
 

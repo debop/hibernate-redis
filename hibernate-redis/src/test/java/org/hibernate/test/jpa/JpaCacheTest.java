@@ -1,7 +1,6 @@
 package org.hibernate.test.jpa;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.test.JpaRedisConfiguration;
 import org.hibernate.test.domain.Event;
 import org.hibernate.test.domain.Item;
 import org.hibernate.test.jpa.repository.EventRepository;
@@ -123,6 +122,7 @@ public class JpaCacheTest {
         em.getEntityManagerFactory().getCache().evict(Item.class);
 
         log.debug("Item 저장 - #1");
+
         Item item = new Item();
         item.setName("redis");
         item.setDescription("redis cache item");
@@ -132,13 +132,13 @@ public class JpaCacheTest {
 
         log.debug("Item 조회 - #1");
 
-        Query query = em.createQuery("select e from Item e where e.id=:id").setParameter("id", item.getId());
+        Query query = em.createQuery("select e from Item e where e.id=:id").setParameter("id", item.getId()).setHint("org.hibernate.cacheable", true);
         Item loaded = (Item) query.getSingleResult();
         assertThat(loaded).isNotNull();
         em.clear();
 
         log.debug("Item 조회 - #2");
-        query = em.createQuery("select e from Item e where e.id=:id").setParameter("id", item.getId());
+        query = em.createQuery("select e from Item e where e.id=:id").setParameter("id", item.getId()).setHint("org.hibernate.cacheable", true);
         loaded = (Item) query.getSingleResult();
         assertThat(loaded).isNotNull();
         em.clear();
@@ -149,7 +149,7 @@ public class JpaCacheTest {
         em.clear();
 
         log.debug("Item 조회 - #4");
-        query = em.createQuery("select e from Item e where e.id=:id").setParameter("id", item.getId());
+        query = em.createQuery("select e from Item e where e.id=:id").setParameter("id", item.getId()).setHint("org.hibernate.cacheable", true);
         loaded = (Item) query.getSingleResult();
         assertThat(loaded).isNotNull();
         em.clear();
