@@ -56,7 +56,8 @@ public class JedisClient {
     private StringRedisSerializer regionSerializer = new StringRedisSerializer();
 
     @Getter
-    private RedisSerializer<Object> keySerializer = new BinaryRedisSerializer<Object>();
+    private StringRedisSerializer keySerializer = new StringRedisSerializer();
+    // private RedisSerializer<Object> keySerializer = new BinaryRedisSerializer<Object>();
 
     @Getter
     private RedisSerializer<Object> valueSerializer = new BinaryRedisSerializer<Object>();
@@ -271,19 +272,22 @@ public class JedisClient {
      * @param unit    expire timeout unit
      */
     public void set(final String region, final Object key, final Object value, long timeout, TimeUnit unit) {
-        log.trace("save cache item region=[{}], key=[{}], timeout=[{}], unit=[{}]",
-                  region, key, timeout, unit);
+        log.debug("save cache item region=[{}], key=[{}], timeout=[{}], unit=[{}], value=[{}]",
+                  region, key, timeout, unit, value);
 
         final byte[] rawRegion = rawRegion(region);
         final byte[] rawKey = rawKey(key);
-        final byte[] rawValue = rawValue(value);
+        // final byte[] rawValue = rawValue(value);
+        final byte[] rawValue = region.contains("UpdateTimestampsCache")
+                                ? rawValue((Long) value - 3600000L)
+                                : rawValue(value);
         final int seconds = (int) unit.toSeconds(timeout);
 
         runWithTx(new JedisTransactionalCallback() {
             @Override
             public void execute(Transaction tx) {
                 tx.hset(rawRegion, rawKey, rawValue);
-                if (seconds > 0) {
+                if (seconds > 0 && !region.contains("UpdateTimestampsCache")) {
                     final byte[] rawZkey = rawZkey(region);
                     final long score = System.currentTimeMillis() + seconds * 1000L;
                     tx.zadd(rawZkey, score, rawKey);
@@ -416,7 +420,7 @@ public class JedisClient {
      * 키를 byte[] 로 직렬화합니다 *
      */
     private byte[] rawKey(final Object key) {
-        return getKeySerializer().serialize(key);
+        return getKeySerializer().serialize(key.toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -424,7 +428,7 @@ public class JedisClient {
         byte[][] rawKeys = new byte[keys.size()][];
         int i = 0;
         for (Object key : keys) {
-            rawKeys[i++] = getKeySerializer().serialize(key);
+            rawKeys[i++] = getKeySerializer().serialize(key.toString());
         }
         return rawKeys;
     }
@@ -451,7 +455,12 @@ public class JedisClient {
      * serializer cache value
      */
     private byte[] rawValue(final Object value) {
-        return getValueSerializer().serialize(value);
+        try {
+            return getValueSerializer().serialize(value);
+        } catch (Exception e) {
+            log.warn("value를 직렬화하는데 실패했습니다. value=" + value, e);
+            return null;
+        }
     }
 
     /**
@@ -516,7 +525,11 @@ public class JedisClient {
      * @return original key set.
      */
     private Set<Object> deserializeKeys(final Set<byte[]> rawKeys) {
-        return SerializationTool.deserialize(rawKeys, getKeySerializer());
+        Set<Object> keys = new HashSet<Object>();
+        for (byte[] rawKey : rawKeys) {
+            keys.add(deserializeKey(rawKey));
+        }
+        return keys;
     }
 
     /**

@@ -84,8 +84,13 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) {
-        if (minimalPutOverride && region.contains(key))
+        log.debug("put after load... key=[{}], value=[{}], txTimestamp=[{}], minimalPutOverride=[{}]",
+                  key, value, txTimestamp, minimalPutOverride);
+
+        if (minimalPutOverride && region.contains(key)) {
+            log.debug("minimalPutOverride and already contains cache item. key=[{}]", key);
             return false;
+        }
 
         region.put(key, value);
         return true;
@@ -94,16 +99,19 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public void remove(Object key) {
+        log.debug("remove cache item... key=[{}]", key);
         region.remove(key);
     }
 
     @Override
     public void unlockItem(Object key, SoftLock lock) {
+        log.debug("unlockItem... key=[{}], lock=[{}]", key, lock);
         // nothing to do
     }
 
     @Override
     public boolean update(Object key, Object value) {
+        log.debug("update cache item... key=[{}], value=[{}]", key, value);
         region.put(key, value);
         return true;
     }

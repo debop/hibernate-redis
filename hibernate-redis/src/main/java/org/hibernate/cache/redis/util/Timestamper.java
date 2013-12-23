@@ -16,24 +16,12 @@
 
 package org.hibernate.cache.redis.util;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * Generates increasing identifiers (in a single VM only).
  * Not valid across multiple VMs. Yet, the identifier is based on time, so that the drifting
  * across a cluster should not ever be large...
  */
 public final class Timestamper {
-    /**
-     * Value for left shifting System.currentTimeMillis, freeing some space for the counter
-     */
-    public static final int BIN_DIGITS = 12;
-
-    /**
-     * What is one milliseconds, based on "counter value reserved space", for this Timestamper
-     */
-    public static final int ONE_MS = 1 << BIN_DIGITS;
-    private static final AtomicLong VALUE = new AtomicLong();
 
     private Timestamper() { }
 
@@ -44,6 +32,7 @@ public final class Timestamper {
      * @return uniquely & increasing value
      */
     public static long next() {
-        return System.currentTimeMillis() / 100L;
+        return System.currentTimeMillis();
     }
 }
+

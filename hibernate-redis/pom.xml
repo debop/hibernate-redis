@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-redis-parent</artifactId>
-        <version>1.4.3.RELEASE</version>
+        <version>1.5.0.RELEASE</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -32,10 +32,19 @@
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-testing</artifactId>
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-ehcache</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Redis -->
         <dependency>
@@ -131,6 +140,14 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Spring Data -->
+        <!-- Spring Data 의 모든 버전은 spring-data-jpa 가 참조하는 버전을 기준으로 하세요 -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
             <scope>test</scope>
         </dependency>
 

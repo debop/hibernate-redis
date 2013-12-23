@@ -48,52 +48,29 @@ public class ReadWriteRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean insert(Object key, Object value) {
-        return false;
+        log.debug("insert cache item... key=[{}], value=[{}], version=[{}]", key, value);
+        region.put(key, value);
+        return true;
     }
 
     @Override
     public boolean afterInsert(Object key, Object value) {
-        region.writeLock(key);
-        try {
-            Lockable item = (Lockable) region.get(key);
-
-            if (item == null) {
-                region.put(key, new Item(value, null, region.nextTimestamp()));
-                return true;
-            } else {
-                return false;
-            }
-        } finally {
-            region.writeUnlock(key);
-        }
+        log.debug("after insert cache item... key=[{}], value=[{}], version=[{}]", key, value);
+        region.put(key, value);
+        return true;
     }
 
     @Override
     public boolean update(Object key, Object value) {
-        return false;
+        log.debug("update cache item... key=[{}], value=[{}], version=[{}]", key, value);
+        region.put(key, value);
+        return true;
     }
 
     @Override
     public boolean afterUpdate(Object key, Object value, SoftLock lock) {
-        region.writeLock(key);
-        try {
-            Lockable item = (Lockable) region.get(key);
-
-            if (item != null && item.isUnlockable(lock)) {
-                final Lock lockItem = (Lock) item;
-                if (lockItem.wasLockedConcurrently()) {
-                    decrementLock(key, lockItem);
-                    return false;
-                } else {
-                    region.put(key, new Item(value, null, region.nextTimestamp()));
-                    return true;
-                }
-            } else {
-                handleLockExpiry(key, item);
-                return false;
-            }
-        } finally {
-            region.writeUnlock(key);
-        }
+        log.debug("after update cache item... key=[{}], value=[{}], lock=[{}]", key, value, lock);
+        region.put(key, value);
+        return true;
     }
 }

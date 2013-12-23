@@ -21,7 +21,6 @@ import org.hibernate.cache.redis.regions.RedisTransactionalDataRegion;
 import org.hibernate.cache.spi.access.SoftLock;
 import org.hibernate.cfg.Settings;
 
-import java.io.Serializable;
 import java.util.Comparator;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
@@ -54,22 +53,8 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      * after the start of this transaction.
      */
     public final Object get(Object key, long txTimestamp) {
-        readLockIfNeeded(key);
-        try {
-            Lockable item = (Lockable) region.get(key);
-            boolean readable = item != null && item.isReadable(txTimestamp);
-
-            log.debug("readable=[{}]", readable);
-            if (readable)
-                log.debug("retrieve cache item. item.getValue()=[{}]", item.getValue());
-
-            return (readable) ? item.getValue() : null;
-        } catch (Exception e) {
-            log.warn("Fail to retrieve redis cache item", e);
-            return null;
-        } finally {
-            readUnlockIfNeeded(key);
-        }
+        log.debug("get cache item... key=[{}], txTimestamp=[{}]", key, txTimestamp);
+        return region.get(key);
     }
 
     @Override
@@ -78,82 +63,31 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
                                      long txTimestamp,
                                      Object version,
                                      boolean minimalPutOverride) {
-        region.writeLock(key);
-        try {
-            Lockable item = (Lockable) region.get(key);
-            boolean writeable = (item == null) || item.isWriteable(txTimestamp, version, versionComparator);
-            if (writeable) {
-                region.put(key, new Item(value, version, region.nextTimestamp()));
-            }
-            return writeable;
-        } catch (Exception e) {
-            log.warn("Fail to put cache item", e);
-            return false;
-        } finally {
-            region.writeUnlock(key);
-        }
+        log.debug("set cache item after entity loading... key=[{}], value=[{}], txTimestamp=[{}], version=[{}], minimalPutOverride=[{}]",
+                  key, value, txTimestamp, version, minimalPutOverride);
+
+        region.put(key, value);
+        return true;
     }
 
     /**
      * Soft-lock a cache item.
      */
     public final SoftLock lockItem(Object key, Object version) {
-        region.writeLock(key);
-        try {
-            Lockable item = (Lockable) region.get(key);
-
-            long timeout = region.nextTimestamp() + region.getTimeout();
-            final Lock lock = (item == null)
-                              ? new Lock(timeout, uuid, nextLockId(), version)
-                              : item.lock(timeout, uuid, nextLockId());
-
-            region.put(key, lock);
-            return lock;
-        } finally {
-            region.writeUnlock(key);
-        }
+        log.debug("lock cache item... key=[{}], version=[{}]", key, version);
+        return null;
     }
 
     /**
      * Soft-unlock a cache item.
      */
     public final void unlockItem(Object key, SoftLock lock) {
-        region.writeLock(key);
-
-        try {
-            Lockable item = (Lockable) region.get(key);
-            if (item != null && item.isUnlockable(lock)) {
-                decrementLock(key, (Lock) item);
-            } else {
-                handleLockExpiry(key, item);
-            }
-        } finally {
-            region.writeUnlock(key);
-        }
+        log.debug("unlock cache item... key=[{}], lock=[{}]", key, lock);
     }
 
 
     private long nextLockId() {
         return nextLockId.getAndIncrement();
-    }
-
-    /**
-     * Unlock and re-put the given key, lock combination.
-     */
-    protected void decrementLock(Object key, Lock lock) {
-        lock.unlock(region.nextTimestamp());
-        region.put(key, lock);
-    }
-
-    /**
-     * Handle the timeout of a previous lock mapped to this key
-     */
-    protected void handleLockExpiry(Object key, Lockable lock) {
-        final long ts = region.nextTimestamp() + region.getTimeout();
-        // create new lock that times out immediately
-        final Lock newLock = new Lock(ts, uuid, nextLockId.getAndIncrement(), null);
-        newLock.unlock(ts);
-        region.put(key, newLock);
     }
 
     /**
@@ -171,224 +105,6 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
     private void readUnlockIfNeeded(Object key) {
         if (region.locksAreIndependentOfCache()) {
             region.readUnlock(key);
-        }
-    }
-
-    /**
-     * Interface type implemented by all wrapper objects in the cache.
-     */
-    protected static interface Lockable {
-
-        /**
-         * Returns <code>true</code> if the enclosed value can be read by a transaction started at the given time.
-         */
-        public boolean isReadable(long txTimestamp);
-
-        /**
-         * Returns <code>true</code> if the enclosed value can be replaced with one of the given version by a
-         * transaction started at the given time.
-         */
-        public boolean isWriteable(long txTimestamp, Object version, Comparator versionComparator);
-
-        /**
-         * Returns the enclosed value.
-         */
-        public Object getValue();
-
-        /**
-         * Returns <code>true</code> if the given lock can be unlocked using the given SoftLock instance as a handle.
-         */
-        public boolean isUnlockable(SoftLock lock);
-
-        /**
-         * Locks this entry, stamping it with the UUID and lockId given, with the lock timeout occuring at the specified
-         * time.  The returned Lock object can be used to unlock the entry in the future.
-         */
-        public Lock lock(long timeout, UUID uuid, long lockId);
-    }
-
-    /**
-     * Wrapper type representing unlocked items.
-     */
-    protected final static class Item implements Serializable, Lockable {
-
-        private static final long serialVersionUID = 1L;
-        private final Object value;
-        private final Object version;
-        private final long timestamp;
-
-        /**
-         * Creates an unlocked item wrapping the given value with a version and creation timestamp.
-         */
-        Item(Object value, Object version, long timestamp) {
-            this.value = value;
-            this.version = version;
-            this.timestamp = timestamp;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public boolean isReadable(long txTimestamp) {
-            log.trace("txTimestamp=[{}], timestamp=[{}]", txTimestamp, timestamp);
-            return txTimestamp >= timestamp;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @SuppressWarnings("unchecked")
-        public boolean isWriteable(long txTimestamp, Object newVersion, Comparator versionComparator) {
-            return version != null && versionComparator.compare(version, newVersion) < 0;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public Object getValue() {
-            return value;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public boolean isUnlockable(SoftLock lock) {
-            return false;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public Lock lock(long timeout, UUID uuid, long lockId) {
-            return new Lock(timeout, uuid, lockId, version);
-        }
-    }
-
-    /**
-     * Wrapper type representing locked items.
-     */
-    protected final static class Lock implements Serializable, Lockable, SoftLock {
-
-        private static final long serialVersionUID = 2L;
-
-        private final UUID sourceUuid;
-        private final long lockId;
-        private final Object version;
-
-        private long timeout;
-        private boolean concurrent;
-        private int multiplicity = 1;
-        private long unlockTimestamp;
-
-        /**
-         * Creates a locked item with the given identifiers and object version.
-         */
-        Lock(long timeout, UUID sourceUuid, long lockId, Object version) {
-            this.timeout = timeout;
-            this.lockId = lockId;
-            this.version = version;
-            this.sourceUuid = sourceUuid;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public boolean isReadable(long txTimestamp) {
-            return false;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @SuppressWarnings("unchecked")
-        public boolean isWriteable(long txTimestamp, Object newVersion, Comparator versionComparator) {
-            if (txTimestamp > timeout) {
-                // if timedout then allow write
-                return true;
-            }
-            if (multiplicity > 0) {
-                // if still locked then disallow write
-                return false;
-            }
-
-            return version == null
-                   ? txTimestamp > unlockTimestamp
-                   : versionComparator.compare(version, newVersion) < 0;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public Object getValue() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public boolean isUnlockable(SoftLock lock) {
-            return equals(lock);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean equals(Object o) {
-            if (o == this) {
-                return true;
-            } else if (o instanceof Lock) {
-                return (lockId == ((Lock) o).lockId) && sourceUuid.equals(((Lock) o).sourceUuid);
-            } else {
-                return false;
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int hashCode() {
-            int hash = (sourceUuid != null ? sourceUuid.hashCode() : 0);
-            int temp = (int) lockId;
-            for (int i = 1; i < Long.SIZE / Integer.SIZE; i++) {
-                temp ^= (lockId >>> (i * Integer.SIZE));
-            }
-            return hash + temp;
-        }
-
-        /**
-         * Returns true if this Lock has been concurrently locked by more than one transaction.
-         */
-        public boolean wasLockedConcurrently() {
-            return concurrent;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public Lock lock(long timeout, UUID uuid, long lockId) {
-            concurrent = true;
-            multiplicity++;
-            this.timeout = timeout;
-            return this;
-        }
-
-        /**
-         * Unlocks this Lock, and timestamps the unlock event.
-         */
-        public void unlock(long timestamp) {
-            if (--multiplicity == 0) {
-                unlockTimestamp = timestamp;
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String toString() {
-            return "Lock Source-UUID:" + sourceUuid + " Lock-ID:" + lockId;
         }
     }
 }

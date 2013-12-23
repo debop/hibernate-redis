@@ -48,24 +48,16 @@ public class ReadWriteRedisEntityRegionAccessStrategy
 
     @Override
     public boolean insert(Object key, Object value, Object version) {
-        return false;
+        log.debug("insert cache item... key=[{}], value=[{}], version=[{}]", key, value, version);
+        region.put(key, value);
+        return true;
     }
 
     @Override
     public boolean afterInsert(Object key, Object value, Object version) {
-        region.writeLock(key);
-        try {
-            Lockable item = (Lockable) region.get(key);
-
-            if (item == null) {
-                region.put(key, new Item(value, version, region.nextTimestamp()));
-                return true;
-            } else {
-                return false;
-            }
-        } finally {
-            region.writeUnlock(key);
-        }
+        log.debug("after insert cache item... key=[{}], value=[{}], version=[{}]", key, value, version);
+        region.put(key, value);
+        return true;
     }
 
     @Override
@@ -73,7 +65,9 @@ public class ReadWriteRedisEntityRegionAccessStrategy
                           Object value,
                           Object currentVersion,
                           Object previousVersion) {
-        return false;
+        log.debug("update... key=[{}], value=[{}]", key, value);
+        region.put(key, value);
+        return true;
     }
 
     @Override
@@ -82,27 +76,8 @@ public class ReadWriteRedisEntityRegionAccessStrategy
                                Object currentVersion,
                                Object previousVersion,
                                SoftLock lock) {
-        log.trace("afterUpdate key=[{}]", key);
-
-        region.writeLock(key);
-        try {
-            Lockable item = (Lockable) region.get(key);
-
-            if (item != null && item.isUnlockable(lock)) {
-                Lock lockItem = (Lock) item;
-                if (lockItem.wasLockedConcurrently()) {
-                    decrementLock(key, lockItem);
-                    return false;
-                } else {
-                    region.put(key, new Item(value, currentVersion, region.nextTimestamp()));
-                    return true;
-                }
-            } else {
-                handleLockExpiry(key, item);
-                return false;
-            }
-        } finally {
-            region.writeUnlock(key);
-        }
+        log.debug("after update... key=[{}], value=[{}]", key, value);
+        region.put(key, value);
+        return true;
     }
 }
