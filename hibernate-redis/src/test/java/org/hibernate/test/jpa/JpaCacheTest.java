@@ -132,6 +132,8 @@ public class JpaCacheTest {
 
         log.debug("Item 조회 - #1");
 
+        //NOTE: http://docs.jboss.org/hibernate/stable/entitymanager/reference/en/html/objectstate.html#d0e1215
+
         Query query = em.createQuery("select e from Item e where e.id=:id").setParameter("id", item.getId()).setHint("org.hibernate.cacheable", true);
         Item loaded = (Item) query.getSingleResult();
         assertThat(loaded).isNotNull();
