@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.test.domain.Event;
 import org.hibernate.test.domain.Item;
 import org.hibernate.test.jpa.repository.EventRepository;
+import org.hibernate.test.jpa.repository.ItemRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,14 @@ public class JpaCacheTest {
 
     @PersistenceContext EntityManager em;
     @Autowired EventRepository eventRepository;
+
+    @Before
+    public void clearItems() throws Exception {
+        itemRepository.deleteAll();
+        itemRepository.flush();
+        em.clear();
+        em.getEntityManagerFactory().getCache().evict(Item.class);
+    }
 
     @Test
     public void configurationTest() throws Exception {
@@ -73,7 +83,6 @@ public class JpaCacheTest {
     @Test
     @Rollback(false)
     public void simpleEntityCaching() {
-        em.getEntityManagerFactory().getCache().evict(Item.class);
 
         log.debug("Item 저장 - #1");
         Item item = new Item();
@@ -119,7 +128,6 @@ public class JpaCacheTest {
     @Test
     @Rollback(false)
     public void hqlLoad() throws Exception {
-        em.getEntityManagerFactory().getCache().evict(Item.class);
 
         log.debug("Item 저장 - #1");
 
@@ -155,5 +163,33 @@ public class JpaCacheTest {
         loaded = (Item) query.getSingleResult();
         assertThat(loaded).isNotNull();
         em.clear();
+    }
+
+
+    @Autowired ItemRepository itemRepository;
+
+    @Test
+    public void springRepositoryTest() throws Exception {
+
+        log.debug("Item 저장 - #1");
+
+        Item item = new Item();
+        item.setName("redis");
+        item.setDescription("redis cache item");
+        em.persist(item);
+        em.flush();
+        em.clear();
+
+        log.debug("Item 조회 - #1");
+
+        List<Item> items = itemRepository.findByName("redis");
+        assertThat(items).isNotNull();
+        assertThat(items).hasSize(1);
+
+        log.debug("Item 조회 - #2");
+
+        items = itemRepository.findByName("redis");
+        assertThat(items).isNotNull();
+        assertThat(items).hasSize(1);
     }
 }

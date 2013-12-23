@@ -277,10 +277,10 @@ public class JedisClient {
 
         final byte[] rawRegion = rawRegion(region);
         final byte[] rawKey = rawKey(key);
-        // final byte[] rawValue = rawValue(value);
-        final byte[] rawValue = region.contains("UpdateTimestampsCache")
-                                ? rawValue((Long) value - 3600000L)
-                                : rawValue(value);
+        final byte[] rawValue = rawValue(value);
+//        final byte[] rawValue = region.contains("UpdateTimestampsCache")
+//                                ? rawValue((Long) value - 3600000L)
+//                                : rawValue(value);
         final int seconds = (int) unit.toSeconds(timeout);
 
         runWithTx(new JedisTransactionalCallback() {
