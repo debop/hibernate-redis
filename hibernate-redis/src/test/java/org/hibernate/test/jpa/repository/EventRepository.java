@@ -4,9 +4,11 @@ import org.hibernate.test.domain.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.QueryHint;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,7 +20,12 @@ import java.util.List;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
+    // NOTE: JPQL 결과 셋을 2nd level cache 에 저장하기 위해 @QueryHints 를 사용합니다.
     @Query("select evt from Event evt where evt.title=:title")
     @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-    List<Event> findByTitle(final String title);
+    List<Event> findByTitle(@Param("title") final String title);
+
+    // NOTE: 일반 쿼리 결과도 @QueryHints를 이용해 2nd level cache에 저장합니다.
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+    List<Event> findByDate(Date date);
 }
