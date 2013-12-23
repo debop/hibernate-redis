@@ -1,11 +1,14 @@
 hibernate-redis
 ===============
 
-[hibernate][1] (4.2.x-Final) 2nd level cache using redis.
-use [jedis][2]  2.2.1 or higher
+[hibernate][1] (4.2.x-Final) 2nd level cache using redis server.
+with [jedis][2]  2.2.1 or higher
 
 
 ### Usage
+
+use hibernate-redis for hibernate 2nd cache provider and JPA.
+if you use JPA with JPQL, add @QueryHint annotation for Query cache.
 
 ##### referencing hibernate-redis
 
