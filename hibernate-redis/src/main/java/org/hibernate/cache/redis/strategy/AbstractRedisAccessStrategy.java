@@ -86,6 +86,7 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
      * @
      */
     public final void removeAll() {
+        log.trace("remove all cache items...");
         region.clear();
     }
 

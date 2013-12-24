@@ -62,11 +62,11 @@ public class TransactionalRedisEntityRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) {
-        log.debug("put after load... key=[{}], value=[{}], txTimestamp=[{}], minimalPutOverride=[{}]",
+        log.trace("put after load... key=[{}], value=[{}], txTimestamp=[{}], minimalPutOverride=[{}]",
                   key, value, txTimestamp, minimalPutOverride);
 
         if (minimalPutOverride && region.contains(key)) {
-            log.debug("minimalPutOverride and already contains cache item. key=[{}]", key);
+            log.trace("minimalPutOverride and already contains cache item. key=[{}]", key);
             return false;
         }
 
@@ -86,34 +86,31 @@ public class TransactionalRedisEntityRegionAccessStrategy
 
     @Override
     public boolean insert(Object key, Object value, Object version) {
-        log.debug("insert cache item... key=[{}], value=[{}]", key, value);
+        log.trace("insert cache item... key=[{}], value=[{}]", key, value);
         region.put(key, value);
         return true;
     }
 
     @Override
     public boolean afterInsert(Object key, Object value, Object version) {
-        log.debug("after insert cache item... key=[{}], value=[{}]", key, value);
-        region.put(key, value);
-        return true;
+        return false;
     }
 
     @Override
     public boolean update(Object key, Object value, Object currentVersion, Object previousVersion) {
-        log.debug("update cache item... key=[{}], value=[{}]", key, value);
+        log.trace("update cache item... key=[{}], value=[{}]", key, value);
         region.put(key, value);
         return true;
     }
 
     @Override
     public boolean afterUpdate(Object key, Object value, Object currentVersion, Object previousVersion, SoftLock lock) {
-        log.debug("after update cache item... key=[{}], value=[{}]", key, value);
-        return true;
+        return false;
     }
 
     @Override
     public void remove(Object key) {
-        log.debug("remove cache item... key=[{}]", key);
+        log.trace("remove cache item... key=[{}]", key);
         region.remove(key);
     }
 }

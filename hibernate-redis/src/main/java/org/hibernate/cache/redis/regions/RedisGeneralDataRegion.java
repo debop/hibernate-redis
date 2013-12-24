@@ -41,11 +41,12 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
 
     @Override
     public Object get(Object key) {
+        log.trace("get cache item... key=[{}]", key);
         if (key == null) return null;
-        log.debug("get cache item... key=[{}]", key);
-
         try {
-            return redis.get(getName(), key);
+            Object value = redis.get(getName(), key);
+            log.debug("get cache item... key=[{}], value=[{}]", key, value);
+            return value;
         } catch (Exception e) {
             log.warn("Fail to get cache item... key=" + key, e);
             return null;
@@ -54,6 +55,7 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
 
     @Override
     public void put(Object key, Object value) {
+        log.trace("put cache item... key=[{}], value=[{}], expires=[{}] sec", key, value, getExpireInSeconds());
         try {
             redis.set(getName(), key, value, getExpireInSeconds());
         } catch (Exception e) {
@@ -63,6 +65,7 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
 
     @Override
     public void evict(Object key) {
+        log.trace("evit cache item... key=[{}]", key);
         try {
             redis.del(getName(), key);
         } catch (Exception e) {
@@ -72,6 +75,7 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
 
     @Override
     public void evictAll() {
+        log.trace("evict all cache items...");
         try {
             redis.deleteRegion(getName());
         } catch (Exception e) {

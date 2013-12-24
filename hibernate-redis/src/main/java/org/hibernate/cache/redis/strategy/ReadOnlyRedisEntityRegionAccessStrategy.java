@@ -45,6 +45,7 @@ public class ReadOnlyRedisEntityRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) {
+        log.trace("get cache item... key=[{}], txTimestamp=[{}]", key, txTimestamp);
         return region.get(key);
     }
 
@@ -68,6 +69,7 @@ public class ReadOnlyRedisEntityRegionAccessStrategy
 
     @Override
     public void unlockItem(Object key, SoftLock lock) {
+        log.trace("unlock cache item... key=[{}], lock=[{}]", key, lock);
         evict(key);
     }
 
@@ -79,14 +81,14 @@ public class ReadOnlyRedisEntityRegionAccessStrategy
 
     @Override
     public boolean afterInsert(Object key, Object value, Object version) {
+        log.trace("after insert... key=[{}], value=[{}], version=[{}]", key, value, version);
         region.put(key, value);
         return true;
     }
 
     @Override
     public boolean update(Object key, Object value, Object currentVersion, Object previousVersion) {
-        log.warn("Can't write to a readonly object");
-        return false;
+        throw new UnsupportedOperationException("Can't write to a readonly object");
     }
 
     @Override
@@ -95,7 +97,6 @@ public class ReadOnlyRedisEntityRegionAccessStrategy
                                Object currentVersion,
                                Object previousVersion,
                                SoftLock lock) {
-        log.warn("Can't write to a readonly object");
-        return false;
+        throw new UnsupportedOperationException("Can't write to a readonly object");
     }
 }

@@ -31,8 +31,8 @@ import org.hibernate.cfg.Settings;
  */
 @Slf4j
 public class NonStrictReadWriteRedisCollectionRegionAccessStrategy
-    extends AbstractRedisAccessStrategy<RedisCollectionRegion>
-    implements CollectionRegionAccessStrategy {
+        extends AbstractRedisAccessStrategy<RedisCollectionRegion>
+        implements CollectionRegionAccessStrategy {
 
 
     public NonStrictReadWriteRedisCollectionRegionAccessStrategy(RedisCollectionRegion region,
@@ -70,13 +70,13 @@ public class NonStrictReadWriteRedisCollectionRegionAccessStrategy
 
     @Override
     public void unlockItem(Object key, SoftLock lock) {
-        log.debug("unlock cache item... key=[{}], lock=[{}]", key, lock);
+        log.trace("unlock cache item... key=[{}], lock=[{}]", key, lock);
         region.remove(key);
     }
 
     @Override
     public void remove(Object key) {
-        log.debug("unlock cache item... key=[{}]", key);
+        log.trace("remove cache item... key=[{}]", key);
         region.remove(key);
     }
 }

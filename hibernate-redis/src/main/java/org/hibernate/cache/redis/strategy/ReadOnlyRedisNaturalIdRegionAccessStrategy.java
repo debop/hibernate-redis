@@ -45,6 +45,7 @@ public class ReadOnlyRedisNaturalIdRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) {
+        log.trace("get cache item... key=[{}], txTimestamp=[{}]", key, txTimestamp);
         return region.get(key);
     }
 
@@ -68,6 +69,7 @@ public class ReadOnlyRedisNaturalIdRegionAccessStrategy
 
     @Override
     public void unlockItem(Object key, SoftLock lock) {
+        log.trace("unlock item... key=[{}], lock=[{}]", key, lock);
         region.remove(key);
     }
 
@@ -78,6 +80,7 @@ public class ReadOnlyRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean afterInsert(Object key, Object value) {
+        log.trace("after insert... key=[{}], value=[{}]", key, value);
         region.put(key, value);
         return true;
     }

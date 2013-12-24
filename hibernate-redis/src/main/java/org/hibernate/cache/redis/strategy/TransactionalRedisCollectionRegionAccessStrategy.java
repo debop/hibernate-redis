@@ -52,7 +52,7 @@ public class TransactionalRedisCollectionRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) {
-        log.debug("retrive cache item in transactional. key=[{}]", key);
+        log.trace("retrive cache item in transactional. key=[{}]", key);
         return region.get(key);
     }
 
@@ -62,11 +62,11 @@ public class TransactionalRedisCollectionRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) {
-        log.debug("put after load... key=[{}], value=[{}], txTimestamp=[{}], minimalPutOverride=[{}]",
+        log.trace("put after load... key=[{}], value=[{}], txTimestamp=[{}], minimalPutOverride=[{}]",
                   key, value, txTimestamp, minimalPutOverride);
 
         if (minimalPutOverride && region.contains(key)) {
-            log.debug("minimalPutOverride and already contains cache item. key=[{}]", key);
+            log.trace("minimalPutOverride and already contains cache item. key=[{}]", key);
             return false;
         }
 
@@ -76,23 +76,17 @@ public class TransactionalRedisCollectionRegionAccessStrategy
 
     @Override
     public SoftLock lockItem(Object key, Object version) {
-        log.debug("lock item... key=[{}], version=[{}]", key, version);
         return null;
     }
 
     @Override
     public void unlockItem(Object key, SoftLock lock) {
-        log.debug("unlock item... key=[{}], lock=[{}]", key, lock);
         // nothing to do.
     }
 
     @Override
     public void remove(Object key) {
-        log.debug("remove cache item... key=[{}]", key);
-        try {
-            region.remove(key);
-        } catch (Exception e) {
-            log.warn("Fail to remove cache item... region=[{}], key=[{}]", region.getName(), key);
-        }
+        log.trace("remove cache item... key=[{}]", key);
+        region.remove(key);
     }
 }
