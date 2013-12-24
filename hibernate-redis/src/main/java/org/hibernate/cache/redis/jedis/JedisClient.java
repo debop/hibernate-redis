@@ -147,7 +147,7 @@ public class JedisClient {
             }
         });
         Object value = deserializeValue(rawValue);
-        log.trace("retrieve cache entity. region=[{}], key=[{}], value=[{}]", region, key, value);
+        log.debug("retrieve cache entity. region=[{}], key=[{}], value=[{}]", region, key, value);
         return value;
     }
 

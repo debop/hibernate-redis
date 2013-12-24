@@ -58,7 +58,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) {
-        log.debug("retrieve cache item in transactional. key=[{}]", key);
+        log.trace("retrieve cache item in transactional. key=[{}]", key);
         return region.get(key);
     }
 
@@ -69,6 +69,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean insert(Object key, Object value) {
+        log.trace("insert cache item... key=[{}], value=[{}]", key, value);
         region.put(key, value);
         return true;
     }
@@ -99,13 +100,12 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public void remove(Object key) {
-        log.debug("remove cache item... key=[{}]", key);
+        log.trace("remove cache item... key=[{}]", key);
         region.remove(key);
     }
 
     @Override
     public void unlockItem(Object key, SoftLock lock) {
-        log.debug("unlockItem... key=[{}], lock=[{}]", key, lock);
         // nothing to do
     }
 

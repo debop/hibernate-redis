@@ -22,8 +22,6 @@ import org.hibernate.cache.spi.access.SoftLock;
 import org.hibernate.cfg.Settings;
 
 import java.util.Comparator;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Superclass for all Redis specific read/write AccessStrategy implementations.
@@ -36,8 +34,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDataRegion>
         extends AbstractRedisAccessStrategy<T> {
 
-    private final UUID uuid = UUID.randomUUID();
-    private final AtomicLong nextLockId = new AtomicLong();
     private final Comparator versionComparator;
 
     /**
@@ -83,28 +79,5 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      */
     public final void unlockItem(Object key, SoftLock lock) {
         log.debug("unlock cache item... key=[{}], lock=[{}]", key, lock);
-    }
-
-
-    private long nextLockId() {
-        return nextLockId.getAndIncrement();
-    }
-
-    /**
-     * Read lock the entry for the given key if internal cache locks will not provide correct exclusion.
-     */
-    private void readLockIfNeeded(Object key) {
-        if (region.locksAreIndependentOfCache()) {
-            region.readLock(key);
-        }
-    }
-
-    /**
-     * Read unlock the entry for the given key if internal cache locks will not provide correct exclusion.
-     */
-    private void readUnlockIfNeeded(Object key) {
-        if (region.locksAreIndependentOfCache()) {
-            region.readUnlock(key);
-        }
     }
 }

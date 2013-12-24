@@ -62,7 +62,7 @@ public class ReadWriteRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean update(Object key, Object value) {
-        log.debug("update cache item... key=[{}], value=[{}], version=[{}]", key, value);
+        log.debug("update cache item... key=[{}], value=[{}], lock=[{}]", key, value);
         region.put(key, value);
         return true;
     }

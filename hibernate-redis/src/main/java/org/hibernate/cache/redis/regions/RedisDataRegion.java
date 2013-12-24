@@ -111,7 +111,9 @@ public abstract class RedisDataRegion implements Region {
     @Override
     public boolean contains(Object key) {
         try {
-            return redis.exists(name, key);
+            boolean exists = redis.exists(name, key);
+            log.debug("cache contains items? region=[{}], key=[{}], contains=[{}]", name, key, exists);
+            return exists;
         } catch (Exception e) {
             return false;
         }

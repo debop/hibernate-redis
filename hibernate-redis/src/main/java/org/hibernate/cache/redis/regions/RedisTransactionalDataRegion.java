@@ -71,9 +71,11 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     }
 
     public Object get(Object key) {
-        log.debug("get cache item... key=[{}]", key);
+        log.trace("get cache item... key=[{}]", key);
         try {
-            return redis.get(getName(), key);
+            Object value = redis.get(getName(), key);
+            log.debug("retrieve cache item... key=[{}], value=[{}]", key, value);
+            return value;
         } catch (Exception e) {
             log.warn("Fail to get cache item... key=" + key, e);
             return null;
@@ -82,7 +84,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
 
     public void put(Object key, Object value) {
-        log.debug("put cache item... key=[{}], value=[{}], expire=[{}]", key, value, getExpireInSeconds());
+        log.trace("put cache item... key=[{}], value=[{}], expire=[{}] sec", key, value, getExpireInSeconds());
         try {
             redis.set(getName(), key, value, getExpireInSeconds());
         } catch (Exception e) {
@@ -91,7 +93,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     }
 
     public void remove(Object key) throws CacheException {
-        log.debug("remove cache item... key=[{}]", key);
+        log.trace("remove cache item... key=[{}]", key);
         try {
             redis.del(getName(), key);
         } catch (Exception e) {
@@ -101,7 +103,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
 
     public void clear() {
-        log.debug("clear cache item... region=[{}]", getName());
+        log.trace("clear cache item... region=[{}]", getName());
         try {
             redis.deleteRegion(getName());
         } catch (Exception e) {
@@ -123,24 +125,6 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
     public void readUnlock(Object key) {
         // nothing to do.
-    }
-
-    public void evict(Object key) {
-        log.debug("evict cache item... key=[{}]", key);
-        try {
-            redis.del(getName(), key);
-        } catch (Exception e) {
-            log.warn("Fail to evict cache item... key=" + key, e);
-        }
-    }
-
-    public void evictAll() throws CacheException {
-        log.debug("evictAll cache items... region=[{}]", getName());
-        try {
-            redis.deleteRegion(getName());
-        } catch (Exception e) {
-            log.warn("Fail to evict all cache items... region=" + getName(), e);
-        }
     }
 
     /**

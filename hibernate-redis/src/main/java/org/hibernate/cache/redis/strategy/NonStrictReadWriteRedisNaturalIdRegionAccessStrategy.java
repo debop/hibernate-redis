@@ -16,6 +16,7 @@
 
 package org.hibernate.cache.redis.strategy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.redis.regions.RedisNaturalIdRegion;
 import org.hibernate.cache.spi.NaturalIdRegion;
 import org.hibernate.cache.spi.access.NaturalIdRegionAccessStrategy;
@@ -28,6 +29,7 @@ import org.hibernate.cfg.Settings;
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 5. 오후 11:06
  */
+@Slf4j
 public class NonStrictReadWriteRedisNaturalIdRegionAccessStrategy
         extends AbstractRedisAccessStrategy<RedisNaturalIdRegion>
         implements NaturalIdRegionAccessStrategy {
@@ -69,12 +71,13 @@ public class NonStrictReadWriteRedisNaturalIdRegionAccessStrategy
 
     @Override
     public void unlockItem(Object key, SoftLock lock) {
+        log.trace("unlock cache item... key=[{}], lock=[{}]", key, lock);
         region.remove(key);
     }
 
     @Override
     public boolean insert(Object key, Object value) {
-        return true;
+        return false;
     }
 
     @Override
@@ -84,18 +87,21 @@ public class NonStrictReadWriteRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean update(Object key, Object value) {
+        log.trace("update cache item... key=[{}], value=[{}]", key, value);
         remove(key);
         return false;
     }
 
     @Override
     public boolean afterUpdate(Object key, Object value, SoftLock lock) {
+        log.trace("after update cache item... key=[{}], value=[{}], lock=[{}]", key, value, lock);
         unlockItem(key, lock);
         return false;
     }
 
     @Override
     public void remove(Object key) {
+        log.trace("remove cache item... key=[{}]", key);
         region.remove(key);
     }
 }
