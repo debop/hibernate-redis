@@ -49,7 +49,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      * after the start of this transaction.
      */
     public final Object get(Object key, long txTimestamp) {
-        log.debug("get cache item... key=[{}], txTimestamp=[{}]", key, txTimestamp);
+        log.trace("get cache item... key=[{}], txTimestamp=[{}]", key, txTimestamp);
         return region.get(key);
     }
 
@@ -59,7 +59,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
                                      long txTimestamp,
                                      Object version,
                                      boolean minimalPutOverride) {
-        log.debug("set cache item after entity loading... key=[{}], value=[{}], txTimestamp=[{}], version=[{}], minimalPutOverride=[{}]",
+        log.trace("set cache item after entity loading... key=[{}], value=[{}], txTimestamp=[{}], version=[{}], minimalPutOverride=[{}]",
                   key, value, txTimestamp, version, minimalPutOverride);
 
         region.put(key, value);
@@ -70,7 +70,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      * Soft-lock a cache item.
      */
     public final SoftLock lockItem(Object key, Object version) {
-        log.debug("lock cache item... key=[{}], version=[{}]", key, version);
+        log.trace("lock cache item... key=[{}], version=[{}]", key, version);
         return null;
     }
 
@@ -78,6 +78,6 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      * Soft-unlock a cache item.
      */
     public final void unlockItem(Object key, SoftLock lock) {
-        log.debug("unlock cache item... key=[{}], lock=[{}]", key, lock);
+        log.trace("unlock cache item... key=[{}], lock=[{}]", key, lock);
     }
 }
