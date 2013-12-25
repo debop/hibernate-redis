@@ -3,6 +3,7 @@ package org.hibernate.examples.mapping.associations.manytoone;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.examples.model.AbstractHibernateEntity;
 import org.hibernate.examples.utils.HashTool;
 import org.hibernate.examples.utils.ToStringHelper;
@@ -16,6 +17,7 @@ import javax.persistence.*;
  * @since 2013. 11. 29. 오전 10:32
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class SalesGuy extends AbstractHibernateEntity<Long> {

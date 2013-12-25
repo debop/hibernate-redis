@@ -3,6 +3,7 @@ package org.hibernate.examples.mapping.compositeId.manytoone;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.examples.model.AbstractHibernateEntity;
@@ -22,6 +23,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(name = "CompositeId_OrderDetail")
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter

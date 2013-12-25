@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Type;
@@ -23,6 +24,7 @@ import java.util.Date;
  * @since 2013. 11. 28. 오후 3:49
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @SequenceGenerator(name = "employee_seq", sequenceName = "employee_seq")

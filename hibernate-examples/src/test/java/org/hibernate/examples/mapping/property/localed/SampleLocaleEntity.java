@@ -20,6 +20,7 @@ import java.util.Map;
  * @since 2013. 12. 3. 오후 4:16
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter

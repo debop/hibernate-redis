@@ -3,6 +3,7 @@ package org.hibernate.examples.mapping.inheritance.subclass;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.examples.model.AbstractHibernateEntity;
@@ -18,6 +19,7 @@ import javax.persistence.*;
  * @since 2013. 11. 30. 오후 2:11
  */
 @Entity(name = "Subclass_Billing")
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "BillingType", discriminatorType = DiscriminatorType.STRING)
 @DynamicInsert

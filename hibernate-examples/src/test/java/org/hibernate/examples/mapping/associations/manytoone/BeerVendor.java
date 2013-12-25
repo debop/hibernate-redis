@@ -3,6 +3,7 @@ package org.hibernate.examples.mapping.associations.manytoone;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.examples.model.AbstractHibernateEntity;
@@ -20,6 +21,7 @@ import javax.persistence.Id;
  * @since 2013. 12. 5. 오전 10:20
  */
 @Entity(name = "BeerVendor")
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter

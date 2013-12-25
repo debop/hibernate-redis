@@ -23,6 +23,7 @@ import java.util.Set;
  * @since 2013. 11. 29. 오후 1:04
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class OneToManyUser extends AbstractHibernateEntity<Long> {

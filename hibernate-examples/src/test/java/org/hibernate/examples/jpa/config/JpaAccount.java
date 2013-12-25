@@ -2,6 +2,7 @@ package org.hibernate.examples.jpa.config;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.examples.model.AbstractHibernateEntity;
 import org.hibernate.examples.utils.HashTool;
 import org.hibernate.examples.utils.ToStringHelper;
@@ -15,6 +16,7 @@ import javax.persistence.*;
  * @since 2013. 11. 28. 오후 10:31
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @NamedQuery(name = "JpaAccount.findByName", query = "select ja from JpaAccount ja where ja.name=?1")
 @Getter
 @Setter

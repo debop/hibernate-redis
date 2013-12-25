@@ -1,5 +1,6 @@
 package org.hibernate.examples.hibernate.config;
 
+import org.hibernate.examples.config.HibernateHSqlConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -11,7 +12,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @EnableTransactionManagement
-public class HibernateConfig extends AbstractHSqlHibernateConfiguration {
+public class HibernateConfig extends HibernateHSqlConfiguration {
 
     @Override
     public String[] getMappedPackageNames() {

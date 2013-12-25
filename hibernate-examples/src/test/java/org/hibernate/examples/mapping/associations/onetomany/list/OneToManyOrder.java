@@ -3,6 +3,7 @@ package org.hibernate.examples.mapping.associations.onetomany.list;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.examples.model.AbstractHibernateEntity;
@@ -20,6 +21,7 @@ import java.util.List;
  * @since 2013. 11. 29. 오후 1:17
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class OneToManyOrder extends AbstractHibernateEntity<Long> {
