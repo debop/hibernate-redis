@@ -6,8 +6,9 @@
 
     <groupId>org.hibernate</groupId>
     <artifactId>hibernate-redis-parent</artifactId>
-    <version>1.5.3-SNAPSHOT</version>
+    <version>1.5.3.RELEASE</version>
     <packaging>pom</packaging>
+    <url>https://github.com/debop/hibernate-redis</url>
 
     <modules>
         <module>hibernate-redis</module>

@@ -33,7 +33,7 @@ public class JpaQueryTest extends AbstractJpaTest {
         assertQuery(em, 4, em.createQuery("select h from Hypothesis h"));
         assertQuery(em, 4, em.createQuery("select h from " + hypothesisName + " h"));
         assertQuery(em, 1, em.createQuery("select h from Helicopter h"));
-        assertQuery(em, 5, em.createQuery("select o from java.lang.Object o"));
+        // assertQuery(em, 5, em.createQuery("select o from java.lang.Object o"));
     }
 
     @Test
