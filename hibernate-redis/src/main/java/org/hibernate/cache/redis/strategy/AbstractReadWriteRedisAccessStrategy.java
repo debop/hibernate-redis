@@ -71,6 +71,7 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      */
     public final SoftLock lockItem(Object key, Object version) {
         log.trace("lock cache item... key=[{}], version=[{}]", key, version);
+        region.remove(key);
         return null;
     }
 
@@ -79,5 +80,6 @@ public class AbstractReadWriteRedisAccessStrategy<T extends RedisTransactionalDa
      */
     public final void unlockItem(Object key, SoftLock lock) {
         log.trace("unlock cache item... key=[{}], lock=[{}]", key, lock);
+        region.remove(key);
     }
 }

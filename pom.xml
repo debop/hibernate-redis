@@ -11,12 +11,15 @@
 
     <modules>
         <module>hibernate-redis</module>
+        <module>hibernate-examples</module>
     </modules>
 
     <properties>
         <jdk.version>1.6</jdk.version>
         <hibernate.version>4.2.8.Final</hibernate.version>
         <springframework.version>3.2.5.RELEASE</springframework.version>
+        <querydsl.version>3.2.4</querydsl.version>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -81,37 +84,31 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
                 <version>${springframework.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
                 <version>${springframework.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
                 <version>${springframework.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-tx</artifactId>
                 <version>${springframework.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-orm</artifactId>
                 <version>${springframework.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${springframework.version}</version>
-                <scope>test</scope>
             </dependency>
 
             <!-- Spring Data -->
@@ -120,7 +117,6 @@
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-jpa</artifactId>
                 <version>1.4.2.RELEASE</version>
-                <scope>test</scope>
             </dependency>
 
             <!-- tomcat connection pool 성능이 좋다. -->
@@ -128,7 +124,6 @@
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jdbc</artifactId>
                 <version>7.0.47</version>
-                <scope>test</scope>
             </dependency>
 
             <!-- Database Drivers -->
@@ -136,7 +131,13 @@
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
                 <version>2.3.0</version>
-                <scope>test</scope>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>5.1.27</version>
+                <scope>provided</scope>
             </dependency>
 
             <!-- Test -->
