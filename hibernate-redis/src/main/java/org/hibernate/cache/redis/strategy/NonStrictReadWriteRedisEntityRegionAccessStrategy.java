@@ -45,6 +45,7 @@ public class NonStrictReadWriteRedisEntityRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) {
+        log.trace("get cache item... key=[{}], txTimestamp=[{}]", key, txTimestamp);
         return region.get(key);
     }
 
@@ -54,11 +55,14 @@ public class NonStrictReadWriteRedisEntityRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) {
-        if (minimalPutOverride && region.contains(key))
+        if (minimalPutOverride && region.contains(key)) {
+            log.trace("cancel put from load... minimalPutOverride=[true], contains=[true]");
             return false;
-
+        }
+        log.trace("엔티티 로드 후 2차 캐시에 저장합니다...key=[{}], value=[{}], txTimestamp=[{}]", key, value, txTimestamp);
         region.put(key, value);
         return true;
+
     }
 
     @Override

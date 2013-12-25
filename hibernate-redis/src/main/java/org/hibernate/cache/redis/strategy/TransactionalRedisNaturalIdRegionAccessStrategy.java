@@ -58,7 +58,7 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) {
-        log.trace("retrieve cache item in transactional. key=[{}]", key);
+        log.trace("retrieve cache item in transactional. key=[{}], txTimestamp=[{}]", key, txTimestamp);
         return region.get(key);
     }
 
@@ -85,14 +85,11 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) {
-        log.debug("put after load... key=[{}], value=[{}], txTimestamp=[{}], minimalPutOverride=[{}]",
-                  key, value, txTimestamp, minimalPutOverride);
-
         if (minimalPutOverride && region.contains(key)) {
-            log.debug("minimalPutOverride and already contains cache item. key=[{}]", key);
+            log.trace("minimalPutOverride and already contains cache item. key=[{}]", key);
             return false;
         }
-
+        log.trace("엔티티 로드 후 2차 캐시에 저장합니다...key=[{}], value=[{}], txTimestamp=[{}]", key, value, txTimestamp);
         region.put(key, value);
         return true;
     }
