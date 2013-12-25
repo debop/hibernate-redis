@@ -98,8 +98,12 @@ public abstract class RedisDataRegion implements Region {
      */
     @Override
     public void destroy() throws CacheException {
-        // NOTE: delete all cached item is not neccessory.
-        // NOTE: if you use multi servers, you don't need clear cache.
+        log.info("destroy region. all cache items is deleted. region=[{}]", name);
+        try {
+            redis.deleteRegion(name);
+        } catch (Exception e) {
+            log.warn("Fail to delete all cache items... region=" + name, e);
+        }
     }
 
     /**
@@ -114,7 +118,7 @@ public abstract class RedisDataRegion implements Region {
             boolean exists = redis.exists(name, key);
             log.debug("cache contains items? region=[{}], key=[{}], contains=[{}]", name, key, exists);
             return exists;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             return false;
         }
     }
@@ -123,8 +127,8 @@ public abstract class RedisDataRegion implements Region {
     public long getSizeInMemory() {
         try {
             return redis.dbSize();
-        } catch (Throwable t) {
-            log.warn("error", t);
+        } catch (Throwable e) {
+            log.warn("Fail to get count of cache items", e);
             return -1;
         }
     }
@@ -133,8 +137,8 @@ public abstract class RedisDataRegion implements Region {
     public long getElementCountInMemory() {
         try {
             return redis.keysInRegion(name).size();
-        } catch (Exception e) {
-            log.warn("error", e);
+        } catch (Throwable e) {
+            log.warn("Fail to get count of cache items", e);
             return -1;
         }
     }
@@ -149,8 +153,8 @@ public abstract class RedisDataRegion implements Region {
     public Map toMap() {
         try {
             return redis.hgetAll(name);
-        } catch (Exception e) {
-            log.warn("fail to build CacheEntry. return EmptyMap.", e);
+        } catch (Throwable e) {
+            log.warn("Fail to build CacheEntry. return EmptyMap.", e);
             return Collections.emptyMap();
         }
     }

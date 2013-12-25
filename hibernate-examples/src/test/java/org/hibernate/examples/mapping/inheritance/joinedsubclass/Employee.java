@@ -2,6 +2,7 @@ package org.hibernate.examples.mapping.inheritance.joinedsubclass;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
 import org.hibernate.examples.utils.HashTool;
@@ -16,6 +17,7 @@ import javax.persistence.*;
  * @since 2013. 11. 30. 오후 12:54
  */
 @Entity(name = "JoinedSubclass_Employee")
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Employee extends Person {

@@ -3,6 +3,7 @@ package org.hibernate.examples.mapping.associations.onetomany.list;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.examples.model.AbstractHibernateEntity;
 import org.hibernate.examples.utils.HashTool;
 import org.hibernate.examples.utils.ToStringHelper;
@@ -19,6 +20,7 @@ import java.util.Date;
  * @since 2013. 11. 29. 오후 1:12
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class OneToManyChild extends AbstractHibernateEntity<Long> {

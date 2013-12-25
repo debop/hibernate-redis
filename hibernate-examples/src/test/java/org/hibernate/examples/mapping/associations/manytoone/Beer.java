@@ -3,6 +3,7 @@ package org.hibernate.examples.mapping.associations.manytoone;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
 import org.hibernate.examples.model.AbstractHibernateEntity;
@@ -18,6 +19,7 @@ import javax.persistence.*;
  * @since 2013. 11. 29. 오전 9:37
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Beer extends AbstractHibernateEntity<Long> {

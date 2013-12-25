@@ -3,6 +3,7 @@ package org.hibernate.examples.mapping.queries;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.examples.model.AbstractHibernateEntity;
@@ -19,6 +20,7 @@ import javax.persistence.Id;
  * @since 2013. 12. 3. 오후 8:08
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter

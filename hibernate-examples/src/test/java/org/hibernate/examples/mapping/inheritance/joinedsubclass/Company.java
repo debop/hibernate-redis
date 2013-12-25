@@ -3,6 +3,7 @@ package org.hibernate.examples.mapping.inheritance.joinedsubclass;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.examples.model.AbstractHibernateEntity;
@@ -20,6 +21,7 @@ import javax.persistence.Id;
  * @since 2013. 11. 30. 오후 12:58
  */
 @Entity(name = "JoinedSubclass_Company")
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter

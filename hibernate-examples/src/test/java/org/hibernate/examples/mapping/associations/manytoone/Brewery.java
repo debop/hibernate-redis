@@ -3,14 +3,13 @@ package org.hibernate.examples.mapping.associations.manytoone;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
+import org.hibernate.annotations.*;
 import org.hibernate.examples.model.AbstractHibernateEntity;
 import org.hibernate.examples.utils.HashTool;
 import org.hibernate.examples.utils.ToStringHelper;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +21,7 @@ import java.util.Set;
  * @since 2013. 11. 29. 오전 9:40
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Brewery extends AbstractHibernateEntity<Long> {
