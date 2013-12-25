@@ -98,11 +98,15 @@ public abstract class RedisDataRegion implements Region {
      */
     @Override
     public void destroy() throws CacheException {
+        if (regionDeleted)
+            return;
         log.info("destroy region. all cache items is deleted. region=[{}]", name);
         try {
             redis.deleteRegion(name);
-        } catch (Exception e) {
-            log.warn("Fail to delete all cache items... region=" + name, e);
+        } catch (Exception ignored) {
+            log.warn("Fail to delete all cache items... region=" + name, ignored);
+        } finally {
+            regionDeleted = true;
         }
     }
 
@@ -118,7 +122,8 @@ public abstract class RedisDataRegion implements Region {
             boolean exists = redis.exists(name, key);
             log.debug("cache contains items? region=[{}], key=[{}], contains=[{}]", name, key, exists);
             return exists;
-        } catch (Throwable e) {
+        } catch (Throwable ignored) {
+            log.warn("Fail to check contains key... region=" + name, ignored);
             return false;
         }
     }
@@ -127,8 +132,8 @@ public abstract class RedisDataRegion implements Region {
     public long getSizeInMemory() {
         try {
             return redis.dbSize();
-        } catch (Throwable e) {
-            log.warn("Fail to get count of cache items", e);
+        } catch (Throwable ignored) {
+            log.warn("Fail to get count of cache items. region=" + name, ignored);
             return -1;
         }
     }
@@ -137,8 +142,8 @@ public abstract class RedisDataRegion implements Region {
     public long getElementCountInMemory() {
         try {
             return redis.keysInRegion(name).size();
-        } catch (Throwable e) {
-            log.warn("Fail to get count of cache items", e);
+        } catch (Throwable ignored) {
+            log.warn("Fail to get count of cache items. region=" + name, ignored);
             return -1;
         }
     }
