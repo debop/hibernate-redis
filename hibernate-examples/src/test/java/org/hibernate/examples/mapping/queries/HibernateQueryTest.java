@@ -33,7 +33,7 @@ public class HibernateQueryTest extends AbstractHibernateTest {
         assertQuery(session, 4, session.createQuery("from Hypothesis"));
         assertQuery(session, 4, session.createQuery("from " + hypothesiFullName));
         assertQuery(session, 1, session.createQuery("from Helicopter"));
-        assertQuery(session, 5, session.createQuery("from java.lang.Object"));
+        // assertQuery(session, 5, session.createQuery("from java.lang.Object"));
     }
 
     @Test

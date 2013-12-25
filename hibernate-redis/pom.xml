@@ -3,8 +3,7 @@
     <parent>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-redis-parent</artifactId>
-        <version>1.5.3-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <version>1.5.3.RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -12,7 +11,7 @@
     <packaging>jar</packaging>
 
     <name>hibernate-redis</name>
-    <url>http://maven.apache.org</url>
+    <url>https://github.com/debop/hibernate-redis</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
