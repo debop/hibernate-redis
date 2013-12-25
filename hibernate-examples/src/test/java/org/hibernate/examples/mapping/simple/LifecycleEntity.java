@@ -3,6 +3,7 @@ package org.hibernate.examples.mapping.simple;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.examples.model.AbstractHibernateEntity;
 import org.hibernate.examples.utils.HashTool;
@@ -17,6 +18,7 @@ import java.util.Date;
  * @since 2013. 11. 28. 오후 3:59
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class LifecycleEntity extends AbstractHibernateEntity<Long> {
