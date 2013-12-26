@@ -45,7 +45,7 @@ public class HibernateConfigTest {
         session.flush();
         session.clear();
 
-        Query query = session.createQuery("from Account a where a.id=:id").setLong("id", account.getId());
+        Query query = session.createQuery("from Account a where a.id=:id").setLong("id", account.getId()).setCacheable(true);
         Account a = (Account) query.uniqueResult();
         assertThat(a).isNotNull();
         assertThat(a.isPersisted()).isTrue();

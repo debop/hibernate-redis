@@ -40,7 +40,10 @@ public class HibernateQueryTest extends AbstractHibernateTest {
     public void testConstantParameterQueries() throws Exception {
         final Session session = getSession();
 
-        assertQuery(session, 1, session.createQuery("from Hypothesis h where h.description = 'stuff works'"));
+        Query query = session
+                .createQuery("from Hypothesis h where h.description = 'stuff works'")
+                .setCacheable(true);
+        assertQuery(session, 1, query);
     }
 
     @Test
@@ -49,7 +52,8 @@ public class HibernateQueryTest extends AbstractHibernateTest {
 
         Query query = session
                 .createQuery("from Hypothesis h where h.description = :myParam")
-                .setString("myParam", "stuff works");
+                .setString("myParam", "stuff works")
+                .setCacheable(true);
         assertQuery(session, 1, query);
     }
 
@@ -60,6 +64,8 @@ public class HibernateQueryTest extends AbstractHibernateTest {
 
     @Before
     public void setUp() throws Exception {
+        sessionFactory.getCache().evictEntityRegion(Hypothesis.class);
+        sessionFactory.getCache().evictEntityRegion(Helicopter.class);
 
         log.info("예제용 데이터 추가");
 

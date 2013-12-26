@@ -2,6 +2,7 @@ package org.hibernate.examples.mapping.inheritance.unionsubclass;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.examples.utils.HashTool;
@@ -17,6 +18,7 @@ import javax.persistence.Entity;
  * @since 2013. 12. 3. 오전 12:30
  */
 @Entity(name = "UnionSubsclass_BankAccount")
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter

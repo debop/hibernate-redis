@@ -71,7 +71,6 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     }
 
     public Object get(Object key) {
-        log.trace("get cache item... key=[{}]", key);
         try {
             Object value = redis.get(getName(), key);
             log.debug("retrieve cache item... key=[{}], value=[{}]", key, value);

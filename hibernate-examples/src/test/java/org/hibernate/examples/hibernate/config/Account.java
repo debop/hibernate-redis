@@ -2,6 +2,7 @@ package org.hibernate.examples.hibernate.config;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.examples.model.AbstractHibernateEntity;
 import org.hibernate.examples.utils.HashTool;
 import org.hibernate.examples.utils.ToStringHelper;
@@ -18,6 +19,7 @@ import javax.persistence.Id;
  * @since 2013. 11. 28. 오전 9:44
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Account extends AbstractHibernateEntity<Long> {

@@ -2,6 +2,7 @@ package org.hibernate.examples.mapping.inheritance.subclass;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.examples.utils.HashTool;
@@ -18,6 +19,7 @@ import javax.persistence.Entity;
  */
 @Entity(name = "Subclass_BankAccount")
 @DiscriminatorValue(value = "BankAccount")
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter

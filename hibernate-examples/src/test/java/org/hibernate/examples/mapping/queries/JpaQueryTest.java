@@ -38,7 +38,8 @@ public class JpaQueryTest extends AbstractJpaTest {
 
     @Test
     public void testConstantParameterQueries() throws Exception {
-        assertQuery(em, 1, em.createQuery("select h from Hypothesis h where h.description = 'stuff works'"));
+        Query query = em.createQuery("select h from Hypothesis h where h.description = 'stuff works'");
+        assertQuery(em, 1, query);
     }
 
     @Test
@@ -49,6 +50,7 @@ public class JpaQueryTest extends AbstractJpaTest {
         assertQuery(em, 1, query);
     }
 
+    //@QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     private void assertQuery(final EntityManager em, final int expectedSize, final Query testedQuery) {
         assertThat(testedQuery.getResultList()).as("Query failed").hasSize(expectedSize);
         em.clear();
@@ -56,6 +58,8 @@ public class JpaQueryTest extends AbstractJpaTest {
 
     @Before
     public void setUp() throws Exception {
+        em.getEntityManagerFactory().getCache().evict(Hypothesis.class);
+        em.getEntityManagerFactory().getCache().evict(Helicopter.class);
 
         log.debug("예제용 데이터 추가");
 

@@ -3,6 +3,7 @@ package org.hibernate.examples.mapping.associations.onetomany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.examples.model.AbstractHibernateEntity;
 import org.hibernate.examples.utils.HashTool;
 import org.hibernate.examples.utils.ToStringHelper;
@@ -18,6 +19,7 @@ import javax.persistence.Id;
  * @since 2013. 11. 29. 오후 1:04
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class OneToManyAddress extends AbstractHibernateEntity<Long> {

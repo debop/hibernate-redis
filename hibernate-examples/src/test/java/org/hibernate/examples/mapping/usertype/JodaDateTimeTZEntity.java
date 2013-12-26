@@ -2,10 +2,7 @@ package org.hibernate.examples.mapping.usertype;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.*;
 import org.hibernate.examples.model.AbstractHibernateEntity;
 import org.hibernate.examples.utils.HashTool;
 import org.hibernate.examples.utils.ToStringHelper;
@@ -23,6 +20,7 @@ import javax.persistence.Id;
  * @since 2013. 12. 9. 오전 9:40
  */
 @Entity
+@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter

@@ -2,8 +2,10 @@ package org.hibernate.examples.mapping.tree;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
+import javax.persistence.QueryHint;
 import java.util.List;
 
 /**
@@ -20,6 +22,7 @@ public interface TreeNodeRepository extends JpaRepository<TreeNode, Long>, Query
      * @return
      */
     @Query("select node from TreeNode node where node.parent is null")
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     List<TreeNode> findRoots();
 
     /**
@@ -28,5 +31,6 @@ public interface TreeNodeRepository extends JpaRepository<TreeNode, Long>, Query
      *
      * @return
      */
+    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     List<TreeNode> findByParentIsNull();
 }
