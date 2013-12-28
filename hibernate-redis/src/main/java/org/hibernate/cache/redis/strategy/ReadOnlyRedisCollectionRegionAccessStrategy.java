@@ -31,8 +31,8 @@ import org.hibernate.cfg.Settings;
  */
 @Slf4j
 public class ReadOnlyRedisCollectionRegionAccessStrategy
-    extends AbstractRedisAccessStrategy<RedisCollectionRegion>
-    implements CollectionRegionAccessStrategy {
+        extends AbstractRedisAccessStrategy<RedisCollectionRegion>
+        implements CollectionRegionAccessStrategy {
 
     public ReadOnlyRedisCollectionRegionAccessStrategy(RedisCollectionRegion region, Settings settings) {
         super(region, settings);
@@ -54,9 +54,12 @@ public class ReadOnlyRedisCollectionRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) {
-        if (minimalPutOverride && region.contains(key))
+        if (minimalPutOverride && region.contains(key)) {
+            log.trace("cancel put from load... minimalPutOverride=[true], contains=[true]");
             return false;
+        }
 
+        log.trace("set cache item after entity loading... key=[{}], value=[{}], txTimestamp=[{}]", key, value, txTimestamp);
         region.put(key, value);
         return true;
     }

@@ -62,26 +62,26 @@ public class TransactionalRedisEntityRegionAccessStrategy
                                long txTimestamp,
                                Object version,
                                boolean minimalPutOverride) {
-        log.trace("put after load... key=[{}], value=[{}], txTimestamp=[{}], minimalPutOverride=[{}]",
-                  key, value, txTimestamp, minimalPutOverride);
-
         if (minimalPutOverride && region.contains(key)) {
-            log.trace("minimalPutOverride and already contains cache item. key=[{}]", key);
+            log.trace("cancel put from load... minimalPutOverride=[true], contains=[true]");
             return false;
         }
-
+        log.trace("set cache item after entity loading... key=[{}], value=[{}], txTimestamp=[{}]", key, value, txTimestamp);
         region.put(key, value);
         return true;
     }
 
     @Override
     public SoftLock lockItem(Object key, Object version) {
+        log.trace("lock cache item... key=[{}], version=[{}]", key, version);
+        region.remove(key);
         return null;
     }
 
     @Override
     public void unlockItem(Object key, SoftLock lock) {
-        // nothing to do
+        log.trace("unlock cache item... key=[{}], lock=[{}]", key, lock);
+        region.remove(key);
     }
 
     @Override
