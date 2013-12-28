@@ -110,21 +110,21 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
         }
     }
 
-    public void writeLock(Object key) {
-        // nothing to do.
-    }
-
-    public void writeUnlock(Object key) {
-        // nothing to do.
-    }
-
-    public void readLock(Object key) {
-        // nothing to do.
-    }
-
-    public void readUnlock(Object key) {
-        // nothing to do.
-    }
+//    public void writeLock(Object key) {
+//        // nothing to do.
+//    }
+//
+//    public void writeUnlock(Object key) {
+//        // nothing to do.
+//    }
+//
+//    public void readLock(Object key) {
+//        // nothing to do.
+//    }
+//
+//    public void readUnlock(Object key) {
+//        // nothing to do.
+//    }
 
     /**
      * Returns <code>true</code> if the locks used by the locking methods of this region are the independent of the cache.
@@ -132,7 +132,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
      * Independent locks are not locked by the cache when the cache is accessed directly.  This means that for an independent lock
      * lock holds taken through a region method will not block direct access to the cache via other means.
      */
-    public final boolean locksAreIndependentOfCache() {
-        return false;
-    }
+//    public final boolean locksAreIndependentOfCache() {
+//        return false;
+//    }
 }
