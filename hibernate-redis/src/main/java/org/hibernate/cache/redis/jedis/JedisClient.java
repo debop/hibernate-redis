@@ -135,6 +135,18 @@ public class JedisClient {
      * @return return cached entity, if not exists return null.
      */
     public Object get(final String region, final Object key) {
+        return get(region, key, 0);
+    }
+
+    /**
+     * Get cache
+     *
+     * @param region              region name
+     * @param key                 cache key
+     * @param expirationInSeconds expiration timeout in seconds
+     * @return return cached entity, if not exists return null.
+     */
+    public Object get(final String region, final Object key, final int expirationInSeconds) {
         log.trace("retrieve cache... region=[{}], key=[{}]", region, key);
 
         final byte[] rawRegion = rawRegion(region);
@@ -146,6 +158,20 @@ public class JedisClient {
                 return jedis.hget(rawRegion, rawKey);
             }
         });
+        // 참조 후에는 Expiration 값을 늘려야 합니다.
+        if (rawValue != null && rawValue.length > 0) {
+            if (expirationInSeconds > 0 && !region.contains("UpdateTimestampsCache")) {
+                run(new JedisCallback<Object>() {
+                    @Override
+                    public Object execute(Jedis jedis) {
+                        final byte[] rawZkey = rawZkey(region);
+                        final long score = System.currentTimeMillis() + expirationInSeconds * 1000L;
+                        return jedis.zadd(rawZkey, score, rawKey);
+                    }
+                });
+            }
+        }
+
         Object value = deserializeValue(rawValue);
         log.debug("retrieve cache entity. region=[{}], key=[{}], value=[{}]", region, key, value);
         return value;
@@ -181,6 +207,7 @@ public class JedisClient {
      * @param region region
      * @return cache item count in region
      */
+
     public Long keySizeInRegion(final String region) {
         final byte[] rawRegion = rawRegion(region);
         return run(new JedisCallback<Long>() {
