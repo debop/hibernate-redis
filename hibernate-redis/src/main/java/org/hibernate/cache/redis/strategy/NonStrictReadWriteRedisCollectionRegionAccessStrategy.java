@@ -61,7 +61,7 @@ public class NonStrictReadWriteRedisCollectionRegionAccessStrategy
             log.trace("cancel put from load... minimalPutOverride=[true], contains=[true]");
             return false;
         }
-        log.trace("엔티티 로드 후 2차 캐시에 저장합니다...key=[{}], value=[{}], txTimestamp=[{}]", key, value, txTimestamp);
+        log.trace("set cache item after entity loading... key=[{}], value=[{}], txTimestamp=[{}]", key, value, txTimestamp);
         region.put(key, value);
         return true;
     }

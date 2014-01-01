@@ -41,10 +41,10 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
 
     @Override
     public Object get(Object key) {
-        log.trace("get cache item... key=[{}]", key);
+        log.trace("get cache item... key=[{}], expiration=[{}] sec", key, getExpireInSeconds());
         if (key == null) return null;
         try {
-            Object value = redis.get(getName(), key);
+            Object value = redis.get(getName(), key, getExpireInSeconds());
             log.debug("get cache item... key=[{}], value=[{}]", key, value);
             return value;
         } catch (Exception e) {

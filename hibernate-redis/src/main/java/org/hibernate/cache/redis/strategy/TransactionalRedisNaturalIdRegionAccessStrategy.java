@@ -76,6 +76,8 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public SoftLock lockItem(Object key, Object version) {
+        log.trace("lock cache item... key=[{}], version=[{}]", key, version);
+        region.remove(key);
         return null;
     }
 
@@ -86,10 +88,10 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
                                Object version,
                                boolean minimalPutOverride) {
         if (minimalPutOverride && region.contains(key)) {
-            log.trace("minimalPutOverride and already contains cache item. key=[{}]", key);
+            log.trace("cancel put from load... minimalPutOverride=[true], contains=[true]");
             return false;
         }
-        log.trace("엔티티 로드 후 2차 캐시에 저장합니다...key=[{}], value=[{}], txTimestamp=[{}]", key, value, txTimestamp);
+        log.trace("set cache item after entity loading... key=[{}], value=[{}], txTimestamp=[{}]", key, value, txTimestamp);
         region.put(key, value);
         return true;
     }
@@ -103,7 +105,8 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public void unlockItem(Object key, SoftLock lock) {
-        // nothing to do
+        log.trace("unlock cache item... key=[{}], lock=[{}]", key, lock);
+        region.remove(key);
     }
 
     @Override
