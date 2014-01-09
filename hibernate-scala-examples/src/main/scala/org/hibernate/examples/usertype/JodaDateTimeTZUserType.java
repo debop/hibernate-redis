@@ -81,7 +81,7 @@ public class JodaDateTimeTZUserType implements UserType {
 
     @Override
     public boolean isMutable() {
-        return false;
+        return true;
     }
 
     @Override
