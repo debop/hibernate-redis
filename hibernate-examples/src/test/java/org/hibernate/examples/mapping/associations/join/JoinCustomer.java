@@ -4,8 +4,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import org.hibernate.examples.model.AbstractHibernateEntity;
 import org.hibernate.examples.utils.HashTool;
 import org.hibernate.examples.utils.ToStringHelper;
@@ -50,14 +48,24 @@ public class JoinCustomer extends AbstractHibernateEntity<Long> {
     private JoinAddress joinAddress = new JoinAddress();
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Generated(GenerationTime.INSERT)
-    @Column(name = "CreatedAt", insertable = false, updatable = false)
+    // @Generated(GenerationTime.INSERT)
+    @Column(name = "createdAt", insertable = false, updatable = false)
     private Date createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Generated(GenerationTime.ALWAYS)
-    @Column(name = "UpdatedAt", insertable = false, updatable = false)
+    // @Generated(GenerationTime.ALWAYS)
+    @Column(name = "updatedAt", insertable = false, updatable = false)
     private Date updatedAt;
+
+    @PrePersist
+    private void onPrePersist() {
+        createdAt = new Date();
+    }
+
+    @PreUpdate
+    private void onPreUpdate() {
+        updatedAt = new Date();
+    }
 
     @Override
     public int hashCode() {

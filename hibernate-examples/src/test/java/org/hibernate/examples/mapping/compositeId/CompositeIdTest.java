@@ -43,6 +43,22 @@ public class CompositeIdTest extends AbstractJpaTest {
         assertThat(loaded).isNotNull();
         assertThat(loaded.getId()).isNotNull();
         assertThat(loaded.getId().getBrand()).isEqualTo("Kia");
+
+        loaded.setSerialNo("5081");
+        em.persist(loaded);
+        em.flush();
+        em.clear();
+
+        loaded = em.find(EmbeddableIdCar.class, new EmbeddableCarIdentifier("Kia", 2012));
+
+        assertThat(loaded).isNotNull();
+
+        em.remove(loaded);
+        em.flush();
+        em.clear();
+
+        loaded = em.find(EmbeddableIdCar.class, new EmbeddableCarIdentifier("Kia", 2012));
+        assertThat(loaded).isNull();
     }
 
     @Test
@@ -61,6 +77,24 @@ public class CompositeIdTest extends AbstractJpaTest {
         assertThat(loaded).isNotNull();
         assertThat(loaded.getBrand()).isNotNull();
         assertThat(loaded.getBrand()).isEqualTo("Kia");
+
+        loaded.setSerialNo("5081");
+        em.persist(loaded);
+        em.flush();
+        em.clear();
+
+        loaded = em.find(IdClassCar.class, new CarIdentifier("Kia", 2012));
+
+        assertThat(loaded).isNotNull();
+        assertThat(loaded.getBrand()).isNotNull();
+        assertThat(loaded.getBrand()).isEqualTo("Kia");
+
+        em.remove(loaded);
+        em.flush();
+        em.clear();
+
+        loaded = em.find(IdClassCar.class, new CarIdentifier("Kia", 2012));
+        assertThat(loaded).isNull();
     }
 
     @Test
@@ -85,5 +119,20 @@ public class CompositeIdTest extends AbstractJpaTest {
         assertThat(loaded).isNotNull();
         assertThat(loaded.getId().getOrder()).isNotNull();
         assertThat(loaded.getId().getProduct()).isNotNull();
+
+        loaded.setQuantity(12);
+        em.persist(loaded);
+        em.flush();
+        em.clear();
+
+        loaded = em.find(OrderDetail.class, detail.getId());
+
+        assertThat(loaded).isNotNull();
+        assertThat(loaded.getId().getOrder()).isNotNull();
+        assertThat(loaded.getId().getProduct()).isNotNull();
+
+        em.remove(loaded);
+        em.flush();
+        em.clear();
     }
 }

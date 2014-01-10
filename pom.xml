@@ -20,9 +20,9 @@
         <jdk.version>1.6</jdk.version>
         <scala.version>2.10.3</scala.version>
 
-        <hibernate.version>4.2.8.Final</hibernate.version>
-        <springframework.version>3.2.5.RELEASE</springframework.version>
-        <querydsl.version>3.2.4</querydsl.version>
+        <hibernate.version>4.3.0.Final</hibernate.version>
+        <springframework.version>4.0.0.RELEASE</springframework.version>
+        <querydsl.version>3.3.0</querydsl.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
