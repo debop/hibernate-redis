@@ -17,7 +17,7 @@
     </modules>
 
     <properties>
-        <jdk.version>1.6</jdk.version>
+        <jdk.version>1.7</jdk.version>
         <scala.version>2.10.3</scala.version>
 
         <hibernate.version>4.3.0.Final</hibernate.version>
