@@ -29,7 +29,7 @@ public class OneToManyMapTest extends AbstractJpaTest {
         OneToManyCar car = new OneToManyCar();
 
         OneToManyCarOption option1 = new OneToManyCarOption("option1", 1);
-        OneToManyCarOption option2 = new OneToManyCarOption("option12", 1);
+        OneToManyCarOption option2 = new OneToManyCarOption("option2", 1);
 
         car.getCarOptions().put("option1", option1);
         car.getCarOptions().put("option2", option2);
