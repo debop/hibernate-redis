@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.hibernate</groupId>
+    <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis-parent</artifactId>
     <version>1.5.6-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -17,10 +17,10 @@
     </modules>
 
     <properties>
-        <jdk.version>1.7</jdk.version>
+        <jdk.version>1.6</jdk.version>
         <scala.version>2.10.3</scala.version>
 
-        <hibernate.version>4.3.0.Final</hibernate.version>
+        <hibernate.version>4.3.1.Final</hibernate.version>
         <springframework.version>4.0.0.RELEASE</springframework.version>
         <querydsl.version>3.3.0</querydsl.version>
 
