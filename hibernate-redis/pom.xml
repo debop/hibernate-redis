@@ -3,7 +3,8 @@
     <parent>
         <groupId>com.github.debop</groupId>
         <artifactId>hibernate-redis-parent</artifactId>
-        <version>1.5.6-SNAPSHOT</version>
+        <version>1.5.6</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

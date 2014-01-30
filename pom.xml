@@ -6,7 +6,7 @@
 
     <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis-parent</artifactId>
-    <version>1.5.6-SNAPSHOT</version>
+    <version>1.5.6</version>
     <packaging>pom</packaging>
     <url>https://github.com/debop/hibernate-redis</url>
 
@@ -15,6 +15,18 @@
         <module>hibernate-examples</module>
         <module>hibernate-scala-examples</module>
     </modules>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/debop/hibernate-redis</url>
+    </scm>
 
     <properties>
         <jdk.version>1.6</jdk.version>
@@ -295,14 +307,6 @@
                     <!--<encoding>${project.build.sourceEncoding}</encoding>-->
                 </configuration>
                 <executions>
-                    <!--<execution>-->
-                    <!--<id>scala-compile-first</id>-->
-                    <!--<phase>process-resources</phase>-->
-                    <!--<goals>-->
-                    <!--<goal>add-source</goal>-->
-                    <!--<goal>compile</goal>-->
-                    <!--</goals>-->
-                    <!--</execution>-->
                     <execution>
                         <id>compile</id>
                         <goals>
@@ -362,6 +366,22 @@
                                 <arg>-explaintypes</arg>
                             </args>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- For signing -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
