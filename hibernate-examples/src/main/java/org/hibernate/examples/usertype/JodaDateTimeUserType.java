@@ -1,5 +1,6 @@
 package org.hibernate.examples.usertype;
 
+import com.google.common.base.Objects;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.type.StandardBasicTypes;
@@ -11,7 +12,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * Joda-Time 라이브러리의 {@link DateTime} 수형을 표현하는 UserType 입니다.
@@ -45,7 +45,7 @@ public class JodaDateTimeUserType implements UserType {
 
     @Override
     public boolean equals(Object x, Object y) throws HibernateException {
-        return Objects.equals(x, y);
+        return Objects.equal(x, y);
     }
 
     @Override
