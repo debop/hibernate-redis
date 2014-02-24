@@ -51,6 +51,9 @@ public class Employee extends AbstractHibernateEntity<Long> implements UpdatedTi
     @Temporal(TemporalType.DATE)
     private Date birthday;
 
+    @Lob
+    private byte[] binaryData;
+
     @Type(type="org.hibernate.examples.usertype.JodaDateTimeUserType")
     private DateTime hireDate;
     /**

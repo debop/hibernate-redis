@@ -71,7 +71,7 @@ public final class JedisTool {
 
     private static JedisPoolConfig createJedisPoolConfig() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxActive(64);
+        poolConfig.setMaxTotal(256);
         poolConfig.setMinIdle(2);
         return poolConfig;
     }
