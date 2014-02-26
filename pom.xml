@@ -33,7 +33,7 @@
         <scala.version>2.10.3</scala.version>
 
         <hibernate.version>4.3.1.Final</hibernate.version>
-        <springframework.version>4.0.0.RELEASE</springframework.version>
+        <springframework.version>4.0.2.RELEASE</springframework.version>
         <querydsl.version>3.3.0</querydsl.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -156,14 +156,14 @@
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-jpa</artifactId>
-                <version>1.4.2.RELEASE</version>
+                <version>1.4.4.RELEASE</version>
             </dependency>
 
             <!-- tomcat connection pool 성능이 좋다. -->
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jdbc</artifactId>
-                <version>7.0.47</version>
+                <version>7.0.52</version>
             </dependency>
 
             <!-- Database Drivers -->

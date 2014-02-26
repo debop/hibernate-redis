@@ -11,7 +11,7 @@ import org.hibernate.examples.utils.{ToStringHelper, Hashs}
  * @since 2014. 1. 9. 오후 4:23
  */
 @Entity
-@org.hibernate.annotations.AccessType("field") // AccessType을 지정하면 getter/setter 가 필요없다.
+@Access(AccessType.FIELD)
 @NamedQuery(name = "JpaAccount.findByName", query = "select ja from JpaAccount ja where ja.name=?1")
 @SerialVersionUID(8986275418970766284L)
 class JpaAccount extends HibernateEntity[java.lang.Long] {
@@ -28,5 +28,6 @@ class JpaAccount extends HibernateEntity[java.lang.Long] {
     var name: String = _
 
     override def hashCode(): Int = Hashs.compute(name)
+
     override protected def buildStringHelper: ToStringHelper = super.buildStringHelper.add("name", name)
 }

@@ -9,12 +9,7 @@ import org.hibernate.examples.utils.ToStringHelper;
 
 import javax.persistence.*;
 
-/**
- * org.hibernate.examples.jpa.config.JpaAccount
- *
- * @author 배성혁 sunghyouk.bae@gmail.com
- * @since 2013. 11. 28. 오후 10:31
- */
+
 @Entity
 @org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
 @NamedQuery(name = "JpaAccount.findByName", query = "select ja from JpaAccount ja where ja.name=?1")
