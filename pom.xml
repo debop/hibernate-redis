@@ -152,7 +152,7 @@
             </dependency>
 
             <!-- Spring Data -->
-            <!-- Spring Data 의 모든 버전은 spring-data-jpa 가 참조하는 버전을 기준으로 하세요 -->
+            <!-- 1.5.0 conflit hibernate 4.3.x -->
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-jpa</artifactId>

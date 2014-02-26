@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import javax.persistence.QueryHint;
 import java.util.Date;
@@ -17,7 +16,6 @@ import java.util.List;
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 12. 21. 오후 5:59
  */
-@Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
     // NOTE: JPQL 결과 셋을 2nd level cache 에 저장하기 위해 @QueryHints 를 사용합니다.

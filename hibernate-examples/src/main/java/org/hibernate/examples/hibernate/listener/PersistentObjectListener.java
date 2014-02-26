@@ -22,7 +22,7 @@ public class PersistentObjectListener implements PostLoadEventListener, PostInse
         }
     }
 
-    @Override
+    // @Override
     public boolean requiresPostCommitHanding(EntityPersister persister) {
         return false;
     }

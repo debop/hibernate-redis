@@ -15,7 +15,8 @@ import java.io.Serializable;
  * @since 2013. 11. 27. 오후 2:36
  */
 @MappedSuperclass
-public abstract class AbstractHibernateEntity<TId extends Serializable> extends AbstractPersistentObject implements HibernateEntity<TId> {
+public abstract class AbstractHibernateEntity<TId extends Serializable>
+        extends AbstractPersistentObject implements HibernateEntity<TId> {
 
     abstract public TId getId();
 
