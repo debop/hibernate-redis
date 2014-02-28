@@ -56,8 +56,8 @@ public class JedisClient {
     private StringRedisSerializer regionSerializer = new StringRedisSerializer();
 
     @Getter
-    // private StringRedisSerializer keySerializer = new StringRedisSerializer();
-    private RedisSerializer<Object> keySerializer = new BinaryRedisSerializer<Object>();
+    private StringRedisSerializer keySerializer = new StringRedisSerializer();
+    // private RedisSerializer<Object> keySerializer = new BinaryRedisSerializer<Object>();
 
     @Getter
     private RedisSerializer<Object> valueSerializer = new BinaryRedisSerializer<Object>();
@@ -427,7 +427,7 @@ public class JedisClient {
      * 키를 byte[] 로 직렬화합니다 *
      */
     private byte[] rawKey(final Object key) {
-        return getKeySerializer().serialize(key);
+        return keySerializer.serialize(key.toString());
     }
 
     @SuppressWarnings("unchecked")
