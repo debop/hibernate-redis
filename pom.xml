@@ -171,7 +171,6 @@
                 <groupId>com.jolbox</groupId>
                 <artifactId>bonecp</artifactId>
                 <version>0.8.0.RELEASE</version>
-                <scope>test</scope>
             </dependency>
 
             <!-- Database Drivers -->

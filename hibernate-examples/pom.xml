@@ -136,11 +136,16 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- tomcat connection pool 성능이 좋다. -->
+        <!-- Bone CP -->
         <dependency>
-            <groupId>org.apache.tomcat</groupId>
+            <groupId>com.jolbox</groupId>
+            <artifactId>bonecp</artifactId>
+        </dependency>
+        <dependency>
+        <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jdbc</artifactId>
         </dependency>
+
 
         <!-- Database Drivers -->
         <dependency>

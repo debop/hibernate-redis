@@ -1,5 +1,6 @@
 package org.hibernate.examples.utils;
 
+import com.jolbox.bonecp.BoneCPDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 
@@ -40,9 +41,41 @@ public class DataSources {
      * @return [[javax.sql.DataSource]] 인스턴스
      */
     public static DataSource getDataSource(String driverClass, String url, String username, String passwd) {
-        return getTomcatDataSource(driverClass, url, username, passwd);
+        return getBoneCPDataSource(driverClass, url, username, passwd);
+        // return getTomcatDataSource(driverClass, url, username, passwd);
     }
 
+    /**
+     * BoneCP DataSource 를 빌드합니다.
+     *
+     * @param driverClass DriverClass 명
+     * @param url         Database 주소
+     * @param username    사용자 명
+     * @param passwd      사용자 패스워드
+     * @return [[javax.sql.DataSource]] 인스턴스
+     */
+    public static DataSource getBoneCPDataSource(String driverClass, String url, String username, String passwd) {
+
+        BoneCPDataSource ds = new BoneCPDataSource();
+        ds.setDriverClass(driverClass);
+        ds.setJdbcUrl(url);
+        ds.setUser(username);
+        ds.setPassword(passwd);
+
+        int processCount = Runtime.getRuntime().availableProcessors();
+
+        ds.setMaxConnectionsPerPartition(100);
+        ds.setMinConnectionsPerPartition(processCount);
+        ds.setPartitionCount(4);
+
+        ds.setIdleMaxAgeInSeconds(120);
+        ds.setIdleConnectionTestPeriodInSeconds(60);
+        ds.setMaxConnectionAgeInSeconds(300);
+
+        ds.setDisableJMX(true);
+
+        return ds;
+    }
 
     /**
      * Tomcat DataSource 를 빌드합니다.

@@ -1,5 +1,6 @@
 package org.hibernate.examples.utils
 
+import com.jolbox.bonecp.BoneCPDataSource
 import javax.sql.DataSource
 import org.apache.tomcat.jdbc.pool.PoolProperties
 import scala.Predef.String
@@ -38,7 +39,30 @@ object DataSources {
      * @return [[javax.sql.DataSource]] 인스턴스
      */
     def getDataSource(driverClass: String, url: String, username: String, passwd: String): DataSource =
-        getTomcatDataSource(driverClass, url, username, passwd)
+        getBoneCPDataSource(driverClass, url, username, passwd)
+
+    // getTomcatDataSource(driverClass, url, username, passwd)
+
+    def getBoneCPDataSource(driverClass: String, url: String, username: String, passwd: String): DataSource = {
+
+        val ds = new BoneCPDataSource()
+        ds.setDriverClass(driverClass)
+        ds.setJdbcUrl(url)
+        ds.setUsername(username)
+        ds.setPassword(passwd)
+
+        val processCount = Runtime.getRuntime.availableProcessors()
+
+        ds.setMaxConnectionsPerPartition(50)
+        ds.setMinConnectionsPerPartition(2)
+        ds.setPartitionCount(processCount)
+
+        ds.setIdleMaxAgeInSeconds(120)
+        ds.setIdleConnectionTestPeriodInSeconds(60)
+        ds.setMaxConnectionAgeInSeconds(360)
+
+        ds
+    }
 
     /**
      * Tomcat DataSource 를 빌드합니다.
