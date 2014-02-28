@@ -52,7 +52,7 @@ public class TransactionalRedisCollectionRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) {
-        log.trace("retrive cache item in transactional. key=[{}]", key);
+
         return region.get(key);
     }
 
@@ -63,30 +63,25 @@ public class TransactionalRedisCollectionRegionAccessStrategy
                                Object version,
                                boolean minimalPutOverride) {
         if (minimalPutOverride && region.contains(key)) {
-            log.trace("cancel put from load... minimalPutOverride=[true], contains=[true]");
             return false;
         }
-        log.trace("set cache item after entity loading... key=[{}], value=[{}], txTimestamp=[{}]", key, value, txTimestamp);
         region.put(key, value);
         return true;
     }
 
     @Override
     public SoftLock lockItem(Object key, Object version) {
-        log.trace("lock cache item... key=[{}], version=[{}]", key, version);
         region.remove(key);
         return null;
     }
 
     @Override
     public void unlockItem(Object key, SoftLock lock) {
-        log.trace("unlock cache item... key=[{}], lock=[{}]", key, lock);
         region.remove(key);
     }
 
     @Override
     public void remove(Object key) {
-        log.trace("remove cache item... key=[{}]", key);
         region.remove(key);
     }
 }

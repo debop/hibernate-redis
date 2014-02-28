@@ -47,7 +47,6 @@ public class NonStrictReadWriteRedisCollectionRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) {
-        log.trace("get cache item... key=[{}], txTimestamp=[{}]", key, txTimestamp);
         return region.get(key);
     }
 
@@ -58,10 +57,8 @@ public class NonStrictReadWriteRedisCollectionRegionAccessStrategy
                                Object version,
                                boolean minimalPutOverride) {
         if (minimalPutOverride && region.contains(key)) {
-            log.trace("cancel put from load... minimalPutOverride=[true], contains=[true]");
             return false;
         }
-        log.trace("set cache item after entity loading... key=[{}], value=[{}], txTimestamp=[{}]", key, value, txTimestamp);
         region.put(key, value);
         return true;
     }
@@ -73,7 +70,6 @@ public class NonStrictReadWriteRedisCollectionRegionAccessStrategy
 
     @Override
     public void unlockItem(Object key, SoftLock lock) {
-        log.trace("unlock cache item... key=[{}], lock=[{}]", key, lock);
         region.remove(key);
     }
 

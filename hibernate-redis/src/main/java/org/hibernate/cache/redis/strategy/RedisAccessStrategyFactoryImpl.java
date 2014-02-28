@@ -37,9 +37,6 @@ public class RedisAccessStrategyFactoryImpl implements RedisAccessStrategyFactor
     @Override
     public EntityRegionAccessStrategy createEntityRegionAccessStrategy(RedisEntityRegion entityRegion,
                                                                        AccessType accessType) {
-        log.debug("create EntityRegionAccessStrategy. regionName=[{}], accessType=[{}]",
-                  entityRegion.getName(), accessType.getExternalName());
-
         switch (accessType) {
             case READ_ONLY:
                 if (entityRegion.getCacheDataDescription().isMutable()) {
@@ -60,9 +57,6 @@ public class RedisAccessStrategyFactoryImpl implements RedisAccessStrategyFactor
     @Override
     public CollectionRegionAccessStrategy createCollectionRegionAccessStrategy(RedisCollectionRegion collectionRegion,
                                                                                AccessType accessType) {
-        log.debug("create CollectionRegionAccessStrategy. regionName=[{}], accessType=[{}]",
-                  collectionRegion.getName(), accessType.getExternalName());
-
         switch (accessType) {
             case READ_ONLY:
                 if (collectionRegion.getCacheDataDescription().isMutable()) {
@@ -83,9 +77,6 @@ public class RedisAccessStrategyFactoryImpl implements RedisAccessStrategyFactor
     @Override
     public NaturalIdRegionAccessStrategy createNaturalIdRegionAccessStrategy(RedisNaturalIdRegion naturalIdRegion,
                                                                              AccessType accessType) {
-        log.debug("create NaturalIdRegionAccessStrategy. regionName=[{}], accessType=[{}]",
-                  naturalIdRegion.getName(), accessType.getExternalName());
-
         switch (accessType) {
             case READ_ONLY:
                 if (naturalIdRegion.getCacheDataDescription().isMutable()) {

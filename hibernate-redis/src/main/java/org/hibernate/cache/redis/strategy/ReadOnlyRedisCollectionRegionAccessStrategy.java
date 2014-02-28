@@ -55,11 +55,9 @@ public class ReadOnlyRedisCollectionRegionAccessStrategy
                                Object version,
                                boolean minimalPutOverride) {
         if (minimalPutOverride && region.contains(key)) {
-            log.trace("cancel put from load... minimalPutOverride=[true], contains=[true]");
             return false;
         }
 
-        log.trace("set cache item after entity loading... key=[{}], value=[{}], txTimestamp=[{}]", key, value, txTimestamp);
         region.put(key, value);
         return true;
     }

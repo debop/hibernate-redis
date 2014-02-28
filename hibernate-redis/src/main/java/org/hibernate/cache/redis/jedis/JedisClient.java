@@ -56,8 +56,8 @@ public class JedisClient {
     private StringRedisSerializer regionSerializer = new StringRedisSerializer();
 
     @Getter
-    private StringRedisSerializer keySerializer = new StringRedisSerializer();
-    // private RedisSerializer<Object> keySerializer = new BinaryRedisSerializer<Object>();
+    // private StringRedisSerializer keySerializer = new StringRedisSerializer();
+    private RedisSerializer<Object> keySerializer = new BinaryRedisSerializer<Object>();
 
     @Getter
     private RedisSerializer<Object> valueSerializer = new BinaryRedisSerializer<Object>();
@@ -114,8 +114,6 @@ public class JedisClient {
      * @param key    cache key
      */
     public boolean exists(final String region, final Object key) {
-        log.trace("confirm cache item. region=[{}], key=[{}]", region, key);
-
         final byte[] rawRegion = rawRegion(region);
         final byte[] rawKey = rawKey(key);
 
@@ -147,8 +145,6 @@ public class JedisClient {
      * @return return cached entity, if not exists return null.
      */
     public Object get(final String region, final Object key, final int expirationInSeconds) {
-        log.trace("retrieve cache... region=[{}], key=[{}]", region, key);
-
         final byte[] rawRegion = rawRegion(region);
         final byte[] rawKey = rawKey(key);
 
@@ -172,9 +168,7 @@ public class JedisClient {
             }
         }
 
-        Object value = deserializeValue(rawValue);
-        log.debug("retrieve cache entity. region=[{}], key=[{}], value=[{}]", region, key, value);
-        return value;
+        return deserializeValue(rawValue);
     }
 
     /**
@@ -184,8 +178,6 @@ public class JedisClient {
      * @return collection of cached items
      */
     public Set<Object> keysInRegion(String region) {
-        log.trace("retrieve all cached items in region=[{}]", region);
-
         try {
             final byte[] rawRegion = rawRegion(region);
             Set<byte[]> rawKeys = run(new JedisCallback<Set<byte[]>>() {
@@ -225,8 +217,6 @@ public class JedisClient {
      * @return map of keys and all cached items in specified region
      */
     public Map<Object, Object> hgetAll(String region) {
-        log.trace("retrive all keys and cached items in region=[{}]", region);
-
         final byte[] rawRegion = rawRegion(region);
         Map<byte[], byte[]> rawMap = run(new JedisCallback<Map<byte[], byte[]>>() {
             @Override
@@ -252,8 +242,6 @@ public class JedisClient {
      * @return cache items
      */
     public List<Object> mget(final String region, final Collection<?> keys) {
-        log.trace("retrieve multiple cache items in region... region=[{}], keys=[{}]", region, keys);
-
         final byte[] rawRegion = rawRegion(region);
         final byte[][] rawKeys = rawKeys(keys);
 
@@ -299,9 +287,6 @@ public class JedisClient {
      * @param unit    expire timeout unit
      */
     public void set(final String region, final Object key, final Object value, long timeout, TimeUnit unit) {
-        log.debug("save cache item region=[{}], key=[{}], timeout=[{}], unit=[{}], value=[{}]",
-                  region, key, timeout, unit, value);
-
         final byte[] rawRegion = rawRegion(region);
         final byte[] rawKey = rawKey(key);
         final byte[] rawValue = rawValue(value);
@@ -367,8 +352,6 @@ public class JedisClient {
      * @return count of deleted key
      */
     public Long del(final String region, final Object key) {
-        log.trace("캐시를 삭제합니다. region=[{}], key=[{}]", region, key);
-
         final byte[] rawRegion = rawRegion(region);
         final byte[] rawKey = rawKey(key);
         final byte[] rawZkey = rawZkey(region);
@@ -412,10 +395,10 @@ public class JedisClient {
      * @param region region name to delete
      */
     public void deleteRegion(final String region) throws JedisCacheException {
+        log.debug("delete region region=[{}]", region);
 
         final byte[] rawRegion = rawRegion(region);
         final byte[] rawZkey = rawZkey(region);
-        log.debug("delete region region=[{}]", region);
 
         runWithTx(new JedisTransactionalCallback() {
             @Override
@@ -444,7 +427,7 @@ public class JedisClient {
      * 키를 byte[] 로 직렬화합니다 *
      */
     private byte[] rawKey(final Object key) {
-        return getKeySerializer().serialize(key.toString());
+        return getKeySerializer().serialize(key);
     }
 
     @SuppressWarnings("unchecked")
@@ -452,7 +435,7 @@ public class JedisClient {
         byte[][] rawKeys = new byte[keys.size()][];
         int i = 0;
         for (Object key : keys) {
-            rawKeys[i++] = getKeySerializer().serialize(key.toString());
+            rawKeys[i++] = rawKey(key);
         }
         return rawKeys;
     }

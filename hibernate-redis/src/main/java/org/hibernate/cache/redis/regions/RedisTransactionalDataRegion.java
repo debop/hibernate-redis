@@ -71,7 +71,6 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     }
 
     public Object get(Object key) {
-        log.trace("get cache item... key=[{}], expiration=[{}] sec", key, getExpireInSeconds());
         try {
             Object value = redis.get(getName(), key, getExpireInSeconds());
             log.debug("retrieve cache item... key=[{}], value=[{}]", key, value);
@@ -84,7 +83,6 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
 
     public void put(Object key, Object value) {
-        log.trace("put cache item... key=[{}], value=[{}], expire=[{}] sec", key, value, getExpireInSeconds());
         try {
             redis.set(getName(), key, value, getExpireInSeconds());
         } catch (Exception e) {
@@ -93,7 +91,6 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
     }
 
     public void remove(Object key) throws CacheException {
-        log.trace("remove cache item... key=[{}]", key);
         try {
             redis.del(getName(), key);
         } catch (Exception e) {
@@ -103,37 +100,10 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
 
     public void clear() {
-        log.trace("clear cache item... region=[{}]", getName());
         try {
             redis.deleteRegion(getName());
         } catch (Exception e) {
             log.warn("Fail to clear region... name=" + getName(), e);
         }
     }
-
-//    public void writeLock(Object key) {
-//        // nothing to do.
-//    }
-//
-//    public void writeUnlock(Object key) {
-//        // nothing to do.
-//    }
-//
-//    public void readLock(Object key) {
-//        // nothing to do.
-//    }
-//
-//    public void readUnlock(Object key) {
-//        // nothing to do.
-//    }
-
-    /**
-     * Returns <code>true</code> if the locks used by the locking methods of this region are the independent of the cache.
-     * <p/>
-     * Independent locks are not locked by the cache when the cache is accessed directly.  This means that for an independent lock
-     * lock holds taken through a region method will not block direct access to the cache via other means.
-     */
-//    public final boolean locksAreIndependentOfCache() {
-//        return false;
-//    }
 }

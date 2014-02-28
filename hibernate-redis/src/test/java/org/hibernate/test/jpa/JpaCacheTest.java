@@ -1,7 +1,6 @@
 package org.hibernate.test.jpa;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.test.domain.Event;
 import org.hibernate.test.domain.Item;
 import org.hibernate.test.jpa.repository.EventRepository;
 import org.hibernate.test.jpa.repository.ItemRepository;
@@ -29,7 +28,7 @@ import static org.fest.assertions.Assertions.assertThat;
  */
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { JpaRedisConfiguration.class })
+@ContextConfiguration(classes = {JpaRedisConfiguration.class})
 @Transactional
 public class JpaCacheTest {
 
@@ -50,11 +49,11 @@ public class JpaCacheTest {
         assertThat(eventRepository).isNotNull();
     }
 
-    @Test
-    public void loadEventByTitle() throws Exception {
-        List<Event> events = eventRepository.findByTitle("abc");
-        assertThat(events).isNotNull();
-    }
+//    @Test
+//    public void loadEventByTitle() throws Exception {
+//        List<Event> events = eventRepository.findByTitle("abc");
+//        assertThat(events).isNotNull();
+//    }
 
     @Test
     public void emptySecondLevelCacheEntry() throws Exception {

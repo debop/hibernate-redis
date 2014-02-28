@@ -48,28 +48,24 @@ public class ReadWriteRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean insert(Object key, Object value) {
-        log.debug("insert cache item... key=[{}], value=[{}], version=[{}]", key, value);
         region.put(key, value);
         return true;
     }
 
     @Override
     public boolean afterInsert(Object key, Object value) {
-        log.debug("after insert cache item... key=[{}], value=[{}], version=[{}]", key, value);
         region.put(key, value);
         return true;
     }
 
     @Override
     public boolean update(Object key, Object value) {
-        log.debug("update cache item... key=[{}], value=[{}], lock=[{}]", key, value);
         region.put(key, value);
         return true;
     }
 
     @Override
     public boolean afterUpdate(Object key, Object value, SoftLock lock) {
-        log.debug("after update cache item... key=[{}], value=[{}], lock=[{}]", key, value, lock);
         region.put(key, value);
         return true;
     }

@@ -48,7 +48,6 @@ public class NonStrictReadWriteRedisNaturalIdRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) {
-        log.trace("get cache item... key=[{}], txTimestamp=[{}]", key, txTimestamp);
         return region.get(key);
     }
 
@@ -59,10 +58,8 @@ public class NonStrictReadWriteRedisNaturalIdRegionAccessStrategy
                                Object version,
                                boolean minimalPutOverride) {
         if (minimalPutOverride && region.contains(key)) {
-            log.trace("cancel put from load... minimalPutOverride=[true], contains=[true]");
             return false;
         }
-        log.trace("set cache item after entity loading... key=[{}], value=[{}], txTimestamp=[{}]", key, value, txTimestamp);
         region.put(key, value);
         return true;
     }
@@ -74,7 +71,6 @@ public class NonStrictReadWriteRedisNaturalIdRegionAccessStrategy
 
     @Override
     public void unlockItem(Object key, SoftLock lock) {
-        log.trace("unlock cache item... key=[{}], lock=[{}]", key, lock);
         region.remove(key);
     }
 
@@ -90,14 +86,12 @@ public class NonStrictReadWriteRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean update(Object key, Object value) {
-        log.trace("update cache item... key=[{}], value=[{}]", key, value);
         remove(key);
         return false;
     }
 
     @Override
     public boolean afterUpdate(Object key, Object value, SoftLock lock) {
-        log.trace("after update cache item... key=[{}], value=[{}], lock=[{}]", key, value, lock);
         unlockItem(key, lock);
         return false;
     }

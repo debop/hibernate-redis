@@ -58,7 +58,6 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public Object get(Object key, long txTimestamp) {
-        log.trace("retrieve cache item in transactional. key=[{}], txTimestamp=[{}]", key, txTimestamp);
         return region.get(key);
     }
 
@@ -69,14 +68,12 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public boolean insert(Object key, Object value) {
-        log.trace("insert cache item... key=[{}], value=[{}]", key, value);
         region.put(key, value);
         return true;
     }
 
     @Override
     public SoftLock lockItem(Object key, Object version) {
-        log.trace("lock cache item... key=[{}], version=[{}]", key, version);
         region.remove(key);
         return null;
     }
@@ -88,10 +85,8 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
                                Object version,
                                boolean minimalPutOverride) {
         if (minimalPutOverride && region.contains(key)) {
-            log.trace("cancel put from load... minimalPutOverride=[true], contains=[true]");
             return false;
         }
-        log.trace("set cache item after entity loading... key=[{}], value=[{}], txTimestamp=[{}]", key, value, txTimestamp);
         region.put(key, value);
         return true;
     }
@@ -99,19 +94,16 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
 
     @Override
     public void remove(Object key) {
-        log.trace("remove cache item... key=[{}]", key);
         region.remove(key);
     }
 
     @Override
     public void unlockItem(Object key, SoftLock lock) {
-        log.trace("unlock cache item... key=[{}], lock=[{}]", key, lock);
         region.remove(key);
     }
 
     @Override
     public boolean update(Object key, Object value) {
-        log.debug("update cache item... key=[{}], value=[{}]", key, value);
         region.put(key, value);
         return true;
     }

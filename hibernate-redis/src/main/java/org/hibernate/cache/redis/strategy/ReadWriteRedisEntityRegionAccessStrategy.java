@@ -48,14 +48,12 @@ public class ReadWriteRedisEntityRegionAccessStrategy
 
     @Override
     public boolean insert(Object key, Object value, Object version) {
-        log.trace("insert item... key=[{}], value=[{}], version=[{}]", key, value, version);
         region.put(key, value);
         return true;
     }
 
     @Override
     public boolean afterInsert(Object key, Object value, Object version) {
-        log.trace("after insert item... key=[{}], value=[{}], version=[{}]", key, value, version);
         region.put(key, value);
         return true;
     }
@@ -65,7 +63,6 @@ public class ReadWriteRedisEntityRegionAccessStrategy
                           Object value,
                           Object currentVersion,
                           Object previousVersion) {
-        log.trace("update... key=[{}], value=[{}]", key, value);
         region.put(key, value);
         return true;
     }
@@ -76,7 +73,6 @@ public class ReadWriteRedisEntityRegionAccessStrategy
                                Object currentVersion,
                                Object previousVersion,
                                SoftLock lock) {
-        log.trace("after update... key=[{}], value=[{}]", key, value);
         region.put(key, value);
         return true;
     }

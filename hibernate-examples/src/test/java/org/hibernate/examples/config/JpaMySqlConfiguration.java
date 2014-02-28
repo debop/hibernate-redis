@@ -27,7 +27,7 @@ public class JpaMySqlConfiguration extends AbstractMySqlJpaConfiguration {
 
     @Override
     public String[] getMappedPackageNames() {
-        return new String[] {
+        return new String[]{
                 "org.hibernate.examples.mapping"
         };
     }
@@ -36,7 +36,7 @@ public class JpaMySqlConfiguration extends AbstractMySqlJpaConfiguration {
     public Properties jpaProperties() {
         Properties props = super.jpaProperties();
 
-        props.put(Environment.HBM2DDL_AUTO, "create-drop"); // create | spawn | spawn-drop | update | validate | none
+        props.put(Environment.HBM2DDL_AUTO, "create"); // create | spawn | spawn-drop | update | validate | none
 
         // hibernate second level cache
         props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
