@@ -20,7 +20,7 @@ import java.util.Set;
  * @since 2013. 11. 29. 오후 3:59
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -35,7 +35,7 @@ public class Cloud extends AbstractHibernateEntity<Long> {
 
     private Double length;
 
-    @OneToMany(cascade = { CascadeType.ALL })
+    @OneToMany(cascade = {CascadeType.ALL})
     @JoinTable
     private Set<SnowFlake> producedSnowFlakes = new HashSet<SnowFlake>();
 
@@ -47,8 +47,8 @@ public class Cloud extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("type", type)
-                    .add("length", length);
+                .add("type", type)
+                .add("length", length);
     }
 
     private static final long serialVersionUID = 8894797675268174082L;

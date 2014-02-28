@@ -11,7 +11,7 @@ import javax.persistence.*;
 
 
 @Entity
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @NamedQuery(name = "JpaAccount.findByName", query = "select ja from JpaAccount ja where ja.name=?1")
 @Getter
 @Setter
@@ -34,7 +34,7 @@ public class JpaAccount extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("name", name);
+                .add("name", name);
     }
 
     private static final long serialVersionUID = 8986275418970766284L;

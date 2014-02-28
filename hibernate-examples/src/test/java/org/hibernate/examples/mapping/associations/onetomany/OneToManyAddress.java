@@ -19,7 +19,7 @@ import javax.persistence.Id;
  * @since 2013. 11. 29. 오후 1:04
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class OneToManyAddress extends AbstractHibernateEntity<Long> {
@@ -39,7 +39,7 @@ public class OneToManyAddress extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("city", city);
+                .add("city", city);
     }
 
     private static final long serialVersionUID = -8229206528601220447L;

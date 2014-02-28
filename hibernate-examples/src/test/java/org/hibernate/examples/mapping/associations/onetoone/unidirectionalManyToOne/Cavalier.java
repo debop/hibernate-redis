@@ -19,7 +19,7 @@ import javax.persistence.*;
  * @since 2013. 11. 29. 오후 2:45
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -50,7 +50,7 @@ public class Cavalier extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("name", name);
+                .add("name", name);
     }
 
     private static final long serialVersionUID = 7850333928981763050L;

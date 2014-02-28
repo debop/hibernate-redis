@@ -21,7 +21,7 @@ import javax.persistence.Id;
  * @since 2013. 11. 30. 오후 12:58
  */
 @Entity(name = "JoinedSubclass_Company")
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -43,7 +43,7 @@ public class Company extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("name", name);
+                .add("name", name);
     }
 
     private static final long serialVersionUID = 7470890978065566926L;

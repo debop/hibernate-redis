@@ -19,7 +19,7 @@ import javax.persistence.*;
  * @since 2013. 11. 29. 오후 3:20
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -52,8 +52,8 @@ public class OneToOnePicture extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("author", author)
-                    .add("path", path);
+                .add("author", author)
+                .add("path", path);
     }
 
     private static final long serialVersionUID = 8050166540766541481L;

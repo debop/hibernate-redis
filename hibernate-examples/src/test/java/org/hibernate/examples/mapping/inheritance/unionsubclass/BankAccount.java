@@ -18,7 +18,7 @@ import javax.persistence.Entity;
  * @since 2013. 12. 3. 오전 12:30
  */
 @Entity(name = "UnionSubsclass_BankAccount")
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -41,9 +41,9 @@ public class BankAccount extends AbstractBilling {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("account", account)
-                    .add("bankname", bankname)
-                    .add("swift", swift);
+                .add("account", account)
+                .add("bankname", bankname)
+                .add("swift", swift);
     }
 
     private static final long serialVersionUID = 120306592391268140L;

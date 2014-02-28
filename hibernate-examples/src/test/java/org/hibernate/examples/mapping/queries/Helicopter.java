@@ -21,7 +21,7 @@ import javax.persistence.Id;
  * @since 2013. 12. 3. 오후 8:06
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -43,7 +43,7 @@ public class Helicopter extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("name", name);
+                .add("name", name);
     }
 
     private static final long serialVersionUID = -4578683190280228574L;

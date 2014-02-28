@@ -18,7 +18,7 @@ import javax.persistence.*;
  */
 @Entity(name = "Subclass_CreditCard")
 @DiscriminatorValue(value = "CreditCard")
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 // SecondaryTable은 1:1 join 을 나타냅니다.
 @SecondaryTable(name = "Subclass_CreditCard_Card",
                 pkJoinColumns = @PrimaryKeyJoinColumn(name = "BillingId"))
@@ -47,10 +47,10 @@ public class CreditCard extends AbstractBilling {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("companyName", companyName)
-                    .add("number", number)
-                    .add("expMonth", expMonth)
-                    .add("expYear", expYear);
+                .add("companyName", companyName)
+                .add("number", number)
+                .add("expMonth", expMonth)
+                .add("expYear", expYear);
     }
 
     private static final long serialVersionUID = 7982685426151968281L;

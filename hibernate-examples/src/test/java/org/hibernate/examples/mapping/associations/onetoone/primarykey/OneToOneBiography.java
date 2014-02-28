@@ -19,7 +19,7 @@ import javax.persistence.*;
  * @since 2013. 11. 29. 오후 3:20
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -52,8 +52,8 @@ public class OneToOneBiography extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("author", author)
-                    .add("information", information);
+                .add("author", author)
+                .add("information", information);
     }
 
     private static final long serialVersionUID = 1698356846423798478L;

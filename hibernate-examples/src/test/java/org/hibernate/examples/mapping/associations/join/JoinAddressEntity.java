@@ -21,7 +21,7 @@ import javax.persistence.Id;
  * @since 2013. 11. 28. 오후 11:13
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -45,9 +45,9 @@ public class JoinAddressEntity extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("street", street)
-                    .add("city", city)
-                    .add("zipcode", zipcode);
+                .add("street", street)
+                .add("city", city)
+                .add("zipcode", zipcode);
     }
 
     private static final long serialVersionUID = 6610359502465293056L;

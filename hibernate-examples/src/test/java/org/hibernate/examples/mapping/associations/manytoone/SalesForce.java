@@ -21,7 +21,7 @@ import java.util.Set;
  * @since 2013. 11. 29. 오전 10:32
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class SalesForce extends AbstractHibernateEntity<Long> {
@@ -39,7 +39,7 @@ public class SalesForce extends AbstractHibernateEntity<Long> {
 
     private String corporation;
 
-    @OneToMany(mappedBy = "salesForce", cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "salesForce", cascade = {CascadeType.ALL}, orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.EXTRA)
     private Set<SalesGuy> salesGuys = new HashSet<SalesGuy>();
 
@@ -51,7 +51,7 @@ public class SalesForce extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("corporation", corporation);
+                .add("corporation", corporation);
     }
 
     private static final long serialVersionUID = -6886236659031901168L;

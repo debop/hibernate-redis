@@ -20,7 +20,7 @@ import java.util.Map;
  * @since 2013. 12. 3. 오후 4:16
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -38,10 +38,10 @@ public class SampleLocaleEntity extends AbstractLocaleHibernateEntity<Long, Samp
     /**
      * 지역화 정보를 담당합니다.
      */
-    @CollectionTable(name = "SampleLocaleEntityLocale", joinColumns = { @JoinColumn(name = "SampleLocaleEntityId") })
+    @CollectionTable(name = "SampleLocaleEntityLocale", joinColumns = {@JoinColumn(name = "SampleLocaleEntityId")})
     @MapKeyClass(Locale.class)
     @ElementCollection(targetClass = SampleLocaleValue.class, fetch = FetchType.EAGER)
-    @Cascade({ org.hibernate.annotations.CascadeType.ALL })
+    @Cascade({org.hibernate.annotations.CascadeType.ALL})
     @LazyCollection(LazyCollectionOption.EXTRA)
     private Map<Locale, SampleLocaleValue> localeMap = new HashMap<Locale, SampleLocaleValue>();
 

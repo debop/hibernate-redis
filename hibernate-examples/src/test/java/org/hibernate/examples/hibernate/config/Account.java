@@ -19,7 +19,7 @@ import javax.persistence.Id;
  * @since 2013. 11. 28. 오전 9:44
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Account extends AbstractHibernateEntity<Long> {
@@ -41,8 +41,8 @@ public class Account extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("id", id)
-                    .add("name", name);
+                .add("id", id)
+                .add("name", name);
     }
 
     private static final long serialVersionUID = 8633146002860863953L;

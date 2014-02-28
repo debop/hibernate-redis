@@ -21,7 +21,7 @@ import java.util.Set;
  * @since 2013. 11. 29. 오후 2:06
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -37,7 +37,7 @@ public class OneToManyBiddingItem extends AbstractHibernateEntity<Long> {
 
     private String description;
 
-    @OneToMany(mappedBy = "item", cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "item", cascade = {CascadeType.ALL}, orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.EXTRA)
     private Set<OneToManyBid> bids = new HashSet<OneToManyBid>();
 
@@ -49,8 +49,8 @@ public class OneToManyBiddingItem extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("name", name)
-                    .add("description", description);
+                .add("name", name)
+                .add("description", description);
     }
 
     private static final long serialVersionUID = -5361026108113198323L;

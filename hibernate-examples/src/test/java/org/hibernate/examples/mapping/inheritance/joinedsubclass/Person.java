@@ -20,7 +20,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "JoinedSubclass_Person")
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Inheritance(strategy = InheritanceType.JOINED)
 @DynamicInsert
 @DynamicUpdate
@@ -50,8 +50,8 @@ public abstract class Person extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("name", name)
-                    .add("regidentNo", regidentNo);
+                .add("name", name)
+                .add("regidentNo", regidentNo);
     }
 
     private static final long serialVersionUID = 823321933233116966L;

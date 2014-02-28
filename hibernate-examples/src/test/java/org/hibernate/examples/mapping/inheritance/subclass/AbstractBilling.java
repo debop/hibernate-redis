@@ -19,7 +19,7 @@ import javax.persistence.*;
  * @since 2013. 11. 30. 오후 2:11
  */
 @Entity(name = "Subclass_Billing")
-@org.hibernate.annotations.Cache(region = "examples", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "BillingType", discriminatorType = DiscriminatorType.STRING)
 @DynamicInsert
@@ -45,7 +45,7 @@ public abstract class AbstractBilling extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                    .add("owner", owner);
+                .add("owner", owner);
     }
 
     private static final long serialVersionUID = 8802737282954083012L;

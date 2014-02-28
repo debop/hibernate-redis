@@ -1,13 +1,16 @@
 hibernate-redis
 ===============
 
-[hibernate][1] (4.2.x-Final) 2nd level cache using redis server.
+[hibernate][1] (4.2.x.Final, 4.3.x.Final) 2nd level cache using redis server.
 with [jedis][2]  2.4.1 or higher
 
 ##### NOTE
 
-hibernate 4.3.2.Final or higher changes CacheKey#toString(), we need modify cache key operation!!!
+***if you use Hibernate 4.3.2.Final or above, don't specified region name.
+use region name by default (cache region per entity)***
 
+Hibernate 4.3.2.Final CacheKey eliminate entityOrRoleName property for reduce CacheKey size.
+if multiple entity cached in same region, can't figure out wanted entity.
 
 ### Usage
 
@@ -45,7 +48,7 @@ also same configuration for using Spring Framework or [Spring Data JPA][4]
 add @org.hibernate.annotations.Cache annotation to Entity class like this
 
 	@Entity
-	@Cache(region = "redis:common", usage = CacheConcurrencyStrategy.READ_WRITE)
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)  // or @Cacheable(true) for JPA
 	@Getter
 	@Setter
 	public class Item implements Serializable {
