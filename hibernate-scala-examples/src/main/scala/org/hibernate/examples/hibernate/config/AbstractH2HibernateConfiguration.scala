@@ -15,18 +15,18 @@ import org.hibernate.examples._
  */
 @Configuration
 @EnableTransactionManagement
-abstract class AbstractHSqlHibernateConfiguration extends AbstractHibernateConfiguration {
+abstract class AbstractH2HibernateConfiguration extends AbstractHibernateConfiguration {
 
     @Bean
     override def dataSource(): DataSource =
-        buildDataSource(DRIVER_CLASS_HSQL,
-                           "jdbc:hsqldb:mem:" + getDatabaseName + ";MVCC=TRUE;",
+        buildDataSource(DRIVER_CLASS_H2,
+                           "jdbc:h2:mem:" + getDatabaseName + ";MVCC=TRUE;",
                            "sa",
                            "")
 
     override def hibernateProperties(): Properties = {
         val props = super.hibernateProperties()
-        props.put(AvailableSettings.DIALECT, DIALECT_HSQL)
+        props.put(AvailableSettings.DIALECT, DIALECT_H2)
         props
     }
 }

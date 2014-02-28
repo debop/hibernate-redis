@@ -46,7 +46,7 @@ public class JpaRedisConfiguration {
      * 매핑할 엔티티 클래스가 정의된 package name 의 배열
      */
     public String[] getMappedPackageNames() {
-        return new String[] {
+        return new String[]{
                 Account.class.getPackage().getName()
         };
     }
@@ -78,7 +78,7 @@ public class JpaRedisConfiguration {
     @Bean
     public DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.HSQL)
+                .setType(EmbeddedDatabaseType.H2)
                 .build();
     }
 

@@ -1,12 +1,9 @@
 package org.hibernate.examples.mapping;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.examples.config.JpaHSqlConfiguration;
+import org.hibernate.examples.AbstractJpaTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.EntityManagerFactory;
 
@@ -19,9 +16,7 @@ import static org.fest.assertions.Assertions.assertThat;
  * @since 2013. 11. 28. 오후 4:01
  */
 @Slf4j
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { JpaHSqlConfiguration.class })
-public class JpaMappingTest {
+public class JpaMappingTest extends AbstractJpaTest {
 
     @Autowired EntityManagerFactory emf;
 

@@ -1,6 +1,6 @@
 package org.hibernate.examples.tests.jpa.config
 
-import org.hibernate.examples.tests.config.JpaHSqlConfiguration
+import org.hibernate.examples.tests.config.JpaH2Configuration
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.transaction.annotation.EnableTransactionManagement
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @Configuration
 @EnableJpaRepositories(basePackageClasses = Array(classOf[JpaAccountRepository]))
 @EnableTransactionManagement
-class JpaConfiguration extends JpaHSqlConfiguration {
+class JpaConfiguration extends JpaH2Configuration {
 
     override def getMappedPackageNames: Array[String] =
         Array(classOf[JpaAccount].getPackage.getName)

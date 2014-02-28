@@ -5,6 +5,7 @@ import javax.sql.DataSource
 import org.hibernate.cfg.AvailableSettings
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.transaction.annotation.EnableTransactionManagement
+import org.hibernate.examples._
 
 /**
  * MySQL DB를 사용하는 Spring 용 Hibernate 환경설정 정보

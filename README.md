@@ -2,7 +2,11 @@ hibernate-redis
 ===============
 
 [hibernate][1] (4.2.x-Final) 2nd level cache using redis server.
-with [jedis][2]  2.2.1 or higher
+with [jedis][2]  2.4.1 or higher
+
+##### NOTE
+
+hibernate 4.3.2.Final or higher changes CacheKey#toString(), we need modify cache key operation!!!
 
 
 ### Usage

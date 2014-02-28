@@ -35,7 +35,7 @@ abstract class AbstractHibernateConfiguration {
 
         props.setProperty(AvailableSettings.FORMAT_SQL, "true")
         props.setProperty(AvailableSettings
-            .HBM2DDL_AUTO, "create") // create | create-drop | spawn | spawn-drop | update | validate | none
+                          .HBM2DDL_AUTO, "create") // create | create-drop | spawn | spawn-drop | update | validate | none
         props.setProperty(AvailableSettings.POOL_SIZE, "30")
         props.setProperty(AvailableSettings.SHOW_SQL, "true")
         props.setProperty(AvailableSettings.FORMAT_SQL, "true")

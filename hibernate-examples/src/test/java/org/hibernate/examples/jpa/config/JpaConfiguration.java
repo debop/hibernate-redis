@@ -1,6 +1,6 @@
 package org.hibernate.examples.jpa.config;
 
-import org.hibernate.examples.config.JpaHSqlConfiguration;
+import org.hibernate.examples.config.JpaH2Configuration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -14,11 +14,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableJpaRepositories(basePackageClasses = { JpaAccountRepository.class })
 @EnableTransactionManagement
-public class JpaConfiguration extends JpaHSqlConfiguration {
+public class JpaConfiguration extends JpaH2Configuration {
 
     @Override
     public String[] getMappedPackageNames() {
-        return new String[] {
+        return new String[]{
                 JpaAccount.class.getPackage().getName()
         };
     }

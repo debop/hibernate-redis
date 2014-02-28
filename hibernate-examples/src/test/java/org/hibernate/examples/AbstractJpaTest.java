@@ -1,7 +1,7 @@
 package org.hibernate.examples;
 
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.examples.config.JpaHSqlConfiguration;
+import org.hibernate.examples.config.JpaH2Configuration;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -17,7 +17,7 @@ import javax.persistence.EntityManagerFactory;
  */
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { JpaHSqlConfiguration.class })
+@ContextConfiguration(classes = { JpaH2Configuration.class })
 public abstract class AbstractJpaTest {
 
     @Autowired

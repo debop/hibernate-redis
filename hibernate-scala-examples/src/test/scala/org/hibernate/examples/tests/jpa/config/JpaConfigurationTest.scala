@@ -6,7 +6,7 @@ import org.springframework.test.context.ContextConfiguration
 import javax.persistence.{EntityManager, PersistenceContext}
 import org.springframework.beans.factory.annotation.Autowired
 import org.junit.Test
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.junit.JUnitSuite
 
 /**
  * org.hibernate.examples.tests.jpa.config.JpaConfigurationTest 
@@ -16,7 +16,7 @@ import org.scalatest.junit.AssertionsForJUnit
  */
 @RunWith(classOf[SpringJUnit4ClassRunner])
 @ContextConfiguration(classes = Array(classOf[JpaConfiguration]))
-class JpaConfigurationTest extends AssertionsForJUnit {
+class JpaConfigurationTest extends JUnitSuite {
 
     @PersistenceContext
     var em: EntityManager = _

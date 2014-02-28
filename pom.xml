@@ -34,7 +34,7 @@
 
         <hibernate.version>4.3.1.Final</hibernate.version>
         <springframework.version>4.0.2.RELEASE</springframework.version>
-        <querydsl.version>3.3.0</querydsl.version>
+        <querydsl.version>3.3.1</querydsl.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -166,6 +166,14 @@
                 <version>7.0.52</version>
             </dependency>
 
+            <!-- Bone CP -->
+            <dependency>
+                <groupId>com.jolbox</groupId>
+                <artifactId>bonecp</artifactId>
+                <version>0.8.0.RELEASE</version>
+                <scope>test</scope>
+            </dependency>
+
             <!-- Database Drivers -->
             <dependency>
                 <groupId>org.hsqldb</groupId>
@@ -174,10 +182,16 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>1.3.175</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>5.1.27</version>
-                <scope>provided</scope>
+                <scope>test</scope>
             </dependency>
 
             <!-- Test -->

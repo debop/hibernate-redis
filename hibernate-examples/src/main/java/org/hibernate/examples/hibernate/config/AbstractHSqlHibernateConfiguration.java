@@ -1,8 +1,6 @@
 package org.hibernate.examples.hibernate.config;
 
 import org.hibernate.cfg.Environment;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -13,8 +11,6 @@ import java.util.Properties;
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 11. 28. 오후 1:33
  */
-@Configuration
-@EnableTransactionManagement
 public abstract class AbstractHSqlHibernateConfiguration extends AbstractHibernateConfiguration {
 
     public static final String DRIVER_CLASS_HSQL = "org.hsqldb.jdbcDriver";

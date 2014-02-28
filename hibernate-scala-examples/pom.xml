@@ -139,6 +139,11 @@
             <artifactId>querydsl-jpa-codegen</artifactId>
             <version>${querydsl.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.mysema.querydsl</groupId>
+            <artifactId>querydsl-scala</artifactId>
+            <version>${querydsl.version}</version>
+        </dependency>
 
         <!-- Test -->
         <dependency>
@@ -170,10 +175,35 @@
 
         <!-- Database Drivers -->
         <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
 
     </dependencies>
+
+    <!--<build>-->
+    <!--<plugins>-->
+    <!--<plugin>-->
+    <!--<groupId>com.mysema.querydsl</groupId>-->
+    <!--<artifactId>querydsl-maven-plugin</artifactId>-->
+    <!--<version>${querydsl.version}</version>-->
+    <!--<executions>-->
+    <!--<execution>-->
+    <!--<goals>-->
+    <!--<goal>jpa-export</goal>-->
+    <!--<goal>test-export</goal>-->
+    <!--</goals>-->
+    <!--<configuration>-->
+    <!--<targetFolder>target/generated-sources/scala</targetFolder>-->
+    <!--<scala>true</scala>-->
+    <!--<packages>-->
+    <!--<package>hibernate-scala-examples</package>-->
+    <!--</packages>-->
+    <!--</configuration>-->
+    <!--</execution>-->
+    <!--</executions>-->
+    <!--</plugin>-->
+    <!--</plugins>-->
+    <!--</build>-->
 </project>
