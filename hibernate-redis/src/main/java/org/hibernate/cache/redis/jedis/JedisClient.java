@@ -315,8 +315,8 @@ public class JedisClient {
         // score 가 현재 시각보다 작은 값을 가진 member 를 추려내, 삭제한다.
         try {
             final byte[] rawZkey = rawZkey(region);
-            final long score = System.currentTimeMillis();
             final byte[] rawRegion = rawRegion(region);
+            final long score = System.currentTimeMillis();
 
             final Set<byte[]> rawKeys = run(new JedisCallback<Set<byte[]>>() {
                 @Override
@@ -414,7 +414,7 @@ public class JedisClient {
      * flush db
      */
     public String flushDb() {
-        log.info("Redis DB 전체를 flush 합니다...");
+        log.info("Flush DB...");
 
         return run(new JedisCallback<String>() {
             @Override
@@ -438,7 +438,7 @@ public class JedisClient {
             return keySerializer.serialize(key.toString());
         }
 
-        // for Hibernate 4.3.1.Final and below
+        // for Hibernate 4.3.1.Final or older
         // return keySerializer.serialize(key.toString());
     }
 
