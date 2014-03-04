@@ -6,8 +6,8 @@ with [jedis][2]  2.4.1 or higher
 
 ##### NOTE
 
-***if you use Hibernate 4.3.2.Final or above, don't specified region name.
-use region name by default (cache region per entity)***
+***Don't use Hibernate 4.3.2.Final, 4.2.9.Final!!! It has bug in CacheKey!***
+Recommend use 4.3.4.Final or 4.2.10.Final
 
 Hibernate 4.3.2.Final CacheKey eliminate entityOrRoleName property for reduce CacheKey size.
 if multiple entity cached in same region, can't figure out wanted entity.
