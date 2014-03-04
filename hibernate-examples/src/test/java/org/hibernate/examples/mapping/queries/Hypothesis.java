@@ -20,7 +20,7 @@ import javax.persistence.Id;
  * @since 2013. 12. 3. 오후 8:08
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -49,8 +49,8 @@ public class Hypothesis extends AbstractHibernateEntity<String> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("description", description)
-                .add("position", position);
+                    .add("description", description)
+                    .add("position", position);
     }
 
     private static final long serialVersionUID = 6827597657248806590L;

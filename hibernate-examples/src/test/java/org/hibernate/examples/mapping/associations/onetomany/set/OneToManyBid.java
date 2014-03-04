@@ -20,7 +20,7 @@ import java.sql.Timestamp;
  * @since 2013. 11. 29. 오후 2:04
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -58,7 +58,7 @@ public class OneToManyBid extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("amount", amount);
+                    .add("amount", amount);
     }
 
     private static final long serialVersionUID = 6305076394221526269L;

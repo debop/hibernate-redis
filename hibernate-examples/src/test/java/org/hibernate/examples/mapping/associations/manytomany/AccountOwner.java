@@ -19,7 +19,7 @@ import java.util.Set;
  * @since 2013. 11. 28. 오후 11:45
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class AccountOwner extends AbstractHibernateEntity<Long> {
@@ -40,10 +40,10 @@ public class AccountOwner extends AbstractHibernateEntity<Long> {
      * 사용자의 은행계좌 정보
      * many-to-many 에서는 둘 중 하나는 mappedBy 를 지정해야 한다.
      */
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(name = "BankAccountOwners",
-               joinColumns = {@JoinColumn(name = "ownerId")},
-               inverseJoinColumns = {@JoinColumn(name = "accountId")})
+               joinColumns = { @JoinColumn(name = "ownerId") },
+               inverseJoinColumns = { @JoinColumn(name = "accountId") })
     private Set<BankAccount> bankAccounts = new HashSet<BankAccount>();
 
     @Override
@@ -54,7 +54,7 @@ public class AccountOwner extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("SSN", SSN);
+                    .add("SSN", SSN);
     }
 
     private static final long serialVersionUID = 6041020627741330687L;

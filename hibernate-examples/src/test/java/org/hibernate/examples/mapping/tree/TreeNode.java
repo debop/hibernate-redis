@@ -23,7 +23,7 @@ import java.util.Set;
  * @since 2013. 12. 3. 오후 6:42
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -51,7 +51,7 @@ public class TreeNode extends AbstractHibernateEntity<Long> implements Hibernate
      * 자식 노드
      * mappedBy를 정의하여, child 마다 관리되도록 해야합니다.
      */
-    @OneToMany(mappedBy = "parent", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", cascade = { CascadeType.ALL }, orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.EXTRA)
     private Set<TreeNode> children = new LinkedHashSet<TreeNode>();
 
@@ -88,9 +88,9 @@ public class TreeNode extends AbstractHibernateEntity<Long> implements Hibernate
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("id", id)
-                .add("title", title)
-                .add("description", description);
+                    .add("id", id)
+                    .add("title", title)
+                    .add("description", description);
     }
 
     private static final long serialVersionUID = 6573065680420748563L;

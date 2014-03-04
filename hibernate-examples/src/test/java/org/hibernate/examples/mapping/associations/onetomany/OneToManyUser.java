@@ -23,7 +23,7 @@ import java.util.Set;
  * @since 2013. 11. 29. 오후 1:04
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class OneToManyUser extends AbstractHibernateEntity<Long> {
@@ -36,7 +36,7 @@ public class OneToManyUser extends AbstractHibernateEntity<Long> {
 
     private String city;
 
-    @OneToMany(cascade = {CascadeType.ALL})
+    @OneToMany(cascade = { CascadeType.ALL })
     @JoinTable(name = "OneToOne_User_Address")
     @MapKeyColumn(name = "nick")
     @LazyCollection(LazyCollectionOption.EXTRA)
@@ -44,8 +44,8 @@ public class OneToManyUser extends AbstractHibernateEntity<Long> {
     private Map<String, OneToManyAddress> addresses = new HashMap<String, OneToManyAddress>();
 
     @ElementCollection
-    @JoinTable(name = "OneToMany_Nicks", joinColumns = {@JoinColumn(name = "userId")})
-    @Cascade({org.hibernate.annotations.CascadeType.ALL})
+    @JoinTable(name = "OneToMany_Nicks", joinColumns = { @JoinColumn(name = "userId") })
+    @Cascade({ org.hibernate.annotations.CascadeType.ALL })
     private Set<String> nicknames = new HashSet<String>();
 
 
@@ -57,7 +57,7 @@ public class OneToManyUser extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("city", city);
+                    .add("city", city);
     }
 
     private static final long serialVersionUID = -1397252295104008999L;

@@ -21,7 +21,7 @@ import java.util.List;
  * @since 2013. 11. 29. 오후 1:17
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class OneToManyOrder extends AbstractHibernateEntity<Long> {
@@ -34,7 +34,7 @@ public class OneToManyOrder extends AbstractHibernateEntity<Long> {
     private String no;
 
     // inverse=true (mappedBy="order")
-    @OneToMany(mappedBy = "order", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.EXTRA)
     private List<OneToManyOrderItem> items = new ArrayList<OneToManyOrderItem>();
 
@@ -46,7 +46,7 @@ public class OneToManyOrder extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("no", no);
+                    .add("no", no);
     }
 
     private static final long serialVersionUID = 6377149156636760165L;

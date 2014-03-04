@@ -19,7 +19,7 @@ import java.util.Map;
  * @since 2013. 11. 29. 오후 1:25
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class OneToManyCar extends AbstractHibernateEntity<Long> {
@@ -31,12 +31,12 @@ public class OneToManyCar extends AbstractHibernateEntity<Long> {
 
     private String name;
 
-    @CollectionTable(name = "OneToMany_Car_Option_Map", joinColumns = {@JoinColumn(name = "carId")})
+    @CollectionTable(name = "OneToMany_Car_Option_Map", joinColumns = { @JoinColumn(name = "carId") })
     @MapKeyClass(String.class) // Map의 Key 에 해당하는 놈의 수형
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     private Map<String, String> options = new HashMap<String, String>();
 
-    @CollectionTable(name = "OneToMany_Car_Option_Table", joinColumns = {@JoinColumn(name = "carId")})
+    @CollectionTable(name = "OneToMany_Car_Option_Table", joinColumns = { @JoinColumn(name = "carId") })
     @MapKeyClass(String.class)
     @ElementCollection(targetClass = OneToManyCarOption.class, fetch = FetchType.EAGER)
     private Map<String, OneToManyCarOption> carOptions = new HashMap<String, OneToManyCarOption>();
@@ -49,7 +49,7 @@ public class OneToManyCar extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("name", name);
+                    .add("name", name);
     }
 
     private static final long serialVersionUID = 6690100694736931758L;

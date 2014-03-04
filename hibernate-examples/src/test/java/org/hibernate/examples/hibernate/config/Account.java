@@ -19,7 +19,7 @@ import javax.persistence.Id;
  * @since 2013. 11. 28. 오전 9:44
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Account extends AbstractHibernateEntity<Long> {

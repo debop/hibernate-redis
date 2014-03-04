@@ -24,7 +24,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "CompositeId_Order")
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -42,7 +42,7 @@ public class Order extends AbstractHibernateEntity<Long> {
     @Temporal(TemporalType.DATE)
     private Date orderDate;
 
-    @OneToMany(mappedBy = "id.order", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "id.order", cascade = { CascadeType.ALL }, orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.EXTRA)
     private List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
 
@@ -54,8 +54,8 @@ public class Order extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("number", number)
-                .add("orderDate", orderDate);
+                    .add("number", number)
+                    .add("orderDate", orderDate);
     }
 
     private static final long serialVersionUID = -478214079111379653L;

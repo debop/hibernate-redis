@@ -20,7 +20,7 @@ import java.util.Date;
  * @since 2013. 11. 29. 오후 1:12
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class OneToManyChild extends AbstractHibernateEntity<Long> {
@@ -48,8 +48,8 @@ public class OneToManyChild extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("name", name)
-                .add("birthday", birthday);
+                    .add("name", name)
+                    .add("birthday", birthday);
     }
 
     private static final long serialVersionUID = 8340891121768039665L;

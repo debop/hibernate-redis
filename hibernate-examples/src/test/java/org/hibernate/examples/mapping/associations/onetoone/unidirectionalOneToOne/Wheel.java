@@ -19,7 +19,7 @@ import javax.persistence.*;
  * @since 2013. 11. 29. 오후 3:36
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -36,7 +36,7 @@ public class Wheel extends AbstractHibernateEntity<Long> {
     private double diameter;
 
     @MapsId
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     // @PrimaryKeyJoinColumn
     @JoinColumn(name = "vehicleId")
     private Vehicle vehicle;
@@ -49,8 +49,8 @@ public class Wheel extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("name", name)
-                .add("diameter", diameter);
+                    .add("name", name)
+                    .add("diameter", diameter);
     }
 
     private static final long serialVersionUID = -6537387709923172615L;

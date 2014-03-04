@@ -18,7 +18,7 @@ import javax.persistence.ManyToOne;
  * @since 2013. 11. 30. 오후 12:54
  */
 @Entity(name = "JoinedSubclass_Customer")
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -40,7 +40,7 @@ public class Customer extends Person {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("mobile", mobile);
+                    .add("mobile", mobile);
     }
 
     private static final long serialVersionUID = 8943550440998265187L;

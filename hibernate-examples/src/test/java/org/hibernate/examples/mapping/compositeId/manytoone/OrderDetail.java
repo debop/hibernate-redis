@@ -23,7 +23,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(name = "CompositeId_OrderDetail")
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -57,9 +57,9 @@ public class OrderDetail extends AbstractHibernateEntity<OrderDetailIdentifier> 
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("unitPrice", unitPrice)
-                .add("quantity", quantity)
-                .add("discount", discount);
+                    .add("unitPrice", unitPrice)
+                    .add("quantity", quantity)
+                    .add("discount", discount);
     }
 
     private static final long serialVersionUID = 6958616166017033341L;

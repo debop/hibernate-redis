@@ -19,7 +19,7 @@ import javax.persistence.*;
  * @since 2013. 11. 29. 오전 9:37
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Beer extends AbstractHibernateEntity<Long> {
@@ -35,7 +35,7 @@ public class Beer extends AbstractHibernateEntity<Long> {
     /**
      * Beer가 저장, 머지, 갱신될 때 Brewery 정보도 갱신하도록 합니다. (이런 경우는 잘 쓰지 않는다)
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
     @LazyToOne(LazyToOneOption.PROXY)
     @JoinColumn(name = "breweryId", nullable = false)
     private Brewery brewery;
@@ -48,8 +48,8 @@ public class Beer extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("name", name)
-                .add("price", price);
+                    .add("name", name)
+                    .add("price", price);
     }
 
     private static final long serialVersionUID = 1335724074913569654L;

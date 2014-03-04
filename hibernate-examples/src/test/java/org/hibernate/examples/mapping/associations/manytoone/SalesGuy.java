@@ -17,7 +17,7 @@ import javax.persistence.*;
  * @since 2013. 11. 29. 오전 10:32
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class SalesGuy extends AbstractHibernateEntity<Long> {
@@ -46,7 +46,7 @@ public class SalesGuy extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("name", name);
+                    .add("name", name);
     }
 
     private static final long serialVersionUID = -1171720938973299196L;

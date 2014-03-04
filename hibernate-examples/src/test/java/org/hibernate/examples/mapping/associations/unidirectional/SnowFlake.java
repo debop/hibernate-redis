@@ -20,7 +20,7 @@ import javax.persistence.Id;
  * @since 2013. 11. 29. 오후 4:01
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -43,8 +43,8 @@ public class SnowFlake extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("name", name)
-                .add("description", description);
+                    .add("name", name)
+                    .add("description", description);
     }
 
     private static final long serialVersionUID = -4213456151376181467L;
