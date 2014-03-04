@@ -18,7 +18,7 @@ import javax.persistence.Entity;
  * @since 2013. 12. 3. 오전 1:33
  */
 @Entity(name = "UnionSubsclass_CreditCard")
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -44,10 +44,10 @@ public class CreditCard extends AbstractBilling {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("companyName", companyName)
-                .add("number", number)
-                .add("expMonth", expMonth)
-                .add("expYear", expYear);
+                    .add("companyName", companyName)
+                    .add("number", number)
+                    .add("expMonth", expMonth)
+                    .add("expYear", expYear);
     }
 
     private static final long serialVersionUID = 1711294363190461204L;

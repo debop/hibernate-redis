@@ -20,7 +20,7 @@ import javax.persistence.IdClass;
  * @since 2013. 11. 29. 오후 4:35
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @IdClass(CarIdentifier.class)
 @DynamicInsert
 @DynamicUpdate
@@ -44,9 +44,9 @@ public class IdClassCar extends AbstractValueObject {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("brand", brand)
-                .add("year", year)
-                .add("serialNo", serialNo);
+                    .add("brand", brand)
+                    .add("year", year)
+                    .add("serialNo", serialNo);
     }
 
     private static final long serialVersionUID = -2144857053612105427L;

@@ -18,7 +18,7 @@ import java.util.Date;
  * @since 2013. 11. 28. 오후 11:15
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "JoinCustomer")
 @SecondaryTable(name = "JoinCustomerAddress", pkJoinColumns = @PrimaryKeyJoinColumn(name = "CustomerId"))
 @Getter
@@ -75,10 +75,10 @@ public class JoinCustomer extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("name", name)
-                .add("email", email)
-                .add("createdAt", createdAt)
-                .add("updatedAt", updatedAt);
+                    .add("name", name)
+                    .add("email", email)
+                    .add("createdAt", createdAt)
+                    .add("updatedAt", updatedAt);
     }
 
     private static final long serialVersionUID = 5214616271922396271L;

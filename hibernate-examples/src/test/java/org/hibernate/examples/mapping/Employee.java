@@ -24,7 +24,7 @@ import java.util.Date;
  * @since 2013. 11. 28. 오후 3:49
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @SequenceGenerator(name = "employee_seq", sequenceName = "employee_seq")
@@ -80,10 +80,10 @@ public class Employee extends AbstractHibernateEntity<Long> implements UpdatedTi
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("id", id)
-                .add("empNo", empNo)
-                .add("name", name)
-                .add("email", email);
+                    .add("id", id)
+                    .add("empNo", empNo)
+                    .add("name", name)
+                    .add("email", email);
     }
 
     private static final long serialVersionUID = 6878934074258579705L;

@@ -25,9 +25,9 @@ import javax.persistence.*;
 @org.hibernate.annotations.Table(appliesTo = "Embeddable_User",
                                  indexes = {
                                          @Index(name = "ix_embeddable_user_username",
-                                                columnNames = {"username", "password"})
+                                                columnNames = { "username", "password" })
                                  })
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -95,13 +95,13 @@ public class User extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("firstname", firstname)
-                .add("lastname", lastname)
-                .add("username", username)
-                .add("userpwd", password)
-                .add("userEmail", email)
-                .add("homeAddress", homeAddress)
-                .add("officeAddress", officeAddress);
+                    .add("firstname", firstname)
+                    .add("lastname", lastname)
+                    .add("username", username)
+                    .add("userpwd", password)
+                    .add("userEmail", email)
+                    .add("homeAddress", homeAddress)
+                    .add("officeAddress", officeAddress);
     }
 
     private static final long serialVersionUID = -5638782007660883773L;

@@ -23,7 +23,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "CompositeId_Product")
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -39,7 +39,7 @@ public class Product extends AbstractHibernateEntity<Long> {
     @Column(name = "productName")
     private String name;
 
-    @OneToMany(mappedBy = "id.product", cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "id.product", cascade = { CascadeType.ALL }, orphanRemoval = true)
     @LazyCollection(value = LazyCollectionOption.EXTRA)
     private Set<OrderDetail> orderDetails = new HashSet<OrderDetail>();
 
@@ -51,7 +51,7 @@ public class Product extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("name", name);
+                    .add("name", name);
     }
 
     private static final long serialVersionUID = -4725360631652953447L;

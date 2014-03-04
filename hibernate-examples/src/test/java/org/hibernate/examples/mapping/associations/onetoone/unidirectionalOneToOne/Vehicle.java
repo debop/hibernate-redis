@@ -22,7 +22,7 @@ import javax.persistence.Id;
  * @since 2013. 11. 29. 오후 3:36
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -45,7 +45,7 @@ public class Vehicle extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("brand", brand);
+                    .add("brand", brand);
     }
 
     private static final long serialVersionUID = -5118283969168355563L;

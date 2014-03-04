@@ -18,7 +18,7 @@ import java.util.Date;
  * @since 2013. 11. 28. 오후 3:59
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class LifecycleEntity extends AbstractHibernateEntity<Long> {

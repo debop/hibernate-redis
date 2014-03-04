@@ -21,7 +21,7 @@ import javax.persistence.Id;
  * @since 2013. 12. 5. 오전 10:20
  */
 @Entity(name = "BeerVendor")
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -43,7 +43,7 @@ public class BeerVendor extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("name", name);
+                    .add("name", name);
     }
 
     private static final long serialVersionUID = -6166454923892484549L;

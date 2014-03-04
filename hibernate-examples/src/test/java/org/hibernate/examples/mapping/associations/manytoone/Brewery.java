@@ -21,7 +21,7 @@ import java.util.Set;
  * @since 2013. 11. 29. 오전 9:40
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Brewery extends AbstractHibernateEntity<Long> {
@@ -33,7 +33,7 @@ public class Brewery extends AbstractHibernateEntity<Long> {
 
     private String name;
 
-    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.EXTRA)
     Set<Beer> beers = new HashSet<Beer>();
 
@@ -50,7 +50,7 @@ public class Brewery extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("name", name);
+                    .add("name", name);
     }
 
     private static final long serialVersionUID = -7350106569344824229L;

@@ -22,7 +22,7 @@ import javax.persistence.*;
  */
 @MappedSuperclass
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -48,7 +48,7 @@ public abstract class AbstractBilling extends AbstractHibernateEntity<String> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("owner", owner);
+                    .add("owner", owner);
     }
 
     private static final long serialVersionUID = 90233307681044105L;

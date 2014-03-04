@@ -23,7 +23,6 @@ import org.hibernate.cache.redis.serializer.BinaryRedisSerializer;
 import org.hibernate.cache.redis.serializer.RedisSerializer;
 import org.hibernate.cache.redis.serializer.SerializationTool;
 import org.hibernate.cache.redis.serializer.StringRedisSerializer;
-import org.hibernate.cache.spi.CacheKey;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
@@ -431,15 +430,15 @@ public class JedisClient {
         // Hibernate 4.3.2.Final 부터는 CacheKey 값의 entityOrRolename 속성이 제거되었다.
         // 이 때문에 기본방식은 사용할 수 없다. 만약 사용하려면 모든 entity의 region 을 고유하게 해야 한다.
         //
-        if (key instanceof CacheKey) {
-            CacheKey cacheKey = (CacheKey) key;
-            return keySerializer.serialize(cacheKey.getKey().toString());
-        } else {
-            return keySerializer.serialize(key.toString());
-        }
+//        if (key instanceof CacheKey) {
+//            CacheKey cacheKey = (CacheKey) key;
+//            return keySerializer.serialize(cacheKey.getKey().toString());
+//        } else {
+//            return keySerializer.serialize(key.toString());
+//        }
 
-        // for Hibernate 4.3.1.Final or older
-        // return keySerializer.serialize(key.toString());
+        // except 4.3.2.Final (entotyOrRolename restored)
+        return keySerializer.serialize(key.toString());
     }
 
     @SuppressWarnings("unchecked")

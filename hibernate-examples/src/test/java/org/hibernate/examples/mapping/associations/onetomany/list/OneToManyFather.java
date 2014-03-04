@@ -21,7 +21,7 @@ import java.util.List;
  * @since 2013. 11. 29. 오후 1:12
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class OneToManyFather extends AbstractHibernateEntity<Long> {
@@ -34,7 +34,7 @@ public class OneToManyFather extends AbstractHibernateEntity<Long> {
     private String name;
 
     // inverse=false
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
     @JoinTable(name = "OneToMany_Father_Child")
     @LazyCollection(LazyCollectionOption.EXTRA)
     @OrderColumn(name = "birthday")                     // @OrderColumn 으로 정렬하여 List를 만듭니다.
@@ -48,7 +48,7 @@ public class OneToManyFather extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("name", name);
+                    .add("name", name);
     }
 
     private static final long serialVersionUID = 7615097053691800164L;

@@ -23,7 +23,7 @@ import java.util.Set;
  * @since 2013. 11. 29. 오후 2:15
  */
 @Entity
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
@@ -46,7 +46,7 @@ public class ProductItem extends AbstractHibernateEntity<Long> {
     @Temporal(TemporalType.DATE)
     private Date endDate;
 
-    @CollectionTable(name = "ProductItemImages", joinColumns = {@JoinColumn(name = "productItemId")})
+    @CollectionTable(name = "ProductItemImages", joinColumns = { @JoinColumn(name = "productItemId") })
     @ElementCollection(targetClass = ProductImage.class)
     @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Set<ProductImage> images = new HashSet<ProductImage>();
@@ -63,9 +63,9 @@ public class ProductItem extends AbstractHibernateEntity<Long> {
     @Override
     public ToStringHelper buildStringHelper() {
         return super.buildStringHelper()
-                .add("name", name)
-                .add("initialPrice", initialPrice)
-                .add("reservePrice", reservePrice);
+                    .add("name", name)
+                    .add("initialPrice", initialPrice)
+                    .add("reservePrice", reservePrice);
     }
 
     private static final long serialVersionUID = 9176636190484261550L;
