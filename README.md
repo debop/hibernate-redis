@@ -12,10 +12,29 @@ Recommend use 4.3.4.Final or 4.2.10.Final
 Hibernate 4.3.2.Final CacheKey eliminate entityOrRoleName property for reduce CacheKey size.
 if multiple entity cached in same region, can't figure out wanted entity.
 
-### Usage
+### Maven Repository
 
-use hibernate-redis for hibernate 2nd cache provider and JPA.
-if you use JPA with JPQL, add @QueryHint annotation for Query cache.
+add dependency
+
+        <dependency>
+            <groupId>com.github.debop</groupId>
+            <artifactId>hibernate-redis</artifactId>
+            <version>1.5.7</version>
+        </dependency>
+
+add repository
+
+    <repositories>
+        <repository>
+            <id>debop-snapshots</id>
+            <url>https://github.com/debop/debop-maven-repo/raw/master/snapshots</url>
+        </repository>
+        <repository>
+            <id>debop-releases</id>
+            <url>https://github.com/debop/debop-maven-repo/raw/master/releases</url>
+        </repository>
+    </repositories>
+
 
 ##### referencing hibernate-redis
 
@@ -71,6 +90,8 @@ run "redis-cli monitor" command in terminal. you can see putting cached items, r
 ##### Sample code
 
 read [HibernateCacheTest.java][3] for more usage.
+
+
 
 [1]: http://www.hibernate.org/
 [2]: https://github.com/xetorthio/jedis
