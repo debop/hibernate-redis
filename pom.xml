@@ -28,6 +28,17 @@
         <url>https://github.com/debop/hibernate-redis</url>
     </scm>
 
+    <distributionManagement>
+        <repository>
+            <id>repo</id>
+            <url>https://github.com/debop/debop-maven-repo/raw/master/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>repo-snapshot</id>
+            <url>https://github.com/debop/debop-maven-repo/raw/master/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <properties>
         <jdk.version>1.6</jdk.version>
         <scala.version>2.10.3</scala.version>
