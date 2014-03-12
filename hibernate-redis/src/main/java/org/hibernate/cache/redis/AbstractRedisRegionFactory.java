@@ -27,9 +27,9 @@ import org.hibernate.cache.spi.*;
 import org.hibernate.cache.spi.access.AccessType;
 import org.hibernate.cfg.Settings;
 
-import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Region Factory for Redis
@@ -63,7 +63,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     /**
      * Region names
      */
-    protected final Set<String> regionNames = new HashSet<String>();
+    protected final ConcurrentSkipListSet<String> regionNames = new ConcurrentSkipListSet<String>();
 
     /**
      * JedisClient instance.
@@ -174,7 +174,8 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
                 while (true) {
                     try {
                         Thread.sleep(1000L);
-                        for (final String region : regionNames) {
+                        Set<String> regions = regionNames.clone();
+                        for (final String region : regions) {
                             if (redis != null) {
                                 try {
                                     redis.expire(region);

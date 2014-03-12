@@ -13,7 +13,6 @@
     <modules>
         <module>hibernate-redis</module>
         <module>hibernate-examples</module>
-        <module>hibernate-scala-examples</module>
     </modules>
 
     <licenses>
