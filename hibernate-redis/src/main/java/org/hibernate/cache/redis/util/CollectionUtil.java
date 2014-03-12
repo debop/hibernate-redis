@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * Collection 관련 Utility 클래스
+ * Collection utility class
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 4. 30. 오후 11:13

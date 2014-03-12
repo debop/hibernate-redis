@@ -154,7 +154,7 @@ public class JedisClient {
                 return jedis.hget(rawRegion, rawKey);
             }
         });
-        // 참조 후에는 Expiration 값을 늘려야 합니다.
+        // after get, update expiration time
         if (rawValue != null && rawValue.length > 0) {
             if (expirationInSeconds > 0 && !region.contains("UpdateTimestampsCache")) {
                 run(new JedisCallback<Object>() {
@@ -311,12 +311,13 @@ public class JedisClient {
      * @param region region name
      */
     public void expire(final String region) {
-        // score 가 현재 시각보다 작은 값을 가진 member 를 추려내, 삭제한다.
+
         try {
             final byte[] rawZkey = rawZkey(region);
             final byte[] rawRegion = rawRegion(region);
             final long score = System.currentTimeMillis();
 
+            // get key which score is less than current time
             final Set<byte[]> rawKeys = run(new JedisCallback<Set<byte[]>>() {
                 @Override
                 public Set<byte[]> execute(Jedis jedis) {
@@ -325,12 +326,12 @@ public class JedisClient {
             });
 
             if (rawKeys != null && rawKeys.size() > 0) {
-                log.debug("region[{}]의 정보 중 expires 될 정보는 삭제합니다. expire time=[{}]", region, score);
+                log.debug("delete expired cache item in region[{}] expire time=[{}]", region, score);
 
                 runWithPipeline(new JedisPipelinedCallback() {
                     @Override
                     public void execute(Pipeline pipeline) {
-                        // 해당 캐시를 실제로 삭제합니다.
+                        // delete cache item
                         for (final byte[] rawKey : rawKeys) {
                             pipeline.hdel(rawRegion, rawKey);
                         }
@@ -424,20 +425,9 @@ public class JedisClient {
     }
 
     /**
-     * 키를 byte[] 로 직렬화합니다 *
+     * serialize cache key
      */
     private byte[] rawKey(final Object key) {
-        // Hibernate 4.3.2.Final 부터는 CacheKey 값의 entityOrRolename 속성이 제거되었다.
-        // 이 때문에 기본방식은 사용할 수 없다. 만약 사용하려면 모든 entity의 region 을 고유하게 해야 한다.
-        //
-//        if (key instanceof CacheKey) {
-//            CacheKey cacheKey = (CacheKey) key;
-//            return keySerializer.serialize(cacheKey.getKey().toString());
-//        } else {
-//            return keySerializer.serialize(key.toString());
-//        }
-
-        // except 4.3.2.Final (entotyOrRolename restored)
         return keySerializer.serialize(key.toString());
     }
 
@@ -451,6 +441,9 @@ public class JedisClient {
         return rawKeys;
     }
 
+    /**
+     * Serialize expiration region name
+     */
     private byte[] rawZkey(final String region) {
         return rawRegion("z:" + region);
     }

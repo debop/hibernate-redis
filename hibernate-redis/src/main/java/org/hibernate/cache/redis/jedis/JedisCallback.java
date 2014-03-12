@@ -19,17 +19,17 @@ package org.hibernate.cache.redis.jedis;
 import redis.clients.jedis.Jedis;
 
 /**
- * Jedis 를 입력받아 jedis에 대해 작업을 수행합니다.
+ * Callback for Jedis task
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 10. 오전 10:22
  */
 public interface JedisCallback<T> {
     /**
-     * 작업을 수행합니다.
+     * execute jedis task
      *
-     * @param jedis Jedis 인스턴스
-     * @return 수행 결과
+     * @param jedis Jedis instance.
+     * @return return value
      */
     public T execute(Jedis jedis);
 }

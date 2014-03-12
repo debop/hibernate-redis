@@ -97,7 +97,11 @@ public class TransactionalRedisEntityRegionAccessStrategy
     }
 
     @Override
-    public boolean afterUpdate(Object key, Object value, Object currentVersion, Object previousVersion, SoftLock lock) {
+    public boolean afterUpdate(Object key,
+                               Object value,
+                               Object currentVersion,
+                               Object previousVersion,
+                               SoftLock lock) {
         return false;
     }
 

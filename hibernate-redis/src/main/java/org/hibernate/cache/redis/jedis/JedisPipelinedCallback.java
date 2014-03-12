@@ -5,7 +5,7 @@ import redis.clients.jedis.Pipeline;
 /**
  * Execute method using Redis {@link redis.clients.jedis.Pipeline}
  *
- * @author 배성혁 sunghyouk.bae@gmail.com
+ * @author sunghyouk.bae@gmail.com
  * @since 2013. 11. 16. 오후 1:46
  */
 public interface JedisPipelinedCallback {

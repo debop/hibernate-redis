@@ -3,7 +3,7 @@ package org.hibernate.cache.redis.serializer;
 /**
  * UTF-8 String serializer
  *
- * @author 배성혁 sunghyouk.bae@gmail.com
+ * @author sunghyouk.bae@gmail.com
  * @since 2013. 11. 16. 오후 1:58
  */
 public class StringRedisSerializer implements RedisSerializer<String> {

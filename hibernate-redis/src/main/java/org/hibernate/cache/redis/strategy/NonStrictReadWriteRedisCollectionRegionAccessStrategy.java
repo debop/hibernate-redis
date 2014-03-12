@@ -75,7 +75,6 @@ public class NonStrictReadWriteRedisCollectionRegionAccessStrategy
 
     @Override
     public void remove(Object key) {
-        log.trace("remove cache item... key=[{}]", key);
         region.remove(key);
     }
 }
