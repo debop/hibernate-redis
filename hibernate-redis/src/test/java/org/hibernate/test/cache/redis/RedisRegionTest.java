@@ -3,9 +3,9 @@ package org.hibernate.test.cache.redis;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.redis.SingletonRedisRegionFactory;
 import org.hibernate.cache.redis.strategy.AbstractReadWriteRedisAccessStrategy;
-import org.hibernate.cache.redis.strategy.ItemValueExtractor;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
+import org.hibernate.test.strategy.ItemValueExtractor;
 
 import java.util.Map;
 

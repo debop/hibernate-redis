@@ -19,14 +19,14 @@ package org.hibernate.cache.redis.jedis;
 import redis.clients.jedis.Transaction;
 
 /**
- * Jedis 의 Transaction을 이용하여 복수의 작업을 수행하도록 합니다.
+ * Callback for Jedis transaction task
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 1. 오후 2:20
  */
 public interface JedisTransactionalCallback {
     /**
-     * Transaction 하에서 작업을 수행합니다.
+     * execute jedis transactional task
      *
      * @param tx Jedis Transaction
      */

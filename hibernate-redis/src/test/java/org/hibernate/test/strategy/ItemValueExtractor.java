@@ -1,10 +1,11 @@
-package org.hibernate.cache.redis.strategy;
+package org.hibernate.test.strategy;
 
 import org.hibernate.cache.redis.regions.RedisTransactionalDataRegion;
+import org.hibernate.cache.redis.strategy.AbstractReadWriteRedisAccessStrategy;
 import org.hibernate.cfg.Settings;
 
 /**
- * org.hibernate.cache.redis.strategy.ItemValueExtractor
+ * org.hibernate.test.strategy.ItemValueExtractor
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 6. 오후 1:12

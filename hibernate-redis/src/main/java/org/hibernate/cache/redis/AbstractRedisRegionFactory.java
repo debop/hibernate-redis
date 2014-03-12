@@ -27,14 +27,12 @@ import org.hibernate.cache.spi.*;
 import org.hibernate.cache.spi.access.AccessType;
 import org.hibernate.cfg.Settings;
 
-import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Region Factory for Redis
- * <p/>
- * TODO: 예전처럼 Thread를 이용해서 주기적으로 Expire를 수행하는 것이 성능에 더 좋을 듯하다...
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 5. 오후 11:59
@@ -44,9 +42,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
 
     /**
      * The Hibernate system property specifying the location of the redis configuration file name.
-     * <p/>
      * If not set, redis.xml will be looked for in the root of the classpath.
-     * <p/>
      * If set to say redis-1.xml, redis-1.xml will be looked for in the root of the classpath.
      */
     public static final String IO_REDIS_CACHE_CONFIGURATION_RESOURCE_NAME = "io.redis.cache.configurationResourceName";
@@ -63,7 +59,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     /**
      * Region names
      */
-    protected final Set<String> regionNames = new HashSet<String>();
+    protected final ConcurrentSkipListSet<String> regionNames = new ConcurrentSkipListSet<String>();
 
     /**
      * JedisClient instance.
@@ -174,7 +170,8 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
                 while (true) {
                     try {
                         Thread.sleep(1000L);
-                        for (final String region : regionNames) {
+                        Set<String> regions = regionNames.clone();
+                        for (final String region : regions) {
                             if (redis != null) {
                                 try {
                                     redis.expire(region);

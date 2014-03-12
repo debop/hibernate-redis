@@ -27,7 +27,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Helper class for Redis
+ * Jedis Helper class
  *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 13. 5. 2. 오전 1:53

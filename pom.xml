@@ -6,14 +6,13 @@
 
     <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis-parent</artifactId>
-    <version>1.5.7</version>
+    <version>1.5.8</version>
     <packaging>pom</packaging>
     <url>https://github.com/debop/hibernate-redis</url>
 
     <modules>
         <module>hibernate-redis</module>
         <module>hibernate-examples</module>
-        <module>hibernate-scala-examples</module>
     </modules>
 
     <licenses>
@@ -303,20 +302,21 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
+            <!-- Test jar 는 생략합니다. -->
+            <!--
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-jar-plugin</artifactId>
+                            <version>2.4</version>
+                            <executions>
+                                <execution>
+                                    <goals>
+                                        <goal>test-jar</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+            -->
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>

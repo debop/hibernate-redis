@@ -7,4 +7,4 @@ mvn -DaltDeploymentRepository=snapshot-repo::default::file:../maven-repo/snapsho
 
 ### release deploy
 
-mvn -DaltDeploymentRepository=snapshot-repo::default::file:../maven-repo/releases clean deploy
+mvn -DaltDeploymentRepository=release-repo::default::file:../maven-repo/releases clean deploy

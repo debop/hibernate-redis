@@ -66,7 +66,6 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
      * Region locks are not supported - perform a cache clear as a precaution.
      *
      * @param lock soft lock instance
-     * @
      */
     public final void unlockRegion(SoftLock lock) {
         region.clear();
@@ -76,14 +75,11 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
      * A no-op since this is an asynchronous cache access strategy.
      *
      * @param key key
-     * @
      */
     public void remove(Object key) { }
 
     /**
      * Called to evict data from the entire region
-     *
-     * @
      */
     public final void removeAll() {
         region.clear();
@@ -93,7 +89,6 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
      * Remove the given mapping without regard to transactional safety
      *
      * @param key key
-     * @
      */
     public final void evict(Object key) {
         region.remove(key);
@@ -101,8 +96,6 @@ abstract class AbstractRedisAccessStrategy<T extends RedisTransactionalDataRegio
 
     /**
      * Remove all mappings without regard to transactional safety
-     *
-     * @
      */
     public final void evictAll() {
         region.clear();

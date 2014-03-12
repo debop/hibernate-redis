@@ -5,9 +5,9 @@ import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.persister.entity.EntityPersister;
 
 /**
- * org.hibernate.cache.redis.util.HibernateCacheUtil
+ * Hibernate utility class
  *
- * @author 배성혁 sunghyouk.bae@gmail.com
+ * @author sunghyouk.bae@gmail.com
  * @since 13. 9. 26. 오후 4:49
  */
 public final class HibernateCacheUtil {
