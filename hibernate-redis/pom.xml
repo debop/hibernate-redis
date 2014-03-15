@@ -52,6 +52,12 @@
             <artifactId>jedis</artifactId>
         </dependency>
 
+        <!-- Snappy-java -->
+        <dependency>
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+        </dependency>
+
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>

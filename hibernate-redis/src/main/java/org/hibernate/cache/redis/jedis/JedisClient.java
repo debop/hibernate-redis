@@ -19,10 +19,7 @@ package org.hibernate.cache.redis.jedis;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.redis.serializer.BinaryRedisSerializer;
-import org.hibernate.cache.redis.serializer.RedisSerializer;
-import org.hibernate.cache.redis.serializer.SerializationTool;
-import org.hibernate.cache.redis.serializer.StringRedisSerializer;
+import org.hibernate.cache.redis.serializer.*;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
@@ -60,7 +57,9 @@ public class JedisClient {
     // private RedisSerializer<Object> keySerializer = new BinaryRedisSerializer<Object>();
 
     @Getter
-    private RedisSerializer<Object> valueSerializer = new BinaryRedisSerializer<Object>();
+    private RedisSerializer<Object> valueSerializer =
+            new SnappyRedisSerializer<Object>(new BinaryRedisSerializer<Object>());
+    // private RedisSerializer<Object> valueSerializer = new BinaryRedisSerializer<Object>();
 
     public JedisClient() {
         this(new JedisPool("localhost"), DEFAULT_EXPIRY_IN_SECONDS);
