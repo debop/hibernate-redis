@@ -90,6 +90,13 @@
                 <version>1.1.0.1</version>
             </dependency>
 
+            <!-- Fast Serialization -->
+            <dependency>
+                <groupId>de.ruedigermoeller</groupId>
+                <artifactId>fst</artifactId>
+                <version>1.40</version>
+            </dependency>
+
             <!-- Logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>

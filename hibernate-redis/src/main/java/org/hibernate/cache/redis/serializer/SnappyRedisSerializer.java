@@ -14,7 +14,12 @@ public class SnappyRedisSerializer<T> implements RedisSerializer<T> {
 
     private final RedisSerializer<T> inner;
 
+    public SnappyRedisSerializer() {
+        this(new FstRedisSerializer<T>());
+    }
+
     public SnappyRedisSerializer(RedisSerializer<T> innerSerializer) {
+        assert (innerSerializer != null);
         this.inner = innerSerializer;
     }
 

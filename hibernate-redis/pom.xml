@@ -58,6 +58,13 @@
             <artifactId>snappy-java</artifactId>
         </dependency>
 
+        <!-- Fast Serialization -->
+        <dependency>
+            <groupId>de.ruedigermoeller</groupId>
+            <artifactId>fst</artifactId>
+        </dependency>
+
+
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
