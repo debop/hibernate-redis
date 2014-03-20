@@ -116,31 +116,6 @@
                 <version>1.12.2</version>
             </dependency>
 
-            <!-- Scala -->
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-compiler</artifactId>
-                <version>${scala.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-library</artifactId>
-                <version>${scala.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-actors</artifactId>
-                <version>${scala.version}</version>
-            </dependency>
-
-            <!-- ScalaTest -->
-            <dependency>
-                <groupId>org.scalatest</groupId>
-                <artifactId>scalatest_2.10</artifactId>
-                <version>2.0.M8</version>
-                <scope>test</scope>
-            </dependency>
-
             <!-- Spring Framework -->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -329,83 +304,6 @@
                             </executions>
                         </plugin>
             -->
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-                <version>3.1.6</version>
-                <configuration>
-                    <scalaVersion>${scala.version}</scalaVersion>
-                    <!--<recompileMode>incremental</recompileMode>-->
-                    <!--<useZincServer>true</useZincServer>-->
-                    <analysisCacheFile>${project.build.outputDirectory}/analysis-cache-file</analysisCacheFile>
-                    <testAnalysisCacheFile>${project.build.testOutputDirectory}/test-analysis-cache-file
-                    </testAnalysisCacheFile>
-                    <!--<encoding>${project.build.sourceEncoding}</encoding>-->
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <phase>compile</phase>
-                        <configuration>
-                            <jvmArgs>
-                                <jvmArg>-Xms128m</jvmArg>
-                                <jvmArg>-Xmx8192m</jvmArg>
-                                <jvmArg>-XX:+UseCompressedOops</jvmArg>
-                                <jvmArg>-XX:+UseParallelOldGC</jvmArg>
-                                <jvmArg>-Dfile.encoding=UTF-8</jvmArg>
-                            </jvmArgs>
-                            <args>
-                                <arg>-unchecked</arg>
-                                <arg>-deprecation</arg>
-                                <arg>-explaintypes</arg>
-                            </args>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>test-compile</id>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                        <phase>test-compile</phase>
-                        <configuration>
-                            <jvmArgs>
-                                <jvmArg>-Xms128m</jvmArg>
-                                <jvmArg>-Xmx8192m</jvmArg>
-                                <jvmArg>-Dfile.encoding=UTF-8</jvmArg>
-                            </jvmArgs>
-
-                            <args>
-                                <arg>-unchecked</arg>
-                                <arg>-deprecation</arg>
-                                <arg>-explaintypes</arg>
-                            </args>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <jvmArgs>
-                                <jvmArg>-Xms128m</jvmArg>
-                                <jvmArg>-Xmx4096m</jvmArg>
-                                <jvmArg>-Dfile.encoding=UTF-8</jvmArg>
-                            </jvmArgs>
-                            <args>
-                                <arg>-unchecked</arg>
-                                <arg>-deprecation</arg>
-                                <arg>-explaintypes</arg>
-                            </args>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- For signing -->
             <!--
             <plugin>
