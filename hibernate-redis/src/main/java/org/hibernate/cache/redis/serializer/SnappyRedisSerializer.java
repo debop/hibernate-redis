@@ -15,7 +15,10 @@ public class SnappyRedisSerializer<T> implements RedisSerializer<T> {
     private final RedisSerializer<T> inner;
 
     public SnappyRedisSerializer() {
-        this(new FstRedisSerializer<T>());
+        this(new BinaryRedisSerializer<T>());
+
+        // BUG: Error in Tomcat to serialize/deserialize Float type
+        // this(new FstRedisSerializer<T>());
     }
 
     public SnappyRedisSerializer(RedisSerializer<T> innerSerializer) {

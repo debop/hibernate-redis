@@ -13,8 +13,10 @@ import java.io.ByteArrayOutputStream;
  * Serializer using Fast-Serialization
  *
  * @author Sunghyouk Bae
+ * @deprecated Error in Tomcat to serialize/deserialize Float type
  */
 @Slf4j
+@Deprecated
 public class FstRedisSerializer<T> implements RedisSerializer<T> {
 
     private static final FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();

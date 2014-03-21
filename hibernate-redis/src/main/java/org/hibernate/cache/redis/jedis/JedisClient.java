@@ -52,16 +52,9 @@ public class JedisClient {
     @Setter
     private int expiryInSeconds;
 
-    @Getter
-    private StringRedisSerializer regionSerializer = new StringRedisSerializer();
-
-    @Getter
-    private StringRedisSerializer keySerializer = new StringRedisSerializer();
-    // private RedisSerializer<Object> keySerializer = new BinaryRedisSerializer<Object>();
-
-    @Getter
-    private RedisSerializer<Object> valueSerializer = new SnappyRedisSerializer<Object>();
-    // private RedisSerializer<Object> valueSerializer = new BinaryRedisSerializer<Object>();
+    private final StringRedisSerializer regionSerializer = new StringRedisSerializer();
+    private final StringRedisSerializer keySerializer = new StringRedisSerializer();
+    private final RedisSerializer<Object> valueSerializer = new SnappyRedisSerializer<Object>();
 
     public JedisClient() {
         this(new JedisPool("localhost"), DEFAULT_EXPIRY_IN_SECONDS);
@@ -460,7 +453,7 @@ public class JedisClient {
      * deserialize key
      */
     private Object deserializeKey(final byte[] rawKey) {
-        return getKeySerializer().deserialize(rawKey);
+        return keySerializer.deserialize(rawKey);
     }
 
     /**
@@ -468,7 +461,7 @@ public class JedisClient {
      */
     private byte[] rawValue(final Object value) {
         try {
-            return getValueSerializer().serialize(value);
+            return valueSerializer.serialize(value);
         } catch (Exception e) {
             log.warn("value를 직렬화하는데 실패했습니다. value=" + value, e);
             return null;
@@ -479,7 +472,7 @@ public class JedisClient {
      * deserialize raw value
      */
     private Object deserializeValue(final byte[] rawValue) {
-        return getValueSerializer().deserialize(rawValue);
+        return valueSerializer.deserialize(rawValue);
     }
 
     /**
@@ -550,6 +543,6 @@ public class JedisClient {
      * @return collection of original value
      */
     private List<Object> deserializeValues(final List<byte[]> rawValues) {
-        return SerializationTool.deserialize(rawValues, getValueSerializer());
+        return SerializationTool.deserialize(rawValues, valueSerializer);
     }
 }
