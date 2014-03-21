@@ -1,5 +1,6 @@
 package org.hibernate.examples.usertype;
 
+import com.google.common.base.Objects;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.type.StandardBasicTypes;
@@ -9,7 +10,6 @@ import org.joda.time.DateTimeZone;
 
 import java.io.Serializable;
 import java.sql.*;
-import java.util.Objects;
 
 /**
  * Joda-Time 의 DateTime의 정보를 시각과 {@link org.joda.time.DateTimeZone} 정보로 분리하여 저장하도록 합니다.
@@ -43,7 +43,7 @@ public class JodaDateTimeTZUserType implements UserType {
 
     @Override
     public boolean equals(Object x, Object y) throws HibernateException {
-        return Objects.equals(x, y);
+        return Objects.equal(x, y);
     }
 
     @Override
