@@ -94,7 +94,7 @@
             <dependency>
                 <groupId>de.ruedigermoeller</groupId>
                 <artifactId>fst</artifactId>
-                <version>1.40</version>
+                <version>1.52</version>
             </dependency>
 
             <!-- Logging -->

@@ -43,7 +43,7 @@ public class JodaDateTimeTZUserType implements UserType {
 
     @Override
     public boolean equals(Object x, Object y) throws HibernateException {
-        return Objects.equal(x, y);
+        return x == y || (x != null && x.equals(y));
     }
 
     @Override
