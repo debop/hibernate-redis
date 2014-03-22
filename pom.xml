@@ -13,6 +13,7 @@
     <modules>
         <module>hibernate-redis</module>
         <module>hibernate-examples</module>
+        <module>hibernate-examples-web</module>
     </modules>
 
     <licenses>
