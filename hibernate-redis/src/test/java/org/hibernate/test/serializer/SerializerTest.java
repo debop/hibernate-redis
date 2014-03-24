@@ -11,6 +11,8 @@ import org.junit.Test;
 
 import java.util.Date;
 
+import static org.fest.assertions.Assertions.assertThat;
+
 /**
  * SerializerTest
  *
@@ -54,6 +56,7 @@ public class SerializerTest {
             public void run() {
                 byte[] bytes = binary.serialize(small);
                 Person person = (Person) binary.deserialize(bytes);
+                assertThat(person).isEqualTo(small);
             }
         };
 
@@ -62,6 +65,7 @@ public class SerializerTest {
             public void run() {
                 byte[] bytes = binary.serialize(large);
                 Person person = (Person) binary.deserialize(bytes);
+                assertThat(person).isEqualTo(large);
             }
         };
 
@@ -83,6 +87,7 @@ public class SerializerTest {
             public void run() {
                 byte[] bytes = binSnappy.serialize(small);
                 Person person = (Person) binSnappy.deserialize(bytes);
+                assertThat(person).isEqualTo(small);
             }
         };
 
@@ -91,6 +96,7 @@ public class SerializerTest {
             public void run() {
                 byte[] bytes = binSnappy.serialize(large);
                 Person person = (Person) binSnappy.deserialize(bytes);
+                assertThat(person).isEqualTo(large);
             }
         };
 
@@ -111,6 +117,7 @@ public class SerializerTest {
             public void run() {
                 byte[] bytes = fst.serialize(small);
                 Person person = (Person) fst.deserialize(bytes);
+                assertThat(person).isEqualTo(small);
             }
         };
 
@@ -119,6 +126,8 @@ public class SerializerTest {
             public void run() {
                 byte[] bytes = fst.serialize(large);
                 Person person = (Person) fst.deserialize(bytes);
+                assertThat(person).isEqualTo(large);
+
             }
         };
 
@@ -139,6 +148,7 @@ public class SerializerTest {
             public void run() {
                 byte[] bytes = fstSnappy.serialize(small);
                 Person person = (Person) fstSnappy.deserialize(bytes);
+                assertThat(person).isEqualTo(small);
             }
         };
 
@@ -147,6 +157,7 @@ public class SerializerTest {
             public void run() {
                 byte[] bytes = fstSnappy.serialize(large);
                 Person person = (Person) fstSnappy.deserialize(bytes);
+                assertThat(person).isEqualTo(large);
             }
         };
 
