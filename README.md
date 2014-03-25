@@ -4,6 +4,9 @@ hibernate-redis
 [hibernate][1] (4.2.x.Final, 4.3.x.Final) 2nd level cache using redis server.
 with [jedis][2]  2.4.1 or higher
 
+reduce cache size by [Fast-Serialization][fst] and [snappy-java][snappy]. thanks!
+try serialization [benchmark][benchmark].
+
 ### NOTE
 
 ***Don't use Hibernate 4.3.2.Final, 4.2.9.Final!!! It has bug in CacheKey!***
@@ -15,30 +18,35 @@ if multiple entity cached in same region, can't figure out wanted entity.
 ### Maven Repository
 
 add dependency
-
+```xml
         <dependency>
             <groupId>com.github.debop</groupId>
             <artifactId>hibernate-redis</artifactId>
-            <version>1.5.7</version>
+            <version>1.5.9</version>
         </dependency>
+```
 
 add repository
-
+```xml
     <repositories>
-        <repository>
-            <id>debop-snapshots</id>
-            <url>https://github.com/debop/debop-maven-repo/raw/master/snapshots</url>
-        </repository>
         <repository>
             <id>debop-releases</id>
             <url>https://github.com/debop/debop-maven-repo/raw/master/releases</url>
         </repository>
-    </repositories>
+        <!-- for snapshot -->
+        <repository>
+            <id>debop-snapshots</id>
+            <url>https://github.com/debop/debop-maven-repo/raw/master/snapshots</url>
+        </repository>
 
+    </repositories>
+```
 
 ### setup hibernate configuration
 
 setup hibernate configuration.
+
+```java
 
     // Secondary Cache
     props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
@@ -54,12 +62,15 @@ setup hibernate configuration.
 
     // configuration for Redis that used by hibernate
     props.put(Environment.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties");
+```
 
 also same configuration for using Spring Framework or [Spring Data JPA][4]
 
 ### redis settings for hibernate-redis
 
 sample for hibernate-redis.properties
+
+```ini
 
      ##########################################################
      #
@@ -86,12 +97,13 @@ sample for hibernate-redis.properties
 
      # expiry of hibernate.account region (seconds) // hibernate is prefix, region name is account
      redis.expiryInSeconds.hibernate.account=1200
-
+```
 
 ### Setup hibernate entity to use cache
 
 add @org.hibernate.annotations.Cache annotation to Entity class like this
 
+```java
 	@Entity
 	@Cache(region="common", usage = CacheConcurrencyStrategy.READ_WRITE)  // or @Cacheable(true) for JPA
 	@Getter
@@ -107,7 +119,7 @@ add @org.hibernate.annotations.Cache annotation to Entity class like this
 
     		private static final long serialVersionUID = -281066218676472922L;
 	}
-
+```
 
 ### How to monitor hibernate-cache is running
 
@@ -124,3 +136,6 @@ read [HibernateCacheTest.java][3] for more usage.
 [3]: https://github.com/debop/hibernate-redis/blob/master/hibernate-redis/src/test/java/org/hibernate/test/cache/HibernateCacheTest.java
 [4]: http://projects.spring.io/spring-data-jpa/
 [lombok]: http://www.projectlombok.org/
+[fst]: https://github.com/RuedigerMoeller/fast-serialization
+[snappy]: https://github.com/xerial/snappy-java
+[benchmark]: https://github.com/debop/hibernate-redis/blob/master/hibernate-redis/src/test/java/org/hibernate/test/serializer/SerializerTest.java

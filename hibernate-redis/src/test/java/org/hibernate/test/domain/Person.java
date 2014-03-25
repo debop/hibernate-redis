@@ -1,5 +1,6 @@
 package org.hibernate.test.domain;
 
+import com.google.common.base.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -33,6 +34,9 @@ public class Person implements Serializable {
     private String firstname;
     private String lastname;
 
+    private Float weight = 77.7f;
+    private Double height = 188.8d;
+
     @ManyToMany(mappedBy = "participants")
     private List<Event> events = new ArrayList<Event>();
 
@@ -51,7 +55,15 @@ public class Person implements Serializable {
     @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<String> tailsmans = new ArrayList<String>();
 
-    public String toString() {
-        return getFirstname() + " " + getLastname();
+    @Override
+    public boolean equals(Object obj) {
+        return (obj != null) && (obj instanceof Person) && hashCode() == obj.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return (id != null)
+                ? id.hashCode()
+                : Objects.hashCode(firstname, lastname, weight, height, age);
     }
 }

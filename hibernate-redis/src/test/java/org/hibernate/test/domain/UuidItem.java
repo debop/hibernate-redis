@@ -28,4 +28,10 @@ public class UuidItem implements Serializable {
 	private String name;
 
 	private String description;
+
+    private Float score = 100.6f;
+
+    private Double amount = 134.9d;
+
+
 }

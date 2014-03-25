@@ -153,7 +153,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     @Override
     public TimestampsRegion buildTimestampsRegion(String regionName,
                                                   Properties properties) throws CacheException {
-        regionNames.add(regionName);
+        // regionNames.add(regionName);
         return new RedisTimestampsRegion(accessStrategyFactory,
                                          redis,
                                          regionName,
@@ -188,6 +188,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
                 }
             }
         });
+        expirationThread.setDaemon(true);
         expirationThread.start();
     }
 

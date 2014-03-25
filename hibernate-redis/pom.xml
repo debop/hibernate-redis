@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.github.debop</groupId>
         <artifactId>hibernate-redis-parent</artifactId>
-        <version>1.5.8</version>
+        <version>1.5.9</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -51,6 +51,19 @@
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
         </dependency>
+
+        <!-- Snappy-java -->
+        <dependency>
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+        </dependency>
+
+        <!-- Fast Serialization -->
+        <dependency>
+            <groupId>de.ruedigermoeller</groupId>
+            <artifactId>fst</artifactId>
+        </dependency>
+
 
         <!-- Logging -->
         <dependency>

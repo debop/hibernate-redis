@@ -104,7 +104,7 @@ public class JpaRedisConfiguration {
 
         String[] packagenames = getMappedPackageNames();
         if (packagenames != null && packagenames.length > 0) {
-            JpaRedisConfiguration.log.debug("JPA용 entity를 scan합니다. packages=[{}]", packagenames);
+            log.debug("JPA용 entity를 scan합니다. packages=[{}]", packagenames);
             factoryBean.setPackagesToScan(packagenames);
         }
 
