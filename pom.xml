@@ -6,7 +6,7 @@
 
     <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis-parent</artifactId>
-    <version>1.5.9</version>
+    <version>1.5.10-SNAPSHOT</version>
     <packaging>pom</packaging>
     <url>https://github.com/debop/hibernate-redis</url>
 
