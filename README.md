@@ -1,4 +1,4 @@
-hibernate-redis
+hibernate-redis  [![Build Status](https://drone.io/github.com/debop/hibernate-redis/status.png)](https://drone.io/github.com/debop/hibernate-redis/latest)
 ===============
 
 [hibernate][1] (4.2.x.Final, 4.3.x.Final) 2nd level cache using redis server.
