@@ -9,7 +9,7 @@
         </encoder>
     </appender>
 
-    <logger name="org.hibernate.examples" level="TRACE"/>
+    <logger name="org.hibernate.examples" level="DEBUG"/>
     <logger name="org.hibernate.cache.redis" level="DEBUG"/>
     <logger name="org.hibernate.test" level="DEBUG"/>
 
