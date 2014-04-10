@@ -9,10 +9,7 @@
         </encoder>
     </appender>
 
-    <logger name="org.hibernate.examples-web" level="TRACE"/>
-    <logger name="org.hibernate.cache.redis" level="DEBUG"/>
-    <logger name="org.hibernate.test" level="DEBUG"/>
-
+    <logger name="org.hibernate.examples-web" level="DEBUG"/>
     <logger name="org.hibernate.SQL" level="INFO"/>
 
     <root level="INFO">

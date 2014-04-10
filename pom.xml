@@ -6,7 +6,7 @@
 
     <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis-parent</artifactId>
-    <version>1.5.9</version>
+    <version>1.5.10</version>
     <packaging>pom</packaging>
     <url>https://github.com/debop/hibernate-redis</url>
 
@@ -41,7 +41,6 @@
 
     <properties>
         <jdk.version>1.6</jdk.version>
-        <scala.version>2.10.3</scala.version>
 
         <hibernate.version>4.3.4.Final</hibernate.version>
         <springframework.version>4.0.2.RELEASE</springframework.version>
@@ -81,7 +80,7 @@
             <dependency>
                 <groupId>redis.clients</groupId>
                 <artifactId>jedis</artifactId>
-                <version>2.4.1</version>
+                <version>2.4.2</version>
             </dependency>
 
             <!-- Snappy-java -->
