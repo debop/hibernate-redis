@@ -23,7 +23,10 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Properties;
 
 /**
@@ -36,6 +39,7 @@ import java.util.Properties;
 public final class JedisTool {
 
     public static final String EXPIRY_PROPERTY_PREFIX = "redis.expiryInSeconds.";
+    private static final String FILE_URL_PREFIX = "file:";
     private static Properties cacheProperties = null;
 
     private JedisTool() { }
@@ -80,12 +84,25 @@ public final class JedisTool {
         Properties cacheProps = new Properties();
         String cachePath = props.getProperty(Environment.CACHE_PROVIDER_CONFIG,
                                              "hibernate-redis.properties");
+
+        InputStream is = null;
         try {
             log.info("Loading cache properties... path=[{}]", cachePath);
-            InputStream is = JedisTool.class.getClassLoader().getResourceAsStream(cachePath);
+
+            if (cachePath.startsWith(FILE_URL_PREFIX)) {
+                // load from file
+                is = new FileInputStream(new File(new URI(cachePath)));
+            } else {
+                // load from resources stream
+                is = JedisTool.class.getClassLoader().getResourceAsStream(cachePath);
+            }
             cacheProps.load(is);
         } catch (Exception e) {
             log.warn("Fail to load cache properties. cachePath=" + cachePath, e);
+        } finally {
+            if (is != null) {
+                try { is.close(); } catch (Exception ignored) { }
+            }
         }
         return cacheProps;
     }
