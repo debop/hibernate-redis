@@ -42,8 +42,8 @@
     <properties>
         <jdk.version>1.6</jdk.version>
 
-        <hibernate.version>4.3.4.Final</hibernate.version>
-        <springframework.version>4.0.2.RELEASE</springframework.version>
+        <hibernate.version>4.3.5.Final</hibernate.version>
+        <springframework.version>4.0.3.RELEASE</springframework.version>
         <querydsl.version>3.3.1</querydsl.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -94,7 +94,7 @@
             <dependency>
                 <groupId>de.ruedigermoeller</groupId>
                 <artifactId>fst</artifactId>
-                <version>1.53</version>
+                <version>1.55</version>
             </dependency>
 
             <!-- Logging -->
