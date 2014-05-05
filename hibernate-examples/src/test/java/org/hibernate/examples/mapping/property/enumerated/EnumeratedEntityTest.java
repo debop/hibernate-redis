@@ -23,9 +23,10 @@ public class EnumeratedEntityTest extends AbstractJpaTest {
     @PersistenceContext
     EntityManager em;
 
+    static EnumeratedEntity entity = new EnumeratedEntity();
+
     @Test
     public void enumerated() throws Exception {
-        EnumeratedEntity entity = new EnumeratedEntity();
         entity.setIntValue(OrdinalEnum.Second);
         entity.setStringValue(StringEnum.Integer);
 
@@ -34,6 +35,27 @@ public class EnumeratedEntityTest extends AbstractJpaTest {
         em.clear();
 
         EnumeratedEntity loaded = em.find(EnumeratedEntity.class, entity.getId());
+        assertThat(loaded).isNotNull();
+        assertThat(loaded).isEqualTo(entity);
+        assertThat(loaded.getIntValue()).isEqualTo(OrdinalEnum.Second);
+        assertThat(loaded.getStringValue()).isEqualTo(StringEnum.Integer);
+
+        loaded = em.find(EnumeratedEntity.class, entity.getId());
+        assertThat(loaded).isNotNull();
+        assertThat(loaded).isEqualTo(entity);
+        assertThat(loaded.getIntValue()).isEqualTo(OrdinalEnum.Second);
+        assertThat(loaded.getStringValue()).isEqualTo(StringEnum.Integer);
+    }
+
+    @Test
+    public void loadFromCache() throws Exception {
+        EnumeratedEntity loaded = em.find(EnumeratedEntity.class, entity.getId());
+        assertThat(loaded).isNotNull();
+        assertThat(loaded).isEqualTo(entity);
+        assertThat(loaded.getIntValue()).isEqualTo(OrdinalEnum.Second);
+        assertThat(loaded.getStringValue()).isEqualTo(StringEnum.Integer);
+
+        loaded = em.find(EnumeratedEntity.class, entity.getId());
         assertThat(loaded).isNotNull();
         assertThat(loaded).isEqualTo(entity);
         assertThat(loaded.getIntValue()).isEqualTo(OrdinalEnum.Second);
