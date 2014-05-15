@@ -170,6 +170,13 @@
                 <version>0.8.0.RELEASE</version>
             </dependency>
 
+            <!-- Hikari CP -->
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>1.3.8</version>
+            </dependency>
+
             <!-- Database Drivers -->
             <dependency>
                 <groupId>org.hsqldb</groupId>

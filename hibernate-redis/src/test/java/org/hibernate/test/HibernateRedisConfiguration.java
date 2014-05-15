@@ -1,5 +1,7 @@
 package org.hibernate.test;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.hibernate.cache.redis.SingletonRedisRegionFactory;
@@ -9,8 +11,6 @@ import org.hibernate.test.domain.Account;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
@@ -65,9 +65,22 @@ public class HibernateRedisConfiguration {
 
     @Bean
     public DataSource dataSource() {
-        return new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.H2)
-                .build();
+
+        HikariConfig config = new HikariConfig();
+
+        config.setDriverClassName("org.h2.Driver");
+        config.setJdbcUrl("jdbc:h2:mem:test;MVCC=true;");
+        config.setUsername("sa");
+        config.setPassword("");
+
+        config.setInitializationFailFast(true);
+        config.setConnectionTestQuery("SELECT 1");
+
+        return new HikariDataSource(config);
+
+//        return new EmbeddedDatabaseBuilder()
+//                .setType(EmbeddedDatabaseType.H2)
+//                .build();
     }
 
     @Bean
