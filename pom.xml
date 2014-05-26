@@ -44,7 +44,6 @@
 
         <hibernate.version>4.3.5.Final</hibernate.version>
         <springframework.version>4.0.4.RELEASE</springframework.version>
-        <querydsl.version>3.3.2</querydsl.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

@@ -1,0 +1,147 @@
+subprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'maven'
+
+    compileJava {
+        options.encoding = 'UTF-8'
+        sourceCompatibility = '1.6'
+        targetCompatibility = '1.6'
+    }
+
+    ext {
+        lombokVersion = '1.12.6'
+        slf4jVersion = '1.7.7'
+
+        hibernateVersion = '4.3.5.Final'
+        springVersion = '4.0.5.RELEASE'
+        springDataJpaVersion = '1.6.0.RELEASE'
+
+        querydslVersion = '3.3.4'
+    }
+
+    configurations {
+        lombok
+    }
+
+    dependencies {
+
+        lombok "org.projectlombok:lombok:${lombokVersion}"
+        compile "org.projectlombok:lombok:${lombokVersion}"
+
+        compile "ch.qos.logback:logback-classic:1.1.2"
+        compile "org.slf4j:slf4j-api:${slf4jVersion}"
+
+        // spring framework
+        testCompile "org.springframework:spring-beans:${springVersion}"
+        testCompile "org.springframework:spring-context:${springVersion}"
+        testCompile "org.springframework:spring-orm:${springVersion}"
+        testCompile "org.springframework:spring-tx:${springVersion}"
+        testCompile "org.springframework:spring-test:${springVersion}"
+
+        testCompile "org.springframework.data:spring-data-jpa:${springDataJpaVersion}"
+
+        // Connection Providers
+        testCompile "com.jolbox:bonecp:0.8.0.RELEASE"
+        testCompile "com.zaxxer:HikariCP:1.3.8"
+
+        // Database driver
+        testCompile "com.h2database:h2:1.4.178"
+        testCompile "org.hsqldb:hsqldb:2.3.2"
+        testCompile "mysql:mysql-connector-java:5.1.29"
+
+        // We use Scalatest for testing our library
+        testCompile 'junit:junit:4.11'
+        testCompile 'org.easytesting:fest-assert:1.4'
+        testCompile 'org.hamcrest:hamcrest-all:1.3'
+        testCompile 'com.carrotsearch:junit-benchmarks:0.7.2'
+        testCompile 'org.mockito:mockito-all:1.9.5'
+    }
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        jcenter()
+        maven {
+            url "http://repo.typesafe.com/typesafe/releases/"
+        }
+        maven {
+            url "http://dl.bintray.com/etaty/maven"
+        }
+    }
+
+    task delombok {
+        ext.srcJava = 'src/main/java'
+        ext.srcDelomboked = "${buildDir}/src-delomboked"
+
+        inputs.files file(srcJava)
+        outputs.dir file(srcDelomboked)
+
+        doLast {
+            // 보통은 configurations.runtime만으로 충분하지만, 가끔 provided 등의 사용자정의 configuration이
+            // 존재 할 경우 classpath에 존재하지 않는 라이브러리라서 경고를 보여줄 수 있으므로
+            // 모든 configurations의 의존성을 하나로 모아서 classpath로 지정한다.
+            def allDependencies = configurations.lombok.asFileTree
+            configurations.all { configuration -> allDependencies = allDependencies + configuration.asFileTree }
+
+            ant.taskdef(name: 'delombok',
+                    classname: 'lombok.delombok.ant.DelombokTask',
+                    classpath: configurations.lombok.asPath)
+            ant.delombok(from: srcJava,
+                    to: srcDelomboked,
+                    verbose: true,
+                    encoding: 'UTF-8',
+                    classpath: allDependencies.asPath)
+        }
+    }
+
+    javadoc {
+        dependsOn delombok
+        source = fileTree(dir: delombok.srcDelomboked, includes: ['**/*.java', '**/*.html'])
+        options.encoding = 'utf-8'
+    }
+}
+
+project(':hibernate-redis') {
+    dependencies {
+
+        compile "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
+        testCompile "org.hibernate:hibernate-testing:${hibernateVersion}"
+        testCompile "org.hibernate:hibernate-ehcache:${hibernateVersion}"
+
+        compile "redis.clients:jedis:2.4.2"
+        compile "org.xerial.snappy:snappy-java:1.1.0.1"
+        compile "de.ruedigermoeller:fst:1.55"
+    }
+}
+
+project(':hibernate-examples') {
+    dependencies {
+        compile project(':hibernate-redis')
+
+        compile "org.springframework:spring-context:${springVersion}"
+        compile "org.springframework:spring-orm:${springVersion}"
+        compile "org.springframework:spring-tx:${springVersion}"
+
+        compile "org.springframework.data:spring-data-jpa:${springDataJpaVersion}"
+
+        compile "org.apache.commons:commons-lang3:3.1"
+        compile "com.google.guava:guava:17.0"
+
+        compile "joda-time:joda-time:2.3"
+        compile "org.joda:joda-convert:1.5"
+
+        compile "com.jolbox:bonecp:0.8.0.RELEASE"
+        compile "com.zaxxer:HikariCP:1.3.8"
+        compile "org.apache.tomcat:tomcat-jdbc:7.0.52"
+
+        // QueryDSL
+        compile "com.mysema.querydsl:querydsl-apt:${querydslVersion}"
+        compile "com.mysema.querydsl:querydsl-jpa:${querydslVersion}"
+        compile("com.mysema.querydsl:querydsl-jpa-codegen:${querydslVersion}") {
+            exclude module: 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final'
+        }
+
+        testCompile "org.springframework:spring-test:${springVersion}"
+    }
+}
