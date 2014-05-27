@@ -1,3 +1,5 @@
+apply plugin: 'idea'
+
 ext {
     generatedSrcDir = 'src/main/generated'
     generatedTestDir = 'src/test/generated'

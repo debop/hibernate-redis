@@ -2,10 +2,11 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'maven'
-    apply plugin: 'idea'
+
 
     ext {
         jdkVersion = '1.6'
+
         lombokVersion = '1.12.6'
         slf4jVersion = '1.7.7'
 
@@ -31,7 +32,6 @@ subprojects {
 
 
     dependencies {
-
         lombok "org.projectlombok:lombok:${lombokVersion}"
         compile "org.projectlombok:lombok:${lombokVersion}"
 
