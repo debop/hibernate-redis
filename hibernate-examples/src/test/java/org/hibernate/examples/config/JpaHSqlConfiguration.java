@@ -3,6 +3,8 @@ package org.hibernate.examples.config;
 import org.hibernate.cache.redis.SingletonRedisRegionFactory;
 import org.hibernate.cfg.Environment;
 import org.hibernate.examples.jpa.config.AbstractHSqlJpaConfiguration;
+import org.hibernate.examples.jpa.config.JpaAccount;
+import org.hibernate.examples.mapping.Employee;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -24,7 +26,8 @@ public class JpaHSqlConfiguration extends AbstractHSqlJpaConfiguration {
     @Override
     public String[] getMappedPackageNames() {
         return new String[] {
-                "org.hibernate.examples.mapping"
+                Employee.class.getPackage().getName(),
+                JpaAccount.class.getPackage().getName()
         };
     }
 

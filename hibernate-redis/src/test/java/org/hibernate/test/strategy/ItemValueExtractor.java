@@ -6,7 +6,6 @@ import org.hibernate.cfg.Settings;
 
 /**
  * org.hibernate.test.strategy.ItemValueExtractor
- *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 6. 오후 1:12
  */
@@ -18,6 +17,7 @@ public class ItemValueExtractor extends AbstractReadWriteRedisAccessStrategy<Red
         super(region, settings);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T getValue(final Object entry) {
         return (T) entry;
     }

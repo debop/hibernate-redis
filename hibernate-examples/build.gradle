@@ -1,0 +1,111 @@
+ext {
+    generatedSrcDir = 'src/main/generated'
+    generatedTestDir = 'src/test/generated'
+}
+
+sourceSets {
+    generated {
+        java {
+            srcDirs = [generatedSrcDir]
+        }
+    }
+
+    generatedTest {
+        java {
+            srcDirs = [generatedTestDir]
+        }
+    }
+}
+
+// QueryDSL code generation task
+task generateQueryDSL(type: JavaCompile, group: 'build', description: 'Generate the QueryDSL query types') {
+    source = sourceSets.main.java
+    classpath = configurations.compile + configurations.querydslapt + configurations.testCompile
+    options.compilerArgs = [
+            "-proc:only",
+            "-processor", "com.mysema.query.apt.jpa.JPAAnnotationProcessor"
+    ]
+    destinationDir = sourceSets.generated.java.srcDirs.iterator().next()
+}
+
+// QueryDSL test code generation task
+task generateTestQueryDSL(type: JavaCompile, group: 'build', description: 'Generate the QueryDSL query types in Test') {
+    source = sourceSets.test.java
+    classpath = configurations.compile + configurations.testCompile + configurations.querydslapt + sourceSets.main.runtimeClasspath
+    options.compilerArgs = [
+            "-proc:only",
+            "-processor", "com.mysema.query.apt.jpa.JPAAnnotationProcessor"
+    ]
+    destinationDir = sourceSets.generatedTest.java.srcDirs.iterator().next()
+}
+
+compileJava {
+    dependsOn generateQueryDSL
+    source generateQueryDSL.destinationDir
+}
+
+compileGeneratedJava {
+    dependsOn generateQueryDSL
+    options.warnings = false
+    classpath += sourceSets.main.runtimeClasspath
+}
+
+compileTestJava {
+    dependsOn generateTestQueryDSL
+    source generateTestQueryDSL.destinationDir
+}
+
+compileGeneratedTestJava {
+    dependsOn generateTestQueryDSL
+    options.warnings = false
+    classpath += sourceSets.test.runtimeClasspath
+}
+
+clean {
+    delete sourceSets.generated.java.srcDirs
+    delete sourceSets.generatedTest.java.srcDirs
+}
+
+idea {
+    module {
+        sourceDirs += file(generatedSrcDir)
+    }
+
+    module {
+        testSourceDirs += file(generatedTestDir)
+    }
+}
+
+
+dependencies {
+    compile project(':hibernate-redis')
+
+    compile "org.springframework:spring-beans:$springVersion"
+    compile "org.springframework:spring-context:$springVersion"
+    compile "org.springframework:spring-orm:$springVersion"
+    compile "org.springframework:spring-tx:$springVersion"
+
+    compile "org.springframework.data:spring-data-jpa:$springDataJpaVersion"
+
+    compile "org.hibernate:hibernate-validator:5.1.0.Final"
+
+    compile "org.apache.commons:commons-lang3:3.1"
+    compile "com.google.guava:guava:17.0"
+
+    compile "joda-time:joda-time:2.3"
+    compile "org.joda:joda-convert:1.5"
+
+    compile "com.jolbox:bonecp:0.8.0.RELEASE"
+    compile "com.zaxxer:HikariCP:1.3.8"
+    compile "org.apache.tomcat:tomcat-jdbc:7.0.52"
+
+    // QueryDSL
+    compile "com.mysema.querydsl:querydsl-apt:$querydslVersion"
+    compile "com.mysema.querydsl:querydsl-jpa:$querydslVersion"
+    compile("com.mysema.querydsl:querydsl-jpa-codegen:$querydslVersion") {
+        exclude module: 'hibernate-jpa-2.0-api'
+    }
+    querydslapt "com.mysema.querydsl:querydsl-apt:$querydslVersion"
+
+    testCompile "org.springframework:spring-test:$springVersion"
+}

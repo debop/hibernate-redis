@@ -2,27 +2,33 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'maven'
-
-    compileJava {
-        options.encoding = 'UTF-8'
-        sourceCompatibility = '1.6'
-        targetCompatibility = '1.6'
-    }
+    apply plugin: 'idea'
 
     ext {
+        jdkVersion = '1.6'
         lombokVersion = '1.12.6'
         slf4jVersion = '1.7.7'
 
         hibernateVersion = '4.3.5.Final'
+
         springVersion = '4.0.5.RELEASE'
         springDataJpaVersion = '1.6.0.RELEASE'
-
         querydslVersion = '3.3.4'
+
+        jacksonVersion = '2.3.3'
+    }
+
+    compileJava {
+        options.encoding = 'UTF-8'
+        sourceCompatibility = jdkVersion
+        targetCompatibility = jdkVersion
     }
 
     configurations {
         lombok
+        querydslapt
     }
+
 
     dependencies {
 
@@ -40,10 +46,6 @@ subprojects {
         testCompile "org.springframework:spring-test:${springVersion}"
 
         testCompile "org.springframework.data:spring-data-jpa:${springDataJpaVersion}"
-
-        // Connection Providers
-        testCompile "com.jolbox:bonecp:0.8.0.RELEASE"
-        testCompile "com.zaxxer:HikariCP:1.3.8"
 
         // Database driver
         testCompile "com.h2database:h2:1.4.178"
@@ -100,48 +102,19 @@ subprojects {
         source = fileTree(dir: delombok.srcDelomboked, includes: ['**/*.java', '**/*.html'])
         options.encoding = 'utf-8'
     }
-}
 
-project(':hibernate-redis') {
-    dependencies {
+    test {
+        testLogging {
+            // set options for log level LIFECYCLE
+            events 'failed'
+            exceptionFormat 'short'
+            showStandardStreams true
 
-        compile "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
-        testCompile "org.hibernate:hibernate-testing:${hibernateVersion}"
-        testCompile "org.hibernate:hibernate-ehcache:${hibernateVersion}"
-
-        compile "redis.clients:jedis:2.4.2"
-        compile "org.xerial.snappy:snappy-java:1.1.0.1"
-        compile "de.ruedigermoeller:fst:1.55"
-    }
-}
-
-project(':hibernate-examples') {
-    dependencies {
-        compile project(':hibernate-redis')
-
-        compile "org.springframework:spring-context:${springVersion}"
-        compile "org.springframework:spring-orm:${springVersion}"
-        compile "org.springframework:spring-tx:${springVersion}"
-
-        compile "org.springframework.data:spring-data-jpa:${springDataJpaVersion}"
-
-        compile "org.apache.commons:commons-lang3:3.1"
-        compile "com.google.guava:guava:17.0"
-
-        compile "joda-time:joda-time:2.3"
-        compile "org.joda:joda-convert:1.5"
-
-        compile "com.jolbox:bonecp:0.8.0.RELEASE"
-        compile "com.zaxxer:HikariCP:1.3.8"
-        compile "org.apache.tomcat:tomcat-jdbc:7.0.52"
-
-        // QueryDSL
-        compile "com.mysema.querydsl:querydsl-apt:${querydslVersion}"
-        compile "com.mysema.querydsl:querydsl-jpa:${querydslVersion}"
-        compile("com.mysema.querydsl:querydsl-jpa-codegen:${querydslVersion}") {
-            exclude module: 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final'
+            // set options for log level DEBUG
+            debug {
+                events "started", "skipped", "failed"
+                exceptionFormat "full"
+            }
         }
-
-        testCompile "org.springframework:spring-test:${springVersion}"
     }
 }
