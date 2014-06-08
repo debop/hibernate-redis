@@ -50,7 +50,7 @@ subprojects {
         // Database driver
         testCompile "com.h2database:h2:1.4.178"
         testCompile "org.hsqldb:hsqldb:2.3.2"
-        testCompile "mysql:mysql-connector-java:5.1.29"
+        testCompile "mysql:mysql-connector-java:5.1.31"
 
         // We use Scalatest for testing our library
         testCompile 'junit:junit:4.11'
