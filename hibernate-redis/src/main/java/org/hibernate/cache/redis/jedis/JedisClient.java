@@ -142,12 +142,26 @@ public class JedisClient {
         final byte[] rawRegion = rawRegion(region);
         final byte[] rawKey = rawKey(key);
 
+        // NOTE: expire 된 캐시 정보라면 삭제하고, null 값을 반환합니다.
+        if (expirationInSeconds > 0 && isExpired(region, key)) {
+            runWithPipeline(new JedisPipelinedCallback() {
+                @Override
+                public void execute(Pipeline pipeline) {
+                    final byte[] rawZkey = rawZkey(region);
+                    pipeline.zrem(rawZkey, rawKey);
+                    pipeline.hdel(rawRegion, rawKey);
+                }
+            });
+            return null;
+        }
+
         byte[] rawValue = run(new JedisCallback<byte[]>() {
             @Override
             public byte[] execute(Jedis jedis) {
                 return jedis.hget(rawRegion, rawKey);
             }
         });
+
         // after get, update expiration time
         if (rawValue != null && rawValue.length > 0) {
             if (expirationInSeconds > 0 && !region.contains("UpdateTimestampsCache")) {
@@ -163,6 +177,19 @@ public class JedisClient {
         }
 
         return deserializeValue(rawValue);
+    }
+
+    private Boolean isExpired(final String region, final Object key) {
+        final byte[] rawZkey = rawZkey(region);
+        final byte[] rawKey = rawKey(key);
+
+        Double timestamp = run(new JedisCallback<Double>() {
+            @Override
+            public Double execute(Jedis jedis) {
+                return jedis.zscore(rawZkey, rawKey);
+            }
+        });
+        return timestamp != null && System.currentTimeMillis() > timestamp.longValue();
     }
 
     /**

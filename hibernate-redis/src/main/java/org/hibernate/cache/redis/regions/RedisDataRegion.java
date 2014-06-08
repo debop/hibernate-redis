@@ -98,16 +98,19 @@ public abstract class RedisDataRegion implements Region {
      */
     @Override
     public void destroy() throws CacheException {
-        if (regionDeleted)
-            return;
-        log.info("destroy region. all cache items is deleted. region=[{}]", name);
-        try {
-            redis.deleteRegion(name);
-        } catch (Exception ignored) {
-            log.warn("Fail to delete all cache items... region=" + name, ignored);
-        } finally {
-            regionDeleted = true;
-        }
+        // NOTE: HA 구성 시에는 region 을 삭제할 필요는 없습니다.
+        // NOTE: 단 Cache 조회 시 expiration 되었는지 확인해야 합니다.
+        log.info("destroy region... but not delete redis key. region=[{}]", name);
+//        if (regionDeleted)
+//            return;
+//        log.info("destroy region. all cache items is deleted. region=[{}]", name);
+//        try {
+//            redis.deleteRegion(name);
+//        } catch (Exception ignored) {
+//            log.warn("Fail to delete all cache items... region=" + name, ignored);
+//        } finally {
+//            regionDeleted = true;
+//        }
     }
 
     /**
