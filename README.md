@@ -30,17 +30,6 @@ add repository
 ```xml
 <repositories>
     <repository>
-        <id>debop-releases</id>
-        <url>https://github.com/debop/debop-maven-repo/raw/master/releases</url>
-    </repository>
-    <!-- for snapshot -->
-    <repository>
-        <id>debop-snapshots</id>
-        <url>https://github.com/debop/debop-maven-repo/raw/master/snapshots</url>
-    </repository>
-
-    <!-- bintray for http protocol -->
-    <repository>
         <id>debop-releases-bintray</id>
         <url>http://dl.bintray.com/debop/maven</url>
     </repository>
