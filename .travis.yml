@@ -1,7 +1,7 @@
 language: java
 
 script:
-  - "gradle clean install"
+  - "mvn clean install"
 
 jdk:
   - oraclejdk7
@@ -10,9 +10,9 @@ services:
   - redis
 
 env:
-  - GRADLE_OPTS="-ea -server -Xmx8192m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:PermSize=256M -XX:MaxPermSize=512M"
+  - MAVEN_OPTS="-ea -server -Xmx8192m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:PermSize=256M -XX:MaxPermSize=512M"
 
 # whitelist
 branches:
   only:
-    - develop
+    - master

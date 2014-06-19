@@ -4,7 +4,6 @@ import com.jolbox.bonecp.BoneCPDataSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.jdbc.pool.PoolProperties;
 
 import javax.sql.DataSource;
 import java.util.Map;
@@ -121,44 +120,6 @@ public class DataSources {
 
         return ds;
     }
-
-    /**
-     * Tomcat DataSource 를 빌드합니다.
-     *
-     * @param driverClass DriverClass 명
-     * @param url         Database 주소
-     * @param username    사용자 명
-     * @param passwd      사용자 패스워드
-     * @return [[javax.sql.DataSource]] 인스턴스
-     */
-    public static DataSource getTomcatDataSource(String driverClass, String url, String username, String passwd) {
-
-        log.debug("Tomcat DataSource를 빌드합니다... driverClass=[{}], url=[{}], username=[{}], passwd=[{}]",
-                  driverClass, url, username, passwd);
-
-        PoolProperties p = new org.apache.tomcat.jdbc.pool.PoolProperties();
-        p.setUrl(url);
-        p.setDriverClassName(driverClass);
-        p.setUsername(username);
-        p.setPassword(passwd);
-
-        p.setJmxEnabled(true);
-        p.setTestWhileIdle(true);
-        p.setTestOnBorrow(true);
-        p.setValidationQuery("SELECT 1");
-        p.setTestOnReturn(false);
-        p.setValidationInterval(30000);
-        p.setTimeBetweenEvictionRunsMillis(30000);
-        p.setMaxActive(200);
-        p.setInitialSize(10);
-        p.setMaxWait(10000);
-        p.setRemoveAbandonedTimeout(60);
-        p.setMinEvictableIdleTimeMillis(30000);
-        p.setMinIdle(10);
-
-        return new org.apache.tomcat.jdbc.pool.DataSource(p);
-    }
-
 
     /**
      * 테스트에 사용하기 위해 메모리를 사용하는 HSql DB 에 대한 DataSource 를 반환합니다.
