@@ -3,6 +3,8 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
 
+    version = '1.5.11'
+
 
     ext {
         jdkVersion = '1.6'
