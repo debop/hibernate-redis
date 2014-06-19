@@ -1,6 +1,7 @@
 package org.hibernate.examples.jpa.config;
 
 import org.hibernate.examples.config.JpaH2Configuration;
+import org.hibernate.examples.mapping.Employee;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -19,7 +20,8 @@ public class JpaConfiguration extends JpaH2Configuration {
     @Override
     public String[] getMappedPackageNames() {
         return new String[]{
-                JpaAccount.class.getPackage().getName()
+                JpaAccount.class.getPackage().getName(),
+                Employee.class.getPackage().getName()
         };
     }
 }

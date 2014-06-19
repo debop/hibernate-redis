@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.github.debop</groupId>
         <artifactId>hibernate-redis-parent</artifactId>
-        <version>1.5.10</version>
+        <version>1.5.11-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -109,10 +109,11 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- tomcat connection pool 성능이 좋다. -->
+        <!-- Hikari CP -->
         <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jdbc</artifactId>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>1.3.8</version>
             <scope>test</scope>
         </dependency>
 

@@ -20,9 +20,10 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.Properties;
 
+import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
+
 /**
  * Spring 용 Hibernate 환경 설정 Class 입니다.
- *
  * @author 배성혁 sunghyouk.bae@gmail.com
  * @since 2013. 11. 28. 오전 9:54
  */
@@ -35,14 +36,12 @@ public abstract class AbstractHibernateConfiguration {
 
     /**
      * Mapping Enitty 들이 정의된 Package 명의 배열을 반환합니다.
-     *
      * @return pacakge name 의 배열
      */
     abstract public String[] getMappedPackageNames();
 
     /**
      * HBM 을 이용하여 Database Schema를 생성할 때, 쿼리문을 DB에 맞게 변환할 때 사용하는 규칙
-     *
      * @return NamingStrategy instance
      */
     public NamingStrategy getNamingStrategy() {
@@ -51,7 +50,6 @@ public abstract class AbstractHibernateConfiguration {
 
     /**
      * Hibernate 환경 설정 정보
-     *
      * @return Hibernate 환경 설정 정보를 담은 {@link java.util.Properties}
      */
     public Properties hibernateProperties() {
@@ -71,7 +69,6 @@ public abstract class AbstractHibernateConfiguration {
 
     /**
      * Hibernate 가 사용할 Database 정보를 담은 {@link javax.sql.DataSource}
-     *
      * @param driverClass JDBC Driver class
      * @param url         JDBC Database address (url)
      * @param username    user name
@@ -85,7 +82,6 @@ public abstract class AbstractHibernateConfiguration {
     /**
      * Embeded database 용 DataSource를 빌드합니다.
      * 테스트 시에 사용할 메모리 DB를 생성합니다.
-     *
      * @return {@link javax.sql.DataSource} 인스턴스
      */
     protected DataSource buildEmbeddedDataSource() {
@@ -94,7 +90,6 @@ public abstract class AbstractHibernateConfiguration {
 
     /**
      * {@link javax.sql.DataSource} Bean
-     *
      * @return {@link javax.sql.DataSource} 인스턴스
      */
     @Bean
@@ -107,7 +102,6 @@ public abstract class AbstractHibernateConfiguration {
 
     /**
      * SessionFactory 추가 작업을 하고자할 때 재정의해서 사용합니다.
-     *
      * @param factoryBean {@link LocalSessionFactoryBean} instance
      */
     protected void setupSessionFactory(LocalSessionFactoryBean factoryBean) {
@@ -116,7 +110,6 @@ public abstract class AbstractHibernateConfiguration {
 
     /**
      * Hibernate {@link org.hibernate.SessionFactory} 를 빌드합니다.
-     *
      * @return {@link org.hibernate.SessionFactory} instance.
      */
     @Bean
@@ -127,7 +120,7 @@ public abstract class AbstractHibernateConfiguration {
 
         String[] packagenames = getMappedPackageNames();
         if (packagenames != null && packagenames.length > 0) {
-            log.debug("hibernate용 entity를 scan합니다. packages=[{}]", packagenames);
+            log.debug("hibernate용 entity를 scan합니다. packages=[{}]", arrayToCommaDelimitedString(packagenames));
             factoryBean.setPackagesToScan(packagenames);
         }
 
@@ -154,7 +147,6 @@ public abstract class AbstractHibernateConfiguration {
 
     /**
      * {@link HibernateTransactionManager} Bean 을 등록합니다.
-     *
      * @return {@link HibernateTransactionManager} instance.
      */
     @Bean
@@ -164,7 +156,6 @@ public abstract class AbstractHibernateConfiguration {
 
     /**
      * Hibernate Interceptor
-     *
      * @return hibernate interceptor
      */
     @Bean
@@ -188,7 +179,6 @@ public abstract class AbstractHibernateConfiguration {
 
     /**
      * 예외를 변환하는 Processor를 동록합니다.
-     *
      * @return {@link PersistenceExceptionTranslationPostProcessor} instance.
      */
     @Bean

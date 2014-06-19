@@ -1,0 +1,15 @@
+dependencies {
+
+    compile "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
+    testCompile "org.hibernate:hibernate-testing:${hibernateVersion}"
+    testCompile "org.hibernate:hibernate-ehcache:${hibernateVersion}"
+
+    compile "redis.clients:jedis:2.5.1"
+    compile "org.xerial.snappy:snappy-java:1.1.0.1"
+    compile "de.ruedigermoeller:fst:1.58"
+
+    // Connection Providers
+    testCompile "com.jolbox:bonecp:0.8.0.RELEASE"
+    testCompile "com.zaxxer:HikariCP:1.4.0"
+    testCompile "org.apache.tomcat:tomcat-jdbc:7.0.52"
+}

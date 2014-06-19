@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.debop</groupId>
         <artifactId>hibernate-redis-parent</artifactId>
-        <version>1.5.10</version>
+        <version>1.5.11-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -135,6 +135,12 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Hikari CP -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+        </dependency>
+
         <!-- Bone CP -->
         <dependency>
             <groupId>com.jolbox</groupId>
@@ -145,7 +151,6 @@
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jdbc</artifactId>
         </dependency>
-
 
         <!-- Database Drivers -->
         <dependency>

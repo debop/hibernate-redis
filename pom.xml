@@ -6,7 +6,7 @@
 
     <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis-parent</artifactId>
-    <version>1.5.10</version>
+    <version>1.5.11-SNAPSHOT</version>
     <packaging>pom</packaging>
     <url>https://github.com/debop/hibernate-redis</url>
 
@@ -42,9 +42,8 @@
     <properties>
         <jdk.version>1.6</jdk.version>
 
-        <hibernate.version>4.3.4.Final</hibernate.version>
-        <springframework.version>4.0.2.RELEASE</springframework.version>
-        <querydsl.version>3.3.1</querydsl.version>
+        <hibernate.version>4.3.5.Final</hibernate.version>
+        <springframework.version>4.0.4.RELEASE</springframework.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -94,26 +93,26 @@
             <dependency>
                 <groupId>de.ruedigermoeller</groupId>
                 <artifactId>fst</artifactId>
-                <version>1.53</version>
+                <version>1.55</version>
             </dependency>
 
             <!-- Logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.5</version>
+                <version>1.7.7</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.0.13</version>
+                <version>1.1.2</version>
             </dependency>
 
             <!-- project lombok -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.12.2</version>
+                <version>1.12.6</version>
             </dependency>
 
             <!-- Spring Framework -->
@@ -168,6 +167,13 @@
                 <groupId>com.jolbox</groupId>
                 <artifactId>bonecp</artifactId>
                 <version>0.8.0.RELEASE</version>
+            </dependency>
+
+            <!-- Hikari CP -->
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>1.4.0</version>
             </dependency>
 
             <!-- Database Drivers -->

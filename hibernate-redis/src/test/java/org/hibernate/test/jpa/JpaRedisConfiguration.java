@@ -23,6 +23,8 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.Properties;
 
+import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
+
 /**
  * org.hibernate.test.jpa.JpaRedisConfiguration
  *
@@ -32,7 +34,7 @@ import java.util.Properties;
 @Slf4j
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackageClasses = {EventRepository.class})
+@EnableJpaRepositories(basePackageClasses = { EventRepository.class })
 public class JpaRedisConfiguration {
 
     /**
@@ -46,7 +48,7 @@ public class JpaRedisConfiguration {
      * 매핑할 엔티티 클래스가 정의된 package name 의 배열
      */
     public String[] getMappedPackageNames() {
-        return new String[]{
+        return new String[] {
                 Account.class.getPackage().getName()
         };
     }
@@ -98,13 +100,13 @@ public class JpaRedisConfiguration {
      */
     @Bean
     public EntityManagerFactory entityManagerFactory() throws IOException {
-        JpaRedisConfiguration.log.info("EntityManagerFactory Bean을 생성합니다...");
+        log.info("EntityManagerFactory Bean을 생성합니다...");
 
         LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
 
         String[] packagenames = getMappedPackageNames();
         if (packagenames != null && packagenames.length > 0) {
-            log.debug("JPA용 entity를 scan합니다. packages=[{}]", packagenames);
+            log.debug("JPA용 entity를 scan합니다. packages=[{}]", arrayToCommaDelimitedString(packagenames));
             factoryBean.setPackagesToScan(packagenames);
         }
 

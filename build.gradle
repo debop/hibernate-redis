@@ -1,0 +1,122 @@
+subprojects {
+
+    apply plugin: 'java'
+    apply plugin: 'maven'
+
+    version = '1.5.11'
+
+
+    ext {
+        jdkVersion = '1.6'
+
+        lombokVersion = '1.12.6'
+        slf4jVersion = '1.7.7'
+
+        hibernateVersion = '4.3.5.Final'
+
+        springVersion = '4.0.5.RELEASE'
+        springDataJpaVersion = '1.6.0.RELEASE'
+        querydslVersion = '3.3.4'
+
+        jacksonVersion = '2.3.3'
+    }
+
+    compileJava {
+        options.encoding = 'UTF-8'
+        sourceCompatibility = jdkVersion
+        targetCompatibility = jdkVersion
+    }
+
+    configurations {
+        lombok
+        querydslapt
+    }
+
+
+    dependencies {
+        lombok "org.projectlombok:lombok:${lombokVersion}"
+        compile "org.projectlombok:lombok:${lombokVersion}"
+
+        compile "ch.qos.logback:logback-classic:1.1.2"
+        compile "org.slf4j:slf4j-api:${slf4jVersion}"
+
+        // spring framework
+        testCompile "org.springframework:spring-beans:${springVersion}"
+        testCompile "org.springframework:spring-context:${springVersion}"
+        testCompile "org.springframework:spring-orm:${springVersion}"
+        testCompile "org.springframework:spring-tx:${springVersion}"
+        testCompile "org.springframework:spring-test:${springVersion}"
+
+        testCompile "org.springframework.data:spring-data-jpa:${springDataJpaVersion}"
+
+        // Database driver
+        testCompile "com.h2database:h2:1.4.178"
+        testCompile "org.hsqldb:hsqldb:2.3.2"
+        testCompile "mysql:mysql-connector-java:5.1.31"
+
+        // We use Scalatest for testing our library
+        testCompile 'junit:junit:4.11'
+        testCompile 'org.easytesting:fest-assert:1.4'
+        testCompile 'org.hamcrest:hamcrest-all:1.3'
+        testCompile 'com.carrotsearch:junit-benchmarks:0.7.2'
+        testCompile 'org.mockito:mockito-all:1.9.5'
+    }
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        jcenter()
+        maven {
+            url "http://repo.typesafe.com/typesafe/releases/"
+        }
+        maven {
+            url "http://dl.bintray.com/etaty/maven"
+        }
+    }
+
+    task delombok {
+        ext.srcJava = 'src/main/java'
+        ext.srcDelomboked = "${buildDir}/src-delomboked"
+
+        inputs.files file(srcJava)
+        outputs.dir file(srcDelomboked)
+
+        doLast {
+            // 보통은 configurations.runtime만으로 충분하지만, 가끔 provided 등의 사용자정의 configuration이
+            // 존재 할 경우 classpath에 존재하지 않는 라이브러리라서 경고를 보여줄 수 있으므로
+            // 모든 configurations의 의존성을 하나로 모아서 classpath로 지정한다.
+            def allDependencies = configurations.lombok.asFileTree
+            configurations.all { configuration -> allDependencies = allDependencies + configuration.asFileTree }
+
+            ant.taskdef(name: 'delombok',
+                    classname: 'lombok.delombok.ant.DelombokTask',
+                    classpath: configurations.lombok.asPath)
+            ant.delombok(from: srcJava,
+                    to: srcDelomboked,
+                    verbose: true,
+                    encoding: 'UTF-8',
+                    classpath: allDependencies.asPath)
+        }
+    }
+
+    javadoc {
+        dependsOn delombok
+        source = fileTree(dir: delombok.srcDelomboked, includes: ['**/*.java', '**/*.html'])
+        options.encoding = 'utf-8'
+    }
+
+    test {
+        testLogging {
+            // set options for log level LIFECYCLE
+            events 'failed'
+            exceptionFormat 'short'
+            showStandardStreams true
+
+            // set options for log level DEBUG
+            debug {
+                events "started", "skipped", "failed"
+                exceptionFormat "full"
+            }
+        }
+    }
+}

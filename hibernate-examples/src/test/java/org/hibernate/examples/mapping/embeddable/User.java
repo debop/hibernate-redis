@@ -19,8 +19,8 @@ import javax.persistence.*;
  * @since 2013. 11. 30. 오후 12:33
  */
 @Entity
-@Table(name = "Embeddable_User", indexes = {@Index(name = "ix_embeddable_user_username", columnList = "username, password"),
-@Index(name = "ix_user_email", columnList = "UserEmail")})
+@Table(name = "Embeddable_User", indexes = { @Index(name = "ix_embeddable_user_username", columnList = "username, password"),
+                                             @Index(name = "ix_user_email", columnList = "UserEmail") })
 // index 에 순서를 주려면 hibernate의 Table annotation을 이용해야 합니다.
 @org.hibernate.annotations.Table(appliesTo = "Embeddable_User")
 @org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)

@@ -20,6 +20,8 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.Properties;
 
+import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
+
 /**
  * org.hibernate.examples.jpa.config.AbstractJpaConfiguration
  *
@@ -45,8 +47,6 @@ public abstract class AbstractJpaConfiguration {
 
     /**
      * Database 테이블/컬럼 명에 대한 명명 규칙
-     *
-     * @return
      */
     public NamingStrategy getNamingStrategy() {
         return null; // return DefaultNamingStrategy.INSTANCE;
@@ -127,7 +127,7 @@ public abstract class AbstractJpaConfiguration {
 
         String[] packagenames = getMappedPackageNames();
         if (packagenames != null && packagenames.length > 0) {
-            AbstractJpaConfiguration.log.debug("JPA용 entity를 scan합니다. packages=[{}]", packagenames);
+            log.debug("JPA용 entity를 scan합니다. packages=[{}]", arrayToCommaDelimitedString(packagenames));
             factoryBean.setPackagesToScan(packagenames);
         }
 

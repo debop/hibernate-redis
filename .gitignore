@@ -12,3 +12,10 @@ bin
 # *.jar
 *.war
 *.ear
+
+# Gradle
+.gradle
+build
+
+generated
+generatedTest
