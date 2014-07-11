@@ -19,6 +19,15 @@ public class FstRedisSerializer<T> implements RedisSerializer<T> {
 
     private static final FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
 
+    /**
+     * Provides access to serialization configuration, to inject custom ClassLoaders
+     * among other things.
+     * @return serialization configuration.
+     */
+    public static FSTConfiguration getConf() {
+	return conf;
+    }
+
     @Override
     public byte[] serialize(final T graph) {
         if (graph == null)
