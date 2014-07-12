@@ -18,44 +18,46 @@ if multiple entity cached in same region, can't figure out wanted entity.
 ### Maven Repository
 
 add dependency
-```xml
-<dependency>
-    <groupId>com.github.debop</groupId>
-    <artifactId>hibernate-redis</artifactId>
-    <version>1.6.0</version>
-</dependency>
-```
+
+    ```xml
+    <dependency>
+        <groupId>com.github.debop</groupId>
+        <artifactId>hibernate-redis</artifactId>
+        <version>1.6.1</version>
+    </dependency>
+    ```
 
 add repository
-```xml
-<repositories>
-    <repository>
-        <id>debop-releases-bintray</id>
-        <url>http://dl.bintray.com/debop/maven</url>
-    </repository>
-</repositories>
-```
+
+    ```xml
+    <repositories>
+        <repository>
+            <id>debop-releases-bintray</id>
+            <url>http://dl.bintray.com/debop/maven</url>
+        </repository>
+    </repositories>
+    ```
 
 ### setup hibernate configuration
 
 setup hibernate configuration.
 
-```java
-// Secondary Cache
-props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
-props.put(Environment.USE_QUERY_CACHE, true);
-props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
-props.put(Environment.CACHE_REGION_PREFIX, "hibernate");
-
-// optional setting for second level cache statistics
-props.setProperty(Environment.GENERATE_STATISTICS, "true");
-props.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
-
-props.setProperty(Environment.TRANSACTION_STRATEGY, JdbcTransactionFactory.class.getName());
-
-// configuration for Redis that used by hibernate
-props.put(Environment.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties");
-```
+    ```java
+    // Secondary Cache
+    props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
+    props.put(Environment.USE_QUERY_CACHE, true);
+    props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
+    props.put(Environment.CACHE_REGION_PREFIX, "hibernate");
+    
+    // optional setting for second level cache statistics
+    props.setProperty(Environment.GENERATE_STATISTICS, "true");
+    props.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
+    
+    props.setProperty(Environment.TRANSACTION_STRATEGY, JdbcTransactionFactory.class.getName());
+    
+    // configuration for Redis that used by hibernate
+    props.put(Environment.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties");
+    ```
 
 also same configuration for using Spring Framework or [Spring Data JPA][4]
 
@@ -63,55 +65,55 @@ also same configuration for using Spring Framework or [Spring Data JPA][4]
 
 sample for hibernate-redis.properties
 
-```ini
- ##########################################################
- #
- # properities for hibernate-redis
- #
- ##########################################################
-
- # Redis Server for hibernate 2nd cache
- redis.host=localhost
- redis.port=6379
-
- # redis.timeout=2000
- # redis.password=
-
- # database for hibernate cache
- # redis.database=0
- redis.database=1
-
- # hiberante 2nd cache default expiry (seconds)
- redis.expiryInSeconds=120
-
- # expiry of hibernate.common region (seconds) // hibernate is prefix, region name is common
- redis.expiryInSeconds.hibernate.common=0
-
- # expiry of hibernate.account region (seconds) // hibernate is prefix, region name is account
- redis.expiryInSeconds.hibernate.account=1200
-```
+    ```ini
+     ##########################################################
+     #
+     # properities for hibernate-redis
+     #
+     ##########################################################
+    
+     # Redis Server for hibernate 2nd cache
+     redis.host=localhost
+     redis.port=6379
+    
+     # redis.timeout=2000
+     # redis.password=
+    
+     # database for hibernate cache
+     # redis.database=0
+     redis.database=1
+    
+     # hiberante 2nd cache default expiry (seconds)
+     redis.expiryInSeconds=120
+    
+     # expiry of hibernate.common region (seconds) // hibernate is prefix, region name is common
+     redis.expiryInSeconds.hibernate.common=0
+    
+     # expiry of hibernate.account region (seconds) // hibernate is prefix, region name is account
+     redis.expiryInSeconds.hibernate.account=1200
+    ```
 
 ### Setup hibernate entity to use cache
 
 add @org.hibernate.annotations.Cache annotation to Entity class like this
 
-```java
-@Entity
-@Cache(region="common", usage = CacheConcurrencyStrategy.READ_WRITE)  // or @Cacheable(true) for JPA
-@Getter
-@Setter
-public class Item implements Serializable {
-        @Id
-        @GeneratedValue
-        private Long id;
-
-        private String name;
-
-        private String description;
-
-        private static final long serialVersionUID = -281066218676472922L;
-}
-```
+    ```java
+    @Entity
+    @Cache(region="common", usage = CacheConcurrencyStrategy.READ_WRITE)  // or @Cacheable(true) for JPA
+    @Getter
+    @Setter
+    public class Item implements Serializable {
+            @Id
+            @GeneratedValue
+            private Long id;
+    
+            private String name;
+    
+            private String description;
+    
+            private static final long serialVersionUID = -281066218676472922L;
+    }
+    ```
 
 ### How to monitor hibernate-cache is running
 
