@@ -23,19 +23,22 @@
         </license>
     </licenses>
 
+    <issueManagement>
+        <system>github</system>
+        <url>http://github.com/debop/hibernate-redis/issues</url>
+    </issueManagement>
+
     <scm>
-        <url>https://github.com/debop/hibernate-redis</url>
+        <connection>scm:git:git@github.com:debop/hibernate-redis.git</connection>
+        <url>scm:git:git@github.com:debop/hibernate-redis.git</url>
+        <developerConnection>scm:git:git@github.com:debop/hibernate-redis.git</developerConnection>
     </scm>
 
     <distributionManagement>
         <repository>
             <id>repo</id>
-            <url>https://github.com/debop/debop-maven-repo/raw/master/releases</url>
+            <url>http://dl.bintray.com/debop/maven</url>
         </repository>
-        <snapshotRepository>
-            <id>repo-snapshot</id>
-            <url>https://github.com/debop/debop-maven-repo/raw/master/snapshots</url>
-        </snapshotRepository>
     </distributionManagement>
 
     <properties>
@@ -43,7 +46,7 @@
 
         <hibernate.version>4.3.5.Final</hibernate.version>
         <springframework.version>4.0.5.RELEASE</springframework.version>
-        <querydsl.version>3.3.4</querydsl.version>
+        <querydsl.version>3.4.1</querydsl.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
