@@ -52,28 +52,35 @@ public class JedisClient {
     @Setter
     private int expiryInSeconds;
 
+    private final JedisCacheKeyCustomizer cacheKeyCustomizer;
     private final StringRedisSerializer regionSerializer = new StringRedisSerializer();
     private final StringRedisSerializer keySerializer = new StringRedisSerializer();
     private final RedisSerializer<Object> valueSerializer = new SnappyRedisSerializer<Object>();
 
     public JedisClient() {
-        this(new JedisPool("localhost"), DEFAULT_EXPIRY_IN_SECONDS);
+        this(new JedisPool("localhost"), null, DEFAULT_EXPIRY_IN_SECONDS);
     }
 
     public JedisClient(JedisPool jedisPool) {
-        this(jedisPool, DEFAULT_EXPIRY_IN_SECONDS);
+        this(jedisPool, null, DEFAULT_EXPIRY_IN_SECONDS);
+    }
+
+    public JedisClient(JedisPool jedisPool, JedisCacheKeyCustomizer cacheKeyCustomizer) {
+        this(jedisPool, cacheKeyCustomizer, DEFAULT_EXPIRY_IN_SECONDS);
     }
 
     /**
      * initialize JedisClient instance
      *
-     * @param jedisPool       JedisPool instance
-     * @param expiryInSeconds expiration in seconds
+     * @param jedisPool          JedisPool instance
+     * @param cacheKeyCustomizer Cache key customizer instance
+     * @param expiryInSeconds    expiration in seconds
      */
-    public JedisClient(JedisPool jedisPool, int expiryInSeconds) {
+    public JedisClient(JedisPool jedisPool, JedisCacheKeyCustomizer cacheKeyCustomizer, int expiryInSeconds) {
         log.debug("JedisClient created. jedisPool=[{}], expiryInSeconds=[{}]", jedisPool, expiryInSeconds);
 
         this.jedisPool = jedisPool;
+        this.cacheKeyCustomizer = cacheKeyCustomizer;
         this.expiryInSeconds = expiryInSeconds;
     }
 
@@ -448,7 +455,10 @@ public class JedisClient {
     /**
      * serialize cache key
      */
-    private byte[] rawKey(final Object key) {
+    private byte[] rawKey(Object key) {
+        if (cacheKeyCustomizer != null){
+            key = cacheKeyCustomizer.customizeKey(key);
+        }
         return keySerializer.serialize(key.toString());
     }
 
