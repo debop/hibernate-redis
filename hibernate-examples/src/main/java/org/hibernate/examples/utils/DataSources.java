@@ -83,6 +83,9 @@ public class DataSources {
                 config.addDataSourceProperty(entry.getKey().toString(), entry.getValue().toString());
         }
 
+        config.setMinimumIdle(2);
+        config.setMaximumPoolSize(4 * Runtime.getRuntime().availableProcessors());
+
         config.setInitializationFailFast(true);
         config.setConnectionTestQuery("SELECT 1");
 

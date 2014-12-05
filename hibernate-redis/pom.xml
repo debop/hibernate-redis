@@ -40,12 +40,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-ehcache</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- Redis -->
         <dependency>
             <groupId>redis.clients</groupId>
@@ -111,7 +105,7 @@
         <!-- Hikari CP -->
         <dependency>
             <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
+            <artifactId>HikariCP-java6</artifactId>
             <scope>test</scope>
         </dependency>
 

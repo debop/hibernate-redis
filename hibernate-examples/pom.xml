@@ -134,13 +134,15 @@
         <!-- Hikari CP -->
         <dependency>
             <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
+            <artifactId>HikariCP-java6</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Bone CP -->
         <dependency>
             <groupId>com.jolbox</groupId>
             <artifactId>bonecp</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Database Drivers -->
