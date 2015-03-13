@@ -27,6 +27,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Transaction;
+import redis.clients.util.Pool;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -46,7 +47,7 @@ public class JedisClient {
     public static final String DEFAULT_REGION_NAME = "hibernate";
 
     @Getter
-    private final JedisPool jedisPool;
+    private final Pool<Jedis> jedisPool;
 
     @Getter
     @Setter
@@ -60,7 +61,7 @@ public class JedisClient {
         this(new JedisPool("localhost"), DEFAULT_EXPIRY_IN_SECONDS);
     }
 
-    public JedisClient(JedisPool jedisPool) {
+    public JedisClient(Pool<Jedis> jedisPool) {
         this(jedisPool, DEFAULT_EXPIRY_IN_SECONDS);
     }
 
@@ -70,7 +71,7 @@ public class JedisClient {
      * @param jedisPool       JedisPool instance
      * @param expiryInSeconds expiration in seconds
      */
-    public JedisClient(JedisPool jedisPool, int expiryInSeconds) {
+    public JedisClient(Pool<Jedis>  jedisPool, int expiryInSeconds) {
         log.debug("JedisClient created. jedisPool=[{}], expiryInSeconds=[{}]", jedisPool, expiryInSeconds);
 
         this.jedisPool = jedisPool;
