@@ -76,6 +76,10 @@ sample for hibernate-redis.properties
  redis.host=localhost
  redis.port=6379
 
+ # use redis-sentinel cluster as opposed to a single redis server (use only if not using host/port)
+ # sentinels = host1:26379,host2:26379,host3:26379
+ # masterName = "mymaster"
+
  # redis.timeout=2000
  # redis.password=
 
