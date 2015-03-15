@@ -1,0 +1,50 @@
+allprojects {
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
+
+    group = 'com.github.debop'
+    version = '1.6.2-SNAPSHOT'
+}
+
+subprojects {
+    apply plugin: 'java'
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
+
+    task packageSources(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+
+    }
+
+    test {
+        testLogging {
+            showStandardStreams = true
+            events "passed", "skipped", "failed"
+        }
+
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                println "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+            }
+        }
+    }
+
+    artifacts.archives packageSources
+    publishing {
+        repositories {
+            mavenLocal()
+            mavenCentral()
+
+            maven {
+                name "DebopBinTray"
+                url "http://dl.bintray.com/debop/maven"
+            }
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+}
+
