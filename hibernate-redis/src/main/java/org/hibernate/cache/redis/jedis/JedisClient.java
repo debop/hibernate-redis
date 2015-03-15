@@ -44,6 +44,7 @@ public class JedisClient {
 
     public static final int DEFAULT_EXPIRY_IN_SECONDS = 120;
     public static final String DEFAULT_REGION_NAME = "hibernate";
+    private static final int MAX_TIMESTAMP_UPDATE_ATTEMPTS = 5;
 
     @Getter
     private final JedisPool jedisPool;
@@ -427,6 +428,88 @@ public class JedisClient {
             public void execute(Transaction tx) {
                 tx.del(rawRegion);
                 tx.del(rawZkey);
+            }
+        });
+    }
+
+    /**
+     * We want nextTimestamp to return a long that is greater than previous calls to nextTimestamp.
+     *
+     * The simplest algorithm would be to ignore Redis and return currentTimeMillis. However, different VMs can have small drifts
+     * in their currentTimeMillis and this algorithm isn't safe in multi VM clusters.
+     *
+     * A better algorithm would be:
+     *   SETNX rawKey currentTimeMillis
+     *   INCR rawKey
+     *
+     * However, there are two problems.
+     * 1. Clients can have small drift in their currentTimeMillis.
+     *    If rawKey had been set but later evicted then a client which is behind other clients in currentTimeMillis
+     *    might be the first to call SETNX and issue set to a value that had previously been issued by another client.
+     * 2. Master-slave replication is not synchronous.
+     *    Therefore a slave promoted to master might have missed some calls to INCR. As a result
+     *    we might create timestamps that have already been issued.
+     *
+     * Instead we do the following:
+     *    WATCH rawKey
+     *    current = GET rawKey
+     *    new = max(current, currentTimeMillis) + 1
+     *    MULTI
+     *    SET rawKey $new
+     *    EXEC
+     *
+     * If a client has drifted behind in currentTimeMillis then the current timestamp will just be incremented. This solves 1.
+     * If current value is behind we set to currentTimeMillis +1. This fixes 2.
+     *
+     * If the exec fails because another client changed the value we retry the update.
+     * To avoid deadlocking attempting the update we cap the number of retries. After max retries we fall back to just
+     * incrementing the current value which is a single Redis operation and will always succeed.
+     * This does not fix problem 2. but gives us path to eventually recover.
+     */
+    public long nextTimestamp(final Object key) {
+        final byte[] rawKey = rawKey(key);
+
+        Long updatedTimestamp = null;
+        int updateAttempts = 0;
+        while (updatedTimestamp == null && updateAttempts < MAX_TIMESTAMP_UPDATE_ATTEMPTS) {
+            updatedTimestamp = updateOrIncrementTimestamp(rawKey);
+            updateAttempts++;
+        }
+
+        if ( updatedTimestamp != null) {
+            log.debug("updated timestamp: key=[{}], attempt=[{}], timestamp=[{}]", key, updateAttempts, updatedTimestamp);
+            return updatedTimestamp;
+        } else {
+            // If we can't update the timestamp at least fall back to incrementing
+            Long incrementedTimestamp = incrementTimestamp(rawKey);
+            log.warn("updated timestamp failed {} times. Fall back to incrementing: key=[{}], timestamp=[{}]", updateAttempts, key, incrementedTimestamp);
+            return incrementedTimestamp;
+        }
+    }
+
+    private Long updateOrIncrementTimestamp(final byte[] rawKey) {
+        return run(new JedisCallback<Long>() {
+            @Override
+            public Long execute(Jedis jedis) {
+                jedis.watch(rawKey);
+                Long currentTimestamp = (Long)deserializeValue(jedis.get(rawKey));
+                if (currentTimestamp == null) {
+                    currentTimestamp = 0L;
+                }
+                Long newTimestamp = Math.max(System.currentTimeMillis(), currentTimestamp) + 1;
+                Transaction tx = jedis.multi();
+                tx.set(rawKey, rawValue(newTimestamp));
+                List<Object> result = tx.exec(); // it the watch fails exec returns null
+                return result != null ? newTimestamp : null;
+            }
+        });
+    }
+
+    private Long incrementTimestamp(final byte[] rawKey) {
+        return run(new JedisCallback<Long>() {
+            @Override
+            public Long execute(Jedis jedis) {
+                return jedis.incr(rawKey);
             }
         });
     }

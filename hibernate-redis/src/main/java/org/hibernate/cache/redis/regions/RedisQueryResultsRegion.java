@@ -18,6 +18,7 @@ package org.hibernate.cache.redis.regions;
 
 import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory;
+import org.hibernate.cache.redis.timestamper.JedisCacheTimestamper;
 import org.hibernate.cache.spi.QueryResultsRegion;
 
 import java.util.Properties;
@@ -33,7 +34,8 @@ public class RedisQueryResultsRegion extends RedisGeneralDataRegion implements Q
     public RedisQueryResultsRegion(RedisAccessStrategyFactory accessStrategyFactory,
                                    JedisClient redis,
                                    String regionName,
-                                   Properties props) {
-        super(accessStrategyFactory, redis, regionName, props);
+                                   Properties props,
+                                   JedisCacheTimestamper timestamper) {
+        super(accessStrategyFactory, redis, regionName, props, timestamper);
     }
 }
