@@ -1,0 +1,6 @@
+rootProject.name = 'hibernate-redis-parent'
+include ':hibernate-redis'
+include ':hibernate-examples'
+
+project(':hibernate-redis').projectDir = "$rootDir/hibernate-redis" as File
+project(':hibernate-examples').projectDir = "$rootDir/hibernate-examples" as File
