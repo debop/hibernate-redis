@@ -75,7 +75,7 @@
             <dependency>
                 <groupId>redis.clients</groupId>
                 <artifactId>jedis</artifactId>
-                <version>2.6.1</version>
+                <version>2.6.2</version>
             </dependency>
 
             <!-- Snappy-java -->
@@ -149,6 +149,7 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${springframework.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <!-- Spring Data -->
