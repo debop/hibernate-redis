@@ -6,7 +6,7 @@
 
     <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis-parent</artifactId>
-    <version>1.6.1</version>
+    <version>1.6.2</version>
     <packaging>pom</packaging>
     <url>https://github.com/debop/hibernate-redis</url>
 
@@ -23,27 +23,30 @@
         </license>
     </licenses>
 
+    <issueManagement>
+        <system>github</system>
+        <url>http://github.com/debop/hibernate-redis/issues</url>
+    </issueManagement>
+
     <scm>
-        <url>https://github.com/debop/hibernate-redis</url>
+        <connection>scm:git:git@github.com:debop/hibernate-redis.git</connection>
+        <url>scm:git:git@github.com:debop/hibernate-redis.git</url>
+        <developerConnection>scm:git:git@github.com:debop/hibernate-redis.git</developerConnection>
     </scm>
 
     <distributionManagement>
         <repository>
             <id>repo</id>
-            <url>https://github.com/debop/debop-maven-repo/raw/master/releases</url>
+            <url>http://dl.bintray.com/debop/maven</url>
         </repository>
-        <snapshotRepository>
-            <id>repo-snapshot</id>
-            <url>https://github.com/debop/debop-maven-repo/raw/master/snapshots</url>
-        </snapshotRepository>
     </distributionManagement>
 
     <properties>
-        <jdk.version>1.6</jdk.version>
+        <jdk.version>1.7</jdk.version>
 
-        <hibernate.version>4.3.5.Final</hibernate.version>
-        <springframework.version>4.0.5.RELEASE</springframework.version>
-        <querydsl.version>3.3.4</querydsl.version>
+        <hibernate.version>4.3.10.Final</hibernate.version>
+        <springframework.version>4.1.2.RELEASE</springframework.version>
+        <querydsl.version>3.6.0</querydsl.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -68,18 +71,11 @@
                 <scope>test</scope>
             </dependency>
 
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-ehcache</artifactId>
-                <version>${hibernate.version}</version>
-                <scope>test</scope>
-            </dependency>
-
             <!-- Redis -->
             <dependency>
                 <groupId>redis.clients</groupId>
                 <artifactId>jedis</artifactId>
-                <version>2.5.1</version>
+                <version>2.6.2</version>
             </dependency>
 
             <!-- Snappy-java -->
@@ -93,7 +89,7 @@
             <dependency>
                 <groupId>de.ruedigermoeller</groupId>
                 <artifactId>fst</artifactId>
-                <version>1.58</version>
+                <version>2.33</version>
             </dependency>
 
             <!-- Logging -->
@@ -153,6 +149,7 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${springframework.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <!-- Spring Data -->
@@ -168,13 +165,15 @@
                 <groupId>com.jolbox</groupId>
                 <artifactId>bonecp</artifactId>
                 <version>0.8.0.RELEASE</version>
+                <scope>test</scope>
             </dependency>
 
             <!-- Hikari CP -->
             <dependency>
                 <groupId>com.zaxxer</groupId>
-                <artifactId>HikariCP</artifactId>
-                <version>1.4.0</version>
+                <artifactId>HikariCP-java6</artifactId>
+                <version>2.2.5</version>
+                <scope>test</scope>
             </dependency>
 
             <!-- Database Drivers -->
@@ -270,7 +269,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Test jar 는 생략합니다. -->
+            <!-- Skip Test jar -->
             <!--
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
