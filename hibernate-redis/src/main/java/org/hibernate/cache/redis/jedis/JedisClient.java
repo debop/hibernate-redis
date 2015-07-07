@@ -552,7 +552,7 @@ public class JedisClient {
     }
 
     /**
-     * deserize the specified raw key set.
+     * deserialize the specified raw key set.
      *
      * @return original key set.
      */
@@ -565,7 +565,7 @@ public class JedisClient {
     }
 
     /**
-     * deseriaize the specified raw value collection
+     * deserialize the specified raw value collection
      *
      * @return collection of original value
      */
