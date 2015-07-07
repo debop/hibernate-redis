@@ -6,7 +6,7 @@
 
     <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis-parent</artifactId>
-    <version>1.6.2-SNAPSHOT</version>
+    <version>1.6.2</version>
     <packaging>pom</packaging>
     <url>https://github.com/debop/hibernate-redis</url>
 
@@ -44,7 +44,7 @@
     <properties>
         <jdk.version>1.7</jdk.version>
 
-        <hibernate.version>4.3.7.Final</hibernate.version>
+        <hibernate.version>4.3.10.Final</hibernate.version>
         <springframework.version>4.1.2.RELEASE</springframework.version>
         <querydsl.version>3.6.0</querydsl.version>
 
