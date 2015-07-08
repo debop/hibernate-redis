@@ -34,13 +34,6 @@
         <developerConnection>scm:git:git@github.com:debop/hibernate-redis.git</developerConnection>
     </scm>
 
-    <distributionManagement>
-        <repository>
-            <id>repo</id>
-            <url>http://dl.bintray.com/debop/maven</url>
-        </repository>
-    </distributionManagement>
-
     <properties>
         <jdk.version>1.7</jdk.version>
 
@@ -301,6 +294,37 @@
                 </executions>
             </plugin>
             -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <inherited>false</inherited>
+            </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>Local.Repo</id>
+            <name>Local Release Repository</name>
+            <url>http://127.0.0.1:8081/nexus/content/repositories/releases</url>
+        </repository>
+        <repository>
+            <id>Local.Repo.Snapshot</id>
+            <name>Local Snapshot Repository</name>
+            <url>http://127.0.0.1:8081/nexus/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>Local.Repo</id>
+            <name>Local Release Repository</name>
+            <url>http://127.0.0.1:8081/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>Local.Repo.Snapshot</id>
+            <name>Local Snapshot Repository</name>
+            <url>http://127.0.0.1:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
