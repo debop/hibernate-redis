@@ -220,7 +220,6 @@ public class JedisClient {
      * @param region region
      * @return cache item count in region
      */
-
     public Long keySizeInRegion(final String region) {
         final byte[] rawRegion = rawRegion(region);
         return run(new JedisCallback<Long>() {
