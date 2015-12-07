@@ -77,8 +77,7 @@ public abstract class RedisDataRegion implements Region {
                 Integer.decode(props.getProperty(CACHE_LOCK_TIMEOUT_PROPERTY,
                                                  String.valueOf(DEFAULT_CACHE_LOCK_TIMEOUT)));
 
-        int defaultExpires = Integer.decode(JedisTool.getProperty(EXPIRE_IN_SECONDS, "120"));
-        this.expireInSeconds = JedisTool.getExpireInSeconds(name, defaultExpires);
+        this.expireInSeconds = JedisTool.getExpireInSeconds(props, name);
     }
 
     /**

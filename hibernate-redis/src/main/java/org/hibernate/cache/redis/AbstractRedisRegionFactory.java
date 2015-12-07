@@ -52,7 +52,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
      */
     protected Settings settings;
 
-    protected final Properties props;
+    protected Properties props;
 
     protected final RedisAccessStrategyFactory accessStrategyFactory = new RedisAccessStrategyFactoryImpl();
 
