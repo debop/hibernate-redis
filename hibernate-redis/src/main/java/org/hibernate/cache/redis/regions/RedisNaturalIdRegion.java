@@ -19,6 +19,7 @@ package org.hibernate.cache.redis.regions;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory;
+import org.hibernate.cache.redis.timestamper.JedisCacheTimestamper;
 import org.hibernate.cache.spi.CacheDataDescription;
 import org.hibernate.cache.spi.NaturalIdRegion;
 import org.hibernate.cache.spi.access.AccessType;
@@ -43,8 +44,9 @@ public class RedisNaturalIdRegion extends RedisTransactionalDataRegion implement
                                 String regionName,
                                 Settings settings,
                                 CacheDataDescription metadata,
-                                Properties props) {
-        super(accessStrategyFactory, redis, regionName, settings, metadata, props);
+                                Properties props,
+                                JedisCacheTimestamper timestamper) {
+        super(accessStrategyFactory, redis, regionName, settings, metadata, props, timestamper);
     }
 
     @Override

@@ -42,10 +42,7 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
 
         this.settings = settings;
         try {
-            if (redis == null) {
-                this.redis = JedisTool.createJedisClient(props);
-                manageExpiration(redis);
-            }
+            createJedisClientAndTimestamper(settings, properties);
             log.info("RedisRegionFactory is started");
         } catch (Exception e) {
             log.error("Fail to start RedisRegionFactory.", e);

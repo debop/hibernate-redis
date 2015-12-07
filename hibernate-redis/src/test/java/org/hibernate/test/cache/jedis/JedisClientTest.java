@@ -18,18 +18,26 @@ package org.hibernate.test.cache.jedis;
 
 import com.carrotsearch.junitbenchmarks.BenchmarkRule;
 import org.hibernate.cache.redis.jedis.JedisClient;
+import org.hibernate.cache.redis.serializer.SnappyRedisSerializer;
+import org.hibernate.cache.redis.serializer.StringRedisSerializer;
 import org.hibernate.test.cache.MultiThreadTestTool;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
+import redis.clients.jedis.Client;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link org.hibernate.cache.redis.jedis.JedisClient} 테스트
@@ -149,5 +157,60 @@ public class JedisClientTest {
         client.deleteRegion(JedisClient.DEFAULT_REGION_NAME);
         keysInRegion = client.keysInRegion(JedisClient.DEFAULT_REGION_NAME);
         assertThat(keysInRegion.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void nextTimestampWithNoExistingValue() throws Exception {
+        long currentMillis = System.currentTimeMillis();
+
+        long nextTimestamp = client.nextTimestamp("cacheTest");
+
+        assertThat(nextTimestamp).isGreaterThan(currentMillis);
+    }
+
+    @Test
+    public void nextTimestampWithExistingValue() throws Exception {
+
+        long timestampOne = client.nextTimestamp("cacheTest");
+        long timestampTwo = client.nextTimestamp("cacheTest");
+
+        assertThat(timestampTwo).isGreaterThan(timestampOne);
+    }
+
+    @Test
+    public void nextTimestampWithExistingFutureValue() throws Exception {
+        long futureTimestamp = System.currentTimeMillis()+100000;
+        setTimestamp("cacheTest", futureTimestamp);
+
+        long nextTimestamp = client.nextTimestamp("cacheTest");
+
+        assertThat(nextTimestamp).isEqualTo(futureTimestamp+1);
+    }
+
+    @Test
+    public void nextTimestampIncrementsIfUpdateFails() throws Exception {
+        JedisPool pool = mock(JedisPool.class);
+        client = new JedisClient(pool);
+        Jedis jedis = mock(Jedis.class);
+        when(pool.getResource()).thenReturn(jedis);
+
+        Client mockClient = mock(Client.class);
+        Transaction spyTrans = spy(new Transaction(mockClient));
+        when(jedis.multi()).thenReturn(spyTrans);
+
+        when(spyTrans.exec()).thenReturn(null); // fake the watch failing
+        when(jedis.incr(any(byte[].class))).thenReturn(1000L);
+
+        long nextTimestamp = client.nextTimestamp("cacheTest");
+
+        assertThat(nextTimestamp).isEqualTo(1000L);
+    }
+
+    private void setTimestamp(String cacheKey, long timestamp) {
+        JedisPool pool = new JedisPool("localhost");
+        Jedis jedis = pool.getResource();
+        StringRedisSerializer keySerializer = new StringRedisSerializer();
+        SnappyRedisSerializer<Object> serializer = new SnappyRedisSerializer<Object>();
+        jedis.set(keySerializer.serialize(cacheKey), serializer.serialize(timestamp));
     }
 }

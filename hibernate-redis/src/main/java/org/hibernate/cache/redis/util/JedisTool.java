@@ -18,7 +18,10 @@ package org.hibernate.cache.redis.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.redis.jedis.JedisClient;
+import org.hibernate.cache.redis.timestamper.JedisCacheTimestamper;
+import org.hibernate.cache.redis.timestamper.JedisCacheTimestamperJvmImpl;
 import org.hibernate.cfg.Environment;
+import org.hibernate.cfg.Settings;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Protocol;
@@ -40,6 +43,8 @@ public final class JedisTool {
 
     public static final String EXPIRY_PROPERTY_PREFIX = "redis.expiryInSeconds.";
     private static final String FILE_URL_PREFIX = "file:";
+    public static final String TIMESTAMPER_PROPERTY_KEY = "redis.timestamper.class";
+    public static final Class<?> DEFAULT_TIMESTAMPER_CLASS = JedisCacheTimestamperJvmImpl.class;
     private static Properties cacheProperties = null;
 
     private JedisTool() { }
@@ -71,6 +76,24 @@ public final class JedisTool {
                  host, port, timeout, password, database);
 
         return new JedisPool(createJedisPoolConfig(), host, port, timeout, password, database);
+    }
+
+    public static JedisCacheTimestamper createTimestamper(Settings settings, Properties properties, JedisClient jedisClient) {
+        String timestamperClazzName = properties.getProperty(TIMESTAMPER_PROPERTY_KEY, DEFAULT_TIMESTAMPER_CLASS.getName());
+
+        JedisCacheTimestamper timestamper;
+        try {
+            Class<?> clazz = Class.forName(timestamperClazzName);
+            timestamper = (JedisCacheTimestamper) clazz.newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+
+        timestamper.setSettings(settings);
+        timestamper.setProperties(properties);
+        timestamper.setJedisClient(jedisClient);
+
+        return timestamper;
     }
 
     private static JedisPoolConfig createJedisPoolConfig() {

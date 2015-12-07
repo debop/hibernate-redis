@@ -19,6 +19,7 @@ package org.hibernate.cache.redis.regions;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory;
+import org.hibernate.cache.redis.timestamper.JedisCacheTimestamper;
 import org.hibernate.cache.spi.GeneralDataRegion;
 
 import java.util.Properties;
@@ -35,8 +36,9 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
     protected RedisGeneralDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
                                      JedisClient redis,
                                      String regionName,
-                                     Properties props) {
-        super(accessStrategyFactory, redis, regionName, props);
+                                     Properties props,
+                                     JedisCacheTimestamper timestamper) {
+        super(accessStrategyFactory, redis, regionName, props, timestamper);
     }
 
     @Override

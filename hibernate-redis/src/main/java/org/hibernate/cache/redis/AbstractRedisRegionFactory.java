@@ -22,7 +22,8 @@ import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cache.redis.regions.*;
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactoryImpl;
-import org.hibernate.cache.redis.util.Timestamper;
+import org.hibernate.cache.redis.timestamper.JedisCacheTimestamper;
+import org.hibernate.cache.redis.util.JedisTool;
 import org.hibernate.cache.spi.*;
 import org.hibernate.cache.spi.access.AccessType;
 import org.hibernate.cfg.Settings;
@@ -65,6 +66,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
      * JedisClient instance.
      */
     protected JedisClient redis = null;
+    protected JedisCacheTimestamper timestamper = null;
 
     /**
      * expiration management thread
@@ -92,13 +94,21 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
         return true;
     }
 
+    protected void createJedisClientAndTimestamper(Settings settings, Properties properties) {
+        if (redis == null) {
+            redis = JedisTool.createJedisClient(properties);
+            timestamper = JedisTool.createTimestamper(settings, properties, redis);
+            manageExpiration(redis);
+        }
+    }
+
     @Override
     public AccessType getDefaultAccessType() {
         return AccessType.READ_WRITE;
     }
 
     public long nextTimestamp() {
-        return Timestamper.next();
+        return timestamper.next();
     }
 
     @Override
@@ -111,7 +121,8 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
                                      regionName,
                                      settings,
                                      metadata,
-                                     properties);
+                                     properties,
+                                     timestamper);
     }
 
     @Override
@@ -124,7 +135,8 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
                                         regionName,
                                         settings,
                                         metadata,
-                                        properties);
+                                        properties,
+                                        timestamper);
     }
 
     @Override
@@ -137,7 +149,8 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
                                          regionName,
                                          settings,
                                          metadata,
-                                         properties);
+                                         properties,
+                                         timestamper);
     }
 
     @Override
@@ -147,7 +160,8 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
         return new RedisQueryResultsRegion(accessStrategyFactory,
                                            redis,
                                            regionName,
-                                           properties);
+                                           properties,
+                                           timestamper);
     }
 
     @Override
@@ -157,7 +171,8 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
         return new RedisTimestampsRegion(accessStrategyFactory,
                                          redis,
                                          regionName,
-                                         properties);
+                                         properties,
+                                         timestamper);
     }
 
     protected synchronized void manageExpiration(final JedisClient redis) {
