@@ -12,7 +12,3 @@ services:
 env:
   - MAVEN_OPTS="-ea -server -Xmx8192m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:PermSize=256M -XX:MaxPermSize=512M"
 
-# whitelist
-branches:
-  only:
-    - master

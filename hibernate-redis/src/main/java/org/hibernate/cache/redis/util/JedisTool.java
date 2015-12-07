@@ -19,15 +19,17 @@ package org.hibernate.cache.redis.util;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.redis.jedis.JedisClient;
 import org.hibernate.cfg.Environment;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.Protocol;
+import redis.clients.jedis.*;
+import redis.clients.util.Pool;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Jedis Helper class
@@ -57,20 +59,33 @@ public final class JedisTool {
     }
 
     /**
-     * create {@link redis.clients.jedis.JedisPool} instance.
+     * create {@link redis.clients.util.Pool<Jedis>} instance.
      */
-    public static JedisPool createJedisPool(Properties props) {
+    public static Pool<Jedis> createJedisPool(Properties props) {
 
         String host = props.getProperty("redis.host", "localhost");
         Integer port = Integer.decode(props.getProperty("redis.port", String.valueOf(Protocol.DEFAULT_PORT)));
         Integer timeout = Integer.decode(props.getProperty("redis.timeout", String.valueOf(Protocol.DEFAULT_TIMEOUT))); // msec
         String password = props.getProperty("redis.password", null);
         Integer database = Integer.decode(props.getProperty("redis.database", String.valueOf(Protocol.DEFAULT_DATABASE)));
+        String sentinelsString = props.getProperty("redis.sentinels", null);
+        Set<String> sentinels = sentinelsString != null ? new HashSet<String>(Arrays.asList(sentinelsString.split(","))) : null;
+        String masterName = props.getProperty("redis.masterName", null);
 
-        log.info("create JedisPool. host=[{}], port=[{}], timeout=[{}], password=[{}], database=[{}]",
-                 host, port, timeout, password, database);
+        JedisPoolConfig jedisPoolConfig = createJedisPoolConfig();
 
-        return new JedisPool(createJedisPoolConfig(), host, port, timeout, password, database);
+        Pool<Jedis> pool;
+        if (sentinels != null && !sentinels.isEmpty() && masterName != null) {
+            log.info("create JedisSentinelPool. masterName=[{}], sentinels=[{}], timeout=[{}], password=[{}], database=[{}]",
+                    masterName, sentinels, timeout, password, database);
+            pool = new JedisSentinelPool(masterName, sentinels, jedisPoolConfig, timeout, password, database);
+        } else{
+            log.info("create JedisPool. host=[{}], port=[{}], timeout=[{}], password=[{}], database=[{}]",
+                    host, port, timeout, password, database);
+
+            pool = new JedisPool(jedisPoolConfig, host, port, timeout, password, database);
+        }
+        return pool;
     }
 
     private static JedisPoolConfig createJedisPoolConfig() {
