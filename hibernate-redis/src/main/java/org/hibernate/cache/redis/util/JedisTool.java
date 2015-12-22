@@ -81,7 +81,7 @@ public final class JedisTool {
     }
 
     private static Properties loadCacheProperties(final Properties props) {
-        Properties cacheProps = new Properties();
+        Properties cacheProps = new Properties(props);
         String cachePath = props.getProperty(Environment.CACHE_PROVIDER_CONFIG,
                                              "hibernate-redis.properties");
 
