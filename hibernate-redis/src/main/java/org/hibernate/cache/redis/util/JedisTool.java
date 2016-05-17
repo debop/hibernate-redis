@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Properties;
+import org.hibernate.cache.redis.jedis.JedisCacheKeyCustomizer;
 
 /**
  * Jedis Helper class
@@ -48,12 +49,24 @@ public final class JedisTool {
      * create {@link org.hibernate.cache.redis.jedis.JedisClient} instance.
      */
     public static JedisClient createJedisClient(Properties props) {
-        log.info("create JedisClient.");
+        if (log.isTraceEnabled()){
+            log.trace("create JedisClient.");
+        }
         Properties cacheProps = loadCacheProperties(props);
         Integer expiryInSeconds = Integer.decode(cacheProps.getProperty("redis.expiryInSeconds", "120"));  // 120 seconds
         cacheProperties = cacheProps;
+        
+        JedisCacheKeyCustomizer customizer = null;
+        String customizerClass = cacheProps.getProperty("redis.customizerClass");
+        if (customizerClass != null){
+            try {
+                customizer = (JedisCacheKeyCustomizer)Class.forName(customizerClass).newInstance();
+            } catch (Exception ex) {
+                log.error("Problems to instanciate cache key customizer.", ex);
+            }
+        }
 
-        return new JedisClient(createJedisPool(cacheProps), expiryInSeconds);
+        return new JedisClient(createJedisPool(cacheProps),customizer, expiryInSeconds);
     }
 
     /**
@@ -67,8 +80,10 @@ public final class JedisTool {
         String password = props.getProperty("redis.password", null);
         Integer database = Integer.decode(props.getProperty("redis.database", String.valueOf(Protocol.DEFAULT_DATABASE)));
 
-        log.info("create JedisPool. host=[{}], port=[{}], timeout=[{}], password=[{}], database=[{}]",
+        if (log.isTraceEnabled()){
+            log.trace("create JedisPool. host=[{}], port=[{}], timeout=[{}], password=[{}], database=[{}]",
                  host, port, timeout, password, database);
+        }
 
         return new JedisPool(createJedisPoolConfig(), host, port, timeout, password, database);
     }
@@ -87,7 +102,9 @@ public final class JedisTool {
 
         InputStream is = null;
         try {
-            log.info("Loading cache properties... path=[{}]", cachePath);
+            if (log.isTraceEnabled()){
+                log.trace("Loading cache properties... path=[{}]", cachePath);
+            }
 
             if (cachePath.startsWith(FILE_URL_PREFIX)) {
                 // load from file
@@ -132,7 +149,9 @@ public final class JedisTool {
             return defaultValue;
         try {
             String value = cacheProperties.getProperty(name, defaultValue);
-            log.debug("get property. name=[{}], value=[{}], defaultValue=[{}]", name, value, defaultValue);
+            if (log.isDebugEnabled()){
+                log.debug("get property. name=[{}], value=[{}], defaultValue=[{}]", name, value, defaultValue);
+            }
             return value;
         } catch (Exception ignored) {
             return defaultValue;
