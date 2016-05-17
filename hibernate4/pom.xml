@@ -10,12 +10,24 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>hibernate-redis-hibernate4</artifactId>
+  <packaging>jar</packaging>
+
+  <properties>
+    <hibernate.version>4.3.11.Final</hibernate.version>
+  </properties>
 
   <dependencies>
     <dependency>
+      <groupId>com.github.debop</groupId>
+      <artifactId>hibernate-redis</artifactId>
+      <version>${project.parent.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
-      <version>4.3.11.Final</version>
+      <version>${hibernate.version}</version>
       <optional>true</optional>
       <exclusions>
         <exclusion>
@@ -23,6 +35,25 @@
           <artifactId>jboss-logging</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.redisson</groupId>
+      <artifactId>redisson</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
     </dependency>
   </dependencies>
 
