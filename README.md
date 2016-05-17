@@ -1,6 +1,12 @@
 hibernate-redis  [![Build Status](https://travis-ci.org/debop/hibernate-redis.png)](https://travis-ci.org/debop/hibernate-redis)
 ===============
 
+## NEWS
+
+Currently we develop 2.x for supporting Hibernate 4 and Hibernate 5 both. (wait please ^^)
+
+----
+
 [hibernate][1] (4.2.x.Final, 4.3.x.Final) 2nd level cache using redis server.
 with [jedis][2]  2.4.1 or higher
 
