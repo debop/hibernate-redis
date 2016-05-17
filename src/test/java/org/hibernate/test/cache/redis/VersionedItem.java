@@ -1,0 +1,38 @@
+package org.hibernate.test.cache.redis;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Version;
+import java.io.Serializable;
+
+/**
+ * org.hibernate.test.cache.redis.VersionedItem
+ *
+ * @author sunghyouk.bae@gmail.com
+ * @since 13. 4. 6. 오전 12:53
+ */
+@Entity
+@Cache(region = "redis:common", usage = CacheConcurrencyStrategy.READ_WRITE)
+@Getter
+@Setter
+public class VersionedItem implements Serializable {
+
+  @Id
+  @GeneratedValue
+  private Long id;
+
+  @Version
+  private Long version;
+
+  private String name;
+
+  private String description;
+
+  private static final long serialVersionUID = 4832353095588069337L;
+}

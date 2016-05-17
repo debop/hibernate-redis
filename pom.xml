@@ -2,331 +2,165 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.debop</groupId>
-    <artifactId>hibernate-redis-parent</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <url>https://github.com/debop/hibernate-redis</url>
+  <groupId>com.github.debop</groupId>
+  <artifactId>hibernate-redis</artifactId>
+  <version>2.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
-    <modules>
-        <module>hibernate4</module>
-        <module>hibernate5</module>
-        <module>hibernate-redis</module>
-        <module>hibernate-examples</module>
-    </modules>
+  <name>hibernate-redis</name>
+  <url>https://github.com/debop/hibernate-redis</url>
 
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
-    <issueManagement>
-        <system>github</system>
-        <url>http://github.com/debop/hibernate-redis/issues</url>
-    </issueManagement>
+  <issueManagement>
+    <system>github</system>
+    <url>http://github.com/debop/hibernate-redis/issues</url>
+  </issueManagement>
 
-    <scm>
-        <connection>scm:git:git@github.com:debop/hibernate-redis.git</connection>
-        <url>scm:git:git@github.com:debop/hibernate-redis.git</url>
-        <developerConnection>scm:git:git@github.com:debop/hibernate-redis.git</developerConnection>
-    </scm>
+  <scm>
+    <connection>scm:git:git@github.com:debop/hibernate-redis.git</connection>
+    <url>scm:git:git@github.com:debop/hibernate-redis.git</url>
+    <developerConnection>scm:git:git@github.com:debop/hibernate-redis.git</developerConnection>
+  </scm>
 
-    <properties>
-        <jdk.version>1.7</jdk.version>
+  <properties>
+    <java.version>1.7</java.version>
 
-        <hibernate.version>4.3.10.Final</hibernate.version>
-        <springframework.version>4.1.2.RELEASE</springframework.version>
-        <querydsl.version>3.6.0</querydsl.version>
+    <springframework.version>4.2.5.RELEASE</springframework.version>
+    <querydsl.version>3.6.9</querydsl.version>
 
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <!-- Hibernate -->
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-core</artifactId>
-                <version>${hibernate.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-testing</artifactId>
-                <version>${hibernate.version}</version>
-                <scope>test</scope>
-            </dependency>
+  <dependencies>
 
-            <!-- Redis -->
-            <dependency>
-                <groupId>redis.clients</groupId>
-                <artifactId>jedis</artifactId>
-                <version>2.6.2</version>
-            </dependency>
+    <!-- Snappy-java -->
+    <dependency>
+      <groupId>org.xerial.snappy</groupId>
+      <artifactId>snappy-java</artifactId>
+      <version>1.1.0.1</version>
+    </dependency>
 
-            <!-- Snappy-java -->
-            <dependency>
-                <groupId>org.xerial.snappy</groupId>
-                <artifactId>snappy-java</artifactId>
-                <version>1.1.0.1</version>
-            </dependency>
+    <!-- Fast Serialization -->
+    <dependency>
+      <groupId>de.ruedigermoeller</groupId>
+      <artifactId>fst</artifactId>
+      <version>2.33</version>
+    </dependency>
 
-            <!-- Fast Serialization -->
-            <dependency>
-                <groupId>de.ruedigermoeller</groupId>
-                <artifactId>fst</artifactId>
-                <version>2.33</version>
-            </dependency>
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.7</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.1.2</version>
+      <optional>true</optional>
+    </dependency>
 
-            <!-- Logging -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.7.7</version>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>1.1.2</version>
-            </dependency>
+    <!-- project lombok -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.14.2</version>
+      <optional>true</optional>
+    </dependency>
 
-            <!-- project lombok -->
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>1.14.2</version>
-            </dependency>
+    <!-- Test -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>3.4.1</version>
+      <scope>test</scope>
+    </dependency>
 
-            <!-- Guava -->
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>17.0</version>
-            </dependency>
+  </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-idea-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <downloadJavadocs>true</downloadJavadocs>
+          <dependenciesAsLibraries>true</dependenciesAsLibraries>
+          <useFullNames>false</useFullNames>
+        </configuration>
+      </plugin>
 
-            <!-- Spring Framework -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-                <version>${springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-                <version>${springframework.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${springframework.version}</version>
-                <scope>test</scope>
-            </dependency>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
 
-            <!-- Spring Data -->
-            <!-- 1.5.0 conflit hibernate 4.3.x -->
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-jpa</artifactId>
-                <version>1.6.0.RELEASE</version>
-            </dependency>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <inherited>false</inherited>
+      </plugin>
 
-            <!-- Bone CP -->
-            <dependency>
-                <groupId>com.jolbox</groupId>
-                <artifactId>bonecp</artifactId>
-                <version>0.8.0.RELEASE</version>
-                <scope>test</scope>
-            </dependency>
+      <!-- merge hibernate 4 and hibernate 5 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.4.3</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <!--<finalName>hibernate-redis-bundle-${project.version}</finalName>-->
+              <artifactSet>
+                <includes>
+                  <include>hiberante-redis-hibernate4</include>
+                  <include>hiberante-redis-hibernate5</include>
+                </includes>
+              </artifactSet>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
-            <!-- Hikari CP -->
-            <dependency>
-                <groupId>com.zaxxer</groupId>
-                <artifactId>HikariCP-java6</artifactId>
-                <version>2.2.5</version>
-                <scope>test</scope>
-            </dependency>
-
-            <!-- Database Drivers -->
-            <dependency>
-                <groupId>org.hsqldb</groupId>
-                <artifactId>hsqldb</artifactId>
-                <version>2.3.0</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <version>1.3.175</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>5.1.27</version>
-                <scope>test</scope>
-            </dependency>
-
-            <!-- Test -->
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.11</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.easytesting</groupId>
-                <artifactId>fest-assert</artifactId>
-                <version>1.4</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-all</artifactId>
-                <version>1.3</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.carrotsearch</groupId>
-                <artifactId>junit-benchmarks</artifactId>
-                <version>0.7.2</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>1.9.5</version>
-                <scope>test</scope>
-            </dependency>
-
-        </dependencies>
-    </dependencyManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-idea-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <downloadSources>true</downloadSources>
-                    <downloadJavadocs>true</downloadJavadocs>
-                    <dependenciesAsLibraries>true</dependenciesAsLibraries>
-                    <useFullNames>false</useFullNames>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Skip Test jar -->
-            <!--
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-jar-plugin</artifactId>
-                            <version>2.4</version>
-                            <executions>
-                                <execution>
-                                    <goals>
-                                        <goal>test-jar</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-            -->
-            <!-- For signing -->
-            <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <inherited>false</inherited>
-            </plugin>
-        </plugins>
-    </build>
-
-    <repositories>
-        <repository>
-            <id>Local.Repo</id>
-            <name>Local Release Repository</name>
-            <url>http://127.0.0.1:8081/nexus/content/repositories/releases</url>
-        </repository>
-        <repository>
-            <id>Local.Repo.Snapshot</id>
-            <name>Local Snapshot Repository</name>
-            <url>http://127.0.0.1:8081/nexus/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>Local.Repo</id>
-            <name>Local Release Repository</name>
-            <url>http://127.0.0.1:8081/nexus/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>Local.Repo.Snapshot</id>
-            <name>Local Snapshot Repository</name>
-            <url>http://127.0.0.1:8081/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 </project>
