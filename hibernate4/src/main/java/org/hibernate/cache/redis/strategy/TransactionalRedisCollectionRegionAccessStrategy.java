@@ -18,7 +18,7 @@ package org.hibernate.cache.redis.strategy;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.redis.jedis.JedisClient;
+import org.hibernate.cache.redis.client.RedisClient;
 import org.hibernate.cache.redis.regions.RedisCollectionRegion;
 import org.hibernate.cache.spi.CollectionRegion;
 import org.hibernate.cache.spi.access.CollectionRegionAccessStrategy;
@@ -37,7 +37,7 @@ public class TransactionalRedisCollectionRegionAccessStrategy
     implements CollectionRegionAccessStrategy {
 
   @Getter
-  private final JedisClient redis;
+  private final RedisClient redis;
 
   public TransactionalRedisCollectionRegionAccessStrategy(RedisCollectionRegion region,
                                                           Settings settings) {

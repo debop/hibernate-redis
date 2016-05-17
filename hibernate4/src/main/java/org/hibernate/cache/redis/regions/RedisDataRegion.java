@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.client.RedisClient;
 import org.hibernate.cache.redis.strategy.RedisAccessStrategyFactory;
+import org.hibernate.cache.redis.util.RedisCacheUtil;
 import org.hibernate.cache.redis.util.Timestamper;
 import org.hibernate.cache.spi.Region;
 
@@ -76,8 +77,8 @@ public abstract class RedisDataRegion implements Region {
         Integer.decode(props.getProperty(CACHE_LOCK_TIMEOUT_PROPERTY,
             String.valueOf(DEFAULT_CACHE_LOCK_TIMEOUT)));
 
-    int defaultExpires = Integer.decode(JedisTool.getProperty(EXPIRE_IN_SECONDS, "120"));
-    this.expireInSeconds = JedisTool.getExpireInSeconds(name, defaultExpires);
+    int defaultExpires = Integer.decode(RedisCacheUtil.getProperty(EXPIRE_IN_SECONDS, "120"));
+    this.expireInSeconds = RedisCacheUtil.getExpireInSeconds(name, defaultExpires);
   }
 
   /**
@@ -86,7 +87,6 @@ public abstract class RedisDataRegion implements Region {
    * @return region name
    */
   public String getName() {
-
     return name;
   }
 
