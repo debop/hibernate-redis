@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package org.hibernate.cache.redis.hibernate4;
+package org.hibernate.cache.redis.hibernate5;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.client.RedisClient;
-import org.hibernate.cache.redis.hibernate4.regions.*;
-import org.hibernate.cache.redis.hibernate4.strategy.RedisAccessStrategyFactory;
-import org.hibernate.cache.redis.hibernate4.strategy.RedisAccessStrategyFactoryImpl;
-import org.hibernate.cache.redis.util.Timestamper;
+import org.hibernate.cache.redis.hibernate5.regions.*;
+import org.hibernate.cache.redis.hibernate5.strategy.RedisAccessStrategyFactory;
+import org.hibernate.cache.redis.hibernate5.strategy.RedisAccessStrategyFactoryImpl;
 import org.hibernate.cache.spi.*;
 import org.hibernate.cache.spi.access.AccessType;
-import org.hibernate.cfg.Settings;
 
 import java.util.Properties;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * Region Factory for Redis
+ * Abstract Hibernate 2nd Redis Region Factory
  *
  * @author sunghyouk.bae@gmail.com
- * @since 13. 4. 5. 오후 11:59
+ * @since 2015. 8. 27.
  */
 @Slf4j
-abstract class AbstractRedisRegionFactory implements RegionFactory {
+public abstract class AbstractRedisRegionFactory implements RegionFactory {
 
   /**
    * The Hibernate system property specifying the location of the redis configuration file name.
@@ -46,42 +46,28 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
    */
   public static final String IO_REDIS_CACHE_CONFIGURATION_RESOURCE_NAME = "io.redis.cache.configurationResourceName";
 
-  /**
-   * Settings object for the Hibernate persistence unit.
-   */
-  protected Settings settings;
-
   protected final Properties props;
-
+  protected SessionFactoryOptions options;
   protected final RedisAccessStrategyFactory accessStrategyFactory = new RedisAccessStrategyFactoryImpl();
-
   /**
    * Region names
    */
   protected final ConcurrentSkipListSet<String> regionNames = new ConcurrentSkipListSet<String>();
 
   /**
-   * RedisClient instance.
+   * JedisClient instance.
    */
-  protected RedisClient redis = null;
+  protected volatile RedisClient redis = null;
 
-  public AbstractRedisRegionFactory(Properties props) {
+  /**
+   * expiration management thread
+   */
+  protected volatile static Thread expirationThread = null;
+
+  public AbstractRedisRegionFactory(@NonNull Properties props) {
     this.props = props;
   }
 
-  /**
-   * Whether to optimize for minimals puts or minimal gets.
-   * <p/>
-   * Indicates whether when operating in non-strict read/write or read-only mode
-   * Hibernate should optimize the access patterns for minimal puts or minimal gets.
-   * In Ehcache we default to minimal puts since this should have minimal to no
-   * affect on unclustered users, and has great benefit for clustered users.
-   * <p/>
-   * This setting can be overridden by setting the "hibernate.cache.use_minimal_puts"
-   * property in the Hibernate configuration.
-   *
-   * @return true, optimize for minimal puts
-   */
   public boolean isMinimalPutsEnabledByDefault() {
     return true;
   }
@@ -92,7 +78,8 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
   }
 
   public long nextTimestamp() {
-    return Timestamper.next();
+    return System.currentTimeMillis();
+    //return Timestamper.next();
   }
 
   @Override
@@ -103,7 +90,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     return new RedisEntityRegion(accessStrategyFactory,
         redis,
         regionName,
-        settings,
+        options,
         metadata,
         properties);
   }
@@ -116,7 +103,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     return new RedisNaturalIdRegion(accessStrategyFactory,
         redis,
         regionName,
-        settings,
+        options,
         metadata,
         properties);
   }
@@ -129,7 +116,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
     return new RedisCollectionRegion(accessStrategyFactory,
         redis,
         regionName,
-        settings,
+        options,
         metadata,
         properties);
   }
@@ -154,5 +141,5 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
         properties);
   }
 
-  private static final long serialVersionUID = -5441842686229077097L;
+  private static final long serialVersionUID = 4244155609146774509L;
 }
