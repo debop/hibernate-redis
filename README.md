@@ -29,7 +29,7 @@ add dependency
 <dependency>
     <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis</artifactId>
-    <version>1.6.1</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 

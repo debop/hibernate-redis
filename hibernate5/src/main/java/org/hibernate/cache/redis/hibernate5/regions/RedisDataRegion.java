@@ -146,7 +146,7 @@ public abstract class RedisDataRegion implements Region {
   @SuppressWarnings("unchecked")
   @Override
   public Map toMap() {
-    return redis.hgetAll(regionName);
+    return redis.getAll(regionName);
   }
 
   @Override

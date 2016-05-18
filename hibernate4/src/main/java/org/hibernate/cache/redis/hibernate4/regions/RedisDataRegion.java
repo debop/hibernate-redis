@@ -147,7 +147,7 @@ public abstract class RedisDataRegion implements Region {
   @Override
   public Map toMap() {
     try {
-      return redis.hgetAll(name);
+      return redis.getAll(name);
     } catch (Throwable e) {
       log.warn("Fail to build CacheEntry. return EmptyMap.", e);
       return Collections.emptyMap();
