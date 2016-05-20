@@ -16,6 +16,7 @@
 
 package org.hibernate.cache.redis.hibernate5;
 
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.cache.CacheException;
@@ -31,18 +32,20 @@ import java.util.Properties;
  */
 @Slf4j
 public class RedisRegionFactory extends AbstractRedisRegionFactory {
+
   public RedisRegionFactory(Properties props) {
     super(props);
   }
 
   @Override
+  @Synchronized
   public void start(SessionFactoryOptions options, Properties properties) throws CacheException {
-    log.info("Redis를 2차 캐시 저장소로 사용하는 RedisRegionFactory를 시작합니다...");
+    log.debug("RedisRegionFactory is starting... options={}, properties={}", options, properties);
 
     this.options = options;
     try {
       if (redis == null) {
-        this.redis = RedisClientFactory.createRedisClient(properties);
+        this.redis = RedisClientFactory.createRedisClient(getCacheProvierConfigPath());
       }
       log.info("RedisRegionFactory is started.");
     } catch (Exception e) {
@@ -52,8 +55,10 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
   }
 
   @Override
+  @Synchronized
   public void stop() {
-    if (redis == null) return;
+    if (redis == null)
+      return;
     log.debug("stopping RedisRegionFactory...");
 
     try {
@@ -61,7 +66,7 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
       redis = null;
       log.info("RedisRegionFactory is stopped.");
     } catch (Exception ignored) {
-      log.warn("Fail to stop RedisRegionFactory.", ignored);
+      log.error("Fail to stop RedisRegionFactory.", ignored);
     }
   }
 

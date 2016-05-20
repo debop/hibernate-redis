@@ -16,27 +16,64 @@
 
 package org.hibernate.cache.redis.client;
 
-import java.util.Properties;
+import lombok.NonNull;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.redisson.Config;
+import org.redisson.Redisson;
+import org.redisson.RedissonClient;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 /**
- * RedisClient Factory
+ * Factory class for RedisClient.
  *
  * @author debop sunghyouk.bae@gmail.com
  */
+@Slf4j
 public final class RedisClientFactory {
 
-  private RedisClientFactory() {
-  }
+  private RedisClientFactory() {}
 
   /**
    * Create {@link RedisClient} instance by properties
    *
-   * @param props properties for redis server settings
+   * @param redissonYamlUrl redisson yaml setting file URL
    * @return {@link RedisClient} instance
    */
-  public static RedisClient createRedisClient(Properties props) {
-    // TODO: implementation
-    //return RedisClient(...);
-    return null;
+  public static RedisClient createRedisClient(@NonNull final URL redissonYamlUrl) {
+    try {
+      Config config = Config.fromYAML(redissonYamlUrl);
+      RedissonClient redisson = Redisson.create(config);
+      return new RedisClient(redisson);
+    } catch (IOException e) {
+      log.error("Error in create RedisClient", e);
+      throw new RuntimeException(e);
+    }
+  }
+
+  @SneakyThrows
+  public static RedisClient createRedisClient(@NonNull final String redissonYamlPath) {
+    log.debug("load redisson config yaml file. path={}", redissonYamlPath);
+
+    if (redissonYamlPath.startsWith("classpath:")) {
+      String path = redissonYamlPath.substring("classpath:".length());
+      URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+
+      log.debug("load redisson yaml. path={}, url={}", path, url);
+      return createRedisClient(url);
+    } else {
+      String path = redissonYamlPath;
+      if (redissonYamlPath.startsWith("file:")) {
+        path = path.substring("file:".length());
+      }
+      File file = new File(path);
+      URL url = file.toURI().toURL();
+
+      log.debug("load redisson yaml. path={}, url={}", path, url);
+      return createRedisClient(url);
+    }
   }
 }

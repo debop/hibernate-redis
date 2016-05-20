@@ -60,7 +60,7 @@ public class RedisClient {
 
   @SneakyThrows
   public RedisClient(@NonNull RedissonClient redisson, int expiryInSeconds) {
-    log.debug("RedisClient created. config={}, expiryInSeconds={}", redisson.getConfig().toJSON(), expiryInSeconds);
+    log.trace("RedisClient created. config={}, expiryInSeconds={}", redisson.getConfig().toJSON(), expiryInSeconds);
     this.redisson = redisson;
 
     if (expiryInSeconds >= 0) {
@@ -78,6 +78,7 @@ public class RedisClient {
 
   @SuppressWarnings("unchecked")
   public <T> T get(final String region, final Object key) {
+    log.trace("retrive cache item. region={}, key={}", region, key);
     return (T) getCache(region).get(key);
   }
 
@@ -107,6 +108,9 @@ public class RedisClient {
   }
 
   public void set(final String region, final Object key, Object value, final long timeout, final TimeUnit unit) {
+    log.trace("set cache item. region={}, key={}, timeout={}, unit={}",
+              region, key, timeout, unit);
+
     RMapCache<Object, Object> cache = redisson.getMapCache(region);
     if (timeout > 0L) {
       cache.put(key, value, timeout, unit);

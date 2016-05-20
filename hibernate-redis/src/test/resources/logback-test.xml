@@ -20,7 +20,7 @@
   <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>%d{ISO8601} %-5level [%.16thread] %logger{36}.%method: %m%n</pattern>
-      <immediateFlush>true</immediateFlush>
+      <!--<immediateFlush>true</immediateFlush>-->
       <charset>UTF-8</charset>
     </encoder>
   </appender>

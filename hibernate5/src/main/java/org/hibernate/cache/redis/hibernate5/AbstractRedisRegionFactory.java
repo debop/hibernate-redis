@@ -46,6 +46,9 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory {
    */
   public static final String IO_REDIS_CACHE_CONFIGURATION_RESOURCE_NAME = "io.redis.cache.configurationResourceName";
 
+  public static final String REDISSON_CONFIG = "redisson-config";
+  public static final String DEFAULT_REDISSON_CONFIG_PATH = "classpath:conf/redisson.yaml";
+
   protected final Properties props;
   protected SessionFactoryOptions options;
   protected final RedisAccessStrategyFactory accessStrategyFactory = new RedisAccessStrategyFactoryImpl();
@@ -55,17 +58,16 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory {
   protected final ConcurrentSkipListSet<String> regionNames = new ConcurrentSkipListSet<String>();
 
   /**
-   * JedisClient instance.
+   * {@link RedisClient} instance.
    */
   protected volatile RedisClient redis = null;
 
-  /**
-   * expiration management thread
-   */
-  protected volatile static Thread expirationThread = null;
-
-  public AbstractRedisRegionFactory(@NonNull Properties props) {
+  protected AbstractRedisRegionFactory(@NonNull Properties props) {
     this.props = props;
+  }
+
+  protected String getCacheProvierConfigPath() {
+    return props.getProperty(REDISSON_CONFIG, DEFAULT_REDISSON_CONFIG_PATH);
   }
 
   public boolean isMinimalPutsEnabledByDefault() {
@@ -88,11 +90,11 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory {
                                         CacheDataDescription metadata) throws CacheException {
     regionNames.add(regionName);
     return new RedisEntityRegion(accessStrategyFactory,
-        redis,
-        regionName,
-        options,
-        metadata,
-        properties);
+                                 redis,
+                                 regionName,
+                                 options,
+                                 metadata,
+                                 properties);
   }
 
   @Override
@@ -101,11 +103,11 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory {
                                               CacheDataDescription metadata) throws CacheException {
     regionNames.add(regionName);
     return new RedisNaturalIdRegion(accessStrategyFactory,
-        redis,
-        regionName,
-        options,
-        metadata,
-        properties);
+                                    redis,
+                                    regionName,
+                                    options,
+                                    metadata,
+                                    properties);
   }
 
   @Override
@@ -114,11 +116,11 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory {
                                                 CacheDataDescription metadata) throws CacheException {
     regionNames.add(regionName);
     return new RedisCollectionRegion(accessStrategyFactory,
-        redis,
-        regionName,
-        options,
-        metadata,
-        properties);
+                                     redis,
+                                     regionName,
+                                     options,
+                                     metadata,
+                                     properties);
   }
 
   @Override
@@ -126,9 +128,9 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory {
                                                     Properties properties) throws CacheException {
     regionNames.add(regionName);
     return new RedisQueryResultsRegion(accessStrategyFactory,
-        redis,
-        regionName,
-        properties);
+                                       redis,
+                                       regionName,
+                                       properties);
   }
 
   @Override
@@ -136,9 +138,9 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory {
                                                 Properties properties) throws CacheException {
     // regionNames.add(regionName);
     return new RedisTimestampsRegion(accessStrategyFactory,
-        redis,
-        regionName,
-        properties);
+                                     redis,
+                                     regionName,
+                                     properties);
   }
 
   private static final long serialVersionUID = 4244155609146774509L;

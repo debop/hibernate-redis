@@ -16,5 +16,25 @@
 
 package org.hibernate.cache.redis;
 
+import lombok.SneakyThrows;
+import org.redisson.Config;
+import org.redisson.Redisson;
+import org.redisson.RedissonClient;
+
+import java.io.File;
+
+import static org.fest.assertions.Assertions.assertThat;
+
 public abstract class AbstractHibernateRedisTest {
+
+  public static final String REDISSON_CONFIG = "conf/redisson.yaml";
+
+  @SneakyThrows
+  public static RedissonClient createRedisson() {
+    File file = new File(REDISSON_CONFIG);
+    assertThat(file.exists()).isTrue();
+
+    Config config = Config.fromYAML(file);
+    return Redisson.create(config);
+  }
 }

@@ -45,15 +45,16 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
   @Override
   @Synchronized
   public void start(SessionFactoryOptions options, Properties properties) throws CacheException {
-    log.info("Redis를 2차 캐시 저장소로 사용하는 RedisRegionFactory를 시작합니다...");
+    log.debug("SingletonRedisRegionFactory is strting... optinos={}, properties={}",
+              options, properties);
 
     this.options = options;
     try {
       if (redis == null) {
-        this.redis = RedisClientFactory.createRedisClient(properties);
+        this.redis = RedisClientFactory.createRedisClient(getCacheProvierConfigPath());
       }
       referenceCount.incrementAndGet();
-      log.info("RedisRegionFactory를 시작합니다.");
+      log.info("RedisRegionFactory is started.");
     } catch (Exception e) {
       throw new CacheException(e);
     }
@@ -66,13 +67,13 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
       return;
 
     if (referenceCount.decrementAndGet() == 0) {
-      log.trace("RedisRegionFactory를 중지합니다...");
+      log.debug("RedisRegionFactory is stopping...");
       try {
         redis.shutdown();
         redis = null;
-        log.info("RedisRegionFactory를 중지했습니다.");
+        log.info("RedisRegionFactory is stopped.");
       } catch (Exception ignored) {
-        log.warn("Fail to stop SingletonRedisRegionFactory.", ignored);
+        log.error("Fail to stop SingletonRedisRegionFactory.", ignored);
       }
     }
   }

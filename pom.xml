@@ -88,19 +88,10 @@
         <artifactId>redisson</artifactId>
         <version>2.2.13</version>
       </dependency>
-
-      <!-- Snappy-java -->
       <dependency>
-        <groupId>org.xerial.snappy</groupId>
-        <artifactId>snappy-java</artifactId>
-        <version>1.1.0.1</version>
-      </dependency>
-
-      <!-- Fast Serialization -->
-      <dependency>
-        <groupId>de.ruedigermoeller</groupId>
-        <artifactId>fst</artifactId>
-        <version>2.33</version>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>1.17</version>
       </dependency>
 
       <!-- Logging -->

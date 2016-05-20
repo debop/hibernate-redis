@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.redis.AbstractHibernateRedisTest;
 import org.junit.After;
 import org.junit.Test;
-import org.redisson.Redisson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +32,7 @@ import static org.fest.assertions.Assertions.assertThat;
 public class RedisClientTest extends AbstractHibernateRedisTest {
 
   private static final String REGION_NAME = "test.hibernate.region";
-  private RedisClient client = new RedisClient(Redisson.create());
-
+  private RedisClient client = new RedisClient(createRedisson());
 
   @After
   public void cleanup() {
@@ -128,6 +126,10 @@ public class RedisClientTest extends AbstractHibernateRedisTest {
 
     Set<Object> loadedKeys = client.keysInRegion(REGION_NAME);
     assertThat(loadedKeys).isNotEmpty().hasSize(keys.size());
+
+    client.deleteRegion(REGION_NAME);
+    assertThat(client.keysInRegion(REGION_NAME)).isEmpty();
+    assertThat(client.keySizeInRegion(REGION_NAME)).isEqualTo(0);
   }
 
 }
