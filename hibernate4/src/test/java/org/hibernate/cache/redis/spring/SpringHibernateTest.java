@@ -54,6 +54,7 @@ public class SpringHibernateTest {
 
     String regionName = HibernateCacheUtil.getRegionName(sf, Item.class);
     assertThat(regionName).isNotEmpty();
+    log.debug("Item region name={}", regionName);
     SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics(Item.class);
 
     log.debug("Region name={}, Element in memory={}, hit count={}",

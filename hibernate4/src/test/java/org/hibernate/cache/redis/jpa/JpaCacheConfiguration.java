@@ -7,6 +7,7 @@ import org.hibernate.cache.redis.hibernate4.SingletonRedisRegionFactory;
 import org.hibernate.cache.redis.jpa.models.Account;
 import org.hibernate.cache.redis.jpa.repository.EventRepository;
 import org.hibernate.cfg.Environment;
+import org.hibernate.engine.transaction.internal.jdbc.JdbcTransactionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -64,6 +65,10 @@ public class JpaCacheConfiguration {
     props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
     props.put(Environment.CACHE_REGION_PREFIX, "");
     props.put(Environment.CACHE_PROVIDER_CONFIG, "conf/hibernate-redis.properties");
+
+    props.setProperty(Environment.GENERATE_STATISTICS, "true");
+    props.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
+    props.setProperty(Environment.TRANSACTION_STRATEGY, JdbcTransactionFactory.class.getName());
 
     return props;
   }

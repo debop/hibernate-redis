@@ -50,7 +50,7 @@ public class HibernateRedisConfiguration {
     props.put(Environment.CACHE_REGION_PREFIX, "");
     props.put(Environment.CACHE_PROVIDER_CONFIG, "conf/hibernate-redis.properties");
 
-    props.setProperty(Environment.GENERATE_STATISTICS, "false");
+    props.setProperty(Environment.GENERATE_STATISTICS, "true");
     props.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
     props.setProperty(Environment.TRANSACTION_STRATEGY, JdbcTransactionFactory.class.getName());
 
