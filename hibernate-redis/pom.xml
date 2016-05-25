@@ -33,10 +33,20 @@
 
   <dependencies>
 
-    <!-- Redisson -->
     <dependency>
-      <groupId>org.redisson</groupId>
-      <artifactId>redisson</artifactId>
+      <groupId>com.github.debop</groupId>
+      <artifactId>hibernate-redis-client</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.debop</groupId>
+      <artifactId>hibernate-redis-hibernate4</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.debop</groupId>
+      <artifactId>hibernate-redis-hibernate5</artifactId>
+      <version>${project.parent.version}</version>
     </dependency>
 
   </dependencies>
@@ -54,13 +64,16 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <!--<finalName>hibernate-redis-bundle-${project.version}</finalName>-->
               <artifactSet>
                 <includes>
-                  <include>hiberante-redis-hibernate4</include>
-                  <include>hiberante-redis-hibernate5</include>
+                  <include>com.github.debop:*</include>
+                  <!--<include>com.github.debop:hibernate-redis-client</include>-->
+                  <!--<include>com.github.debop:hibernate-redis-hibernate4</include>-->
+                  <!--<include>com.github.debop:hibernate-redis-hibernate5</include>-->
                 </includes>
               </artifactSet>
+              <createDependencyReducedPom>true</createDependencyReducedPom>
+              <createSourcesJar>true</createSourcesJar>
             </configuration>
           </execution>
         </executions>

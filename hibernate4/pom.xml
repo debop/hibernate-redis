@@ -10,7 +10,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>hibernate-redis-hibernate4</artifactId>
-  <packaging>jar</packaging>
+  <name>hibernate4</name>
+  <description>hibernate-redis code for hibernate 4</description>
 
   <properties>
     <hibernate.version>4.3.11.Final</hibernate.version>
@@ -19,9 +20,8 @@
   <dependencies>
     <dependency>
       <groupId>com.github.debop</groupId>
-      <artifactId>hibernate-redis</artifactId>
+      <artifactId>hibernate-redis-client</artifactId>
       <version>${project.parent.version}</version>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
