@@ -31,7 +31,7 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * Abstract Hibernate 2nd Redis Region Factory
+ * Abstract Hibernate 5.x 2nd Redis Region Factory
  *
  * @author sunghyouk.bae@gmail.com
  * @since 2015. 8. 27.

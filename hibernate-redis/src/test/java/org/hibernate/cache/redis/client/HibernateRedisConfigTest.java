@@ -24,7 +24,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author debop sunghyouk.bae@gmail.com

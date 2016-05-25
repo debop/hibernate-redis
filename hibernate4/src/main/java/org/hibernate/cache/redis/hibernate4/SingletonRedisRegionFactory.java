@@ -25,7 +25,7 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A singleton RedisRegionFactory implementation.
+ * Singleton Hibernate 4.x 2nd Cache Region Factory using Redis
  *
  * @author sunghyouk.bae@gmail.com
  */
@@ -36,12 +36,12 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
 
   public SingletonRedisRegionFactory(Properties props) {
     super(props);
-    log.info("create SingletonRedisRegionFactory instance.");
+    log.info("Create SingletonRedisRegionFactory instance.");
   }
 
   @Override
   public synchronized void start(Settings settings, Properties properties) throws CacheException {
-    log.info("starting SingletonRedisRegionFactory...");
+    log.info("Starting SingletonRedisRegionFactory...");
 
     this.settings = settings;
     try {
@@ -57,7 +57,7 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
 
   @Override
   public synchronized void stop() {
-    log.debug("stopping SingletonRedisRegionFactory...");
+    log.debug("Stopping SingletonRedisRegionFactory...");
 
     if (ReferenceCount.decrementAndGet() == 0) {
       try {
@@ -65,7 +65,7 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
         redis = null;
         log.info("stopped SingletonRedisRegionFactory");
       } catch (Exception ignored) {
-        log.warn("error occurred in stopping hibernate-redis client.", ignored);
+        log.warn("Error occurred in stopping hibernate-redis client.", ignored);
       }
     }
   }

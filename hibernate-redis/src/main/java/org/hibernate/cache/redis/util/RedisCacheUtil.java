@@ -25,6 +25,7 @@ import java.net.URI;
 import java.util.Properties;
 
 /**
+ * Hibernate Redis Cache Utility Class
  * @author debop sunghyouk.bae@gmail.com
  */
 @Slf4j

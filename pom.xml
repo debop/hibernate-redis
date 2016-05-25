@@ -53,11 +53,9 @@
   </scm>
 
   <properties>
-    <java.version>1.7</java.version>
+    <java.version>1.6</java.version>
 
-    <hibernate.version>4.3.10.Final</hibernate.version>
-    <springframework.version>4.1.2.RELEASE</springframework.version>
-    <querydsl.version>3.6.0</querydsl.version>
+    <springframework.version>4.2.6.RELEASE</springframework.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -136,6 +134,26 @@
         <scope>test</scope>
       </dependency>
 
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>19.0</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-orm</artifactId>
+        <version>${springframework.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+        <version>${springframework.version}</version>
+        <scope>test</scope>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -192,6 +210,25 @@
       <artifactId>mysql-connector-java</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+      <version>${springframework.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
 
   </dependencies>
 

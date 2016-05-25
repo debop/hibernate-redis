@@ -24,10 +24,9 @@ import org.hibernate.cfg.Settings;
 import java.util.Properties;
 
 /**
- * A non-singleton RedisRegionFactory implementation.
+ * Hibernate 4.x 2nd Cache Region Factory using Redis
  *
  * @author sunghyouk.bae@gmail.com
- * @since 13. 4. 6. 오전 12:41
  */
 @Slf4j
 public class RedisRegionFactory extends AbstractRedisRegionFactory {
@@ -38,7 +37,7 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
 
   @Override
   public void start(Settings settings, Properties properties) throws CacheException {
-    log.info("starting RedisRegionFactory...");
+    log.info("Starting RedisRegionFactory...");
 
     this.settings = settings;
     try {
@@ -55,7 +54,7 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
   @Override
   public void stop() {
     if (redis == null || redis.isShutdown()) return;
-    log.debug("stopping RedisRegionFactory...");
+    log.debug("Stopping RedisRegionFactory...");
 
     try {
       redis.shutdown();

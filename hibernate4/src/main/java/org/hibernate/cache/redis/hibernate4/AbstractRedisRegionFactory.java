@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * Region Factory for Redis
+ * Abstract Hibernate 4.x 2nd Redis Region Factory
  *
  * @author sunghyouk.bae@gmail.com
  * @since 13. 4. 5. 오후 11:59

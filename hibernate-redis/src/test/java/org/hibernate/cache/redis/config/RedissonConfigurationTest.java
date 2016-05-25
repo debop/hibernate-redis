@@ -25,7 +25,8 @@ import org.redisson.core.RBucket;
 import java.io.File;
 import java.io.InputStream;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * @author debop sunghyouk.bae@gmail.com

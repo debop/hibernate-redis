@@ -27,7 +27,7 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Singleton Hibernate 2nd Cache Region Factory using Redis
+ * Singleton Hibernate 5.x 2nd Cache Region Factory using Redis
  *
  * @author sunghyouk.bae@gmail.com
  * @since 2015. 8. 28.

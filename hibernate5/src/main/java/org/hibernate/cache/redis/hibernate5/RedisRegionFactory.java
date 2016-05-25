@@ -25,10 +25,9 @@ import org.hibernate.cache.redis.client.RedisClientFactory;
 import java.util.Properties;
 
 /**
- * Hibernate 2nd Cache Region Factory using Redis
+ * Hibernate 5.x 2nd Cache Region Factory using Redis
  *
  * @author sunghyouk.bae@gmail.com
- * @since 2015. 8. 28.
  */
 @Slf4j
 public class RedisRegionFactory extends AbstractRedisRegionFactory {
@@ -59,7 +58,7 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
   public void stop() {
     if (redis == null)
       return;
-    log.debug("stopping RedisRegionFactory...");
+    log.debug("Stopping RedisRegionFactory...");
 
     try {
       redis.shutdown();
