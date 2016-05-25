@@ -64,34 +64,12 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Hibernate -->
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core</artifactId>
-        <version>${hibernate.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-entitymanager</artifactId>
-        <version>${hibernate.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-testing</artifactId>
-        <version>${hibernate.version}</version>
-        <scope>test</scope>
-      </dependency>
 
       <!-- Redisson -->
       <dependency>
         <groupId>org.redisson</groupId>
         <artifactId>redisson</artifactId>
         <version>2.2.13</version>
-      </dependency>
-      <dependency>
-        <groupId>org.yaml</groupId>
-        <artifactId>snakeyaml</artifactId>
-        <version>1.17</version>
       </dependency>
 
       <!-- Logging -->
@@ -117,63 +95,6 @@
         <optional>true</optional>
       </dependency>
 
-      <!-- Guava -->
-      <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>17.0</version>
-      </dependency>
-
-
-      <!-- Spring Framework -->
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-core</artifactId>
-        <version>${springframework.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-context</artifactId>
-        <version>${springframework.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-beans</artifactId>
-        <version>${springframework.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-tx</artifactId>
-        <version>${springframework.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-orm</artifactId>
-        <version>${springframework.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-test</artifactId>
-        <version>${springframework.version}</version>
-        <scope>test</scope>
-      </dependency>
-
-      <!-- Spring Data -->
-      <!-- 1.5.0 conflit hibernate 4.3.x -->
-      <dependency>
-        <groupId>org.springframework.data</groupId>
-        <artifactId>spring-data-jpa</artifactId>
-        <version>1.6.0.RELEASE</version>
-      </dependency>
-
-      <!-- Bone CP -->
-      <dependency>
-        <groupId>com.jolbox</groupId>
-        <artifactId>bonecp</artifactId>
-        <version>0.8.0.RELEASE</version>
-        <scope>test</scope>
-      </dependency>
-
       <!-- Hikari CP -->
       <dependency>
         <groupId>com.zaxxer</groupId>
@@ -183,12 +104,6 @@
       </dependency>
 
       <!-- Database Drivers -->
-      <dependency>
-        <groupId>org.hsqldb</groupId>
-        <artifactId>hsqldb</artifactId>
-        <version>2.3.0</version>
-        <scope>test</scope>
-      </dependency>
       <dependency>
         <groupId>com.h2database</groupId>
         <artifactId>h2</artifactId>
@@ -206,20 +121,13 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.11</version>
+        <version>4.12</version>
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.easytesting</groupId>
-        <artifactId>fest-assert</artifactId>
-        <version>1.4</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest-all</artifactId>
-        <version>1.3</version>
-        <scope>test</scope>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>3.4.1</version>
       </dependency>
       <dependency>
         <groupId>com.carrotsearch</groupId>
@@ -227,18 +135,73 @@
         <version>0.7.2</version>
         <scope>test</scope>
       </dependency>
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-        <version>1.9.5</version>
-        <scope>test</scope>
-      </dependency>
 
     </dependencies>
   </dependencyManagement>
 
+  <dependencies>
+
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+
+    <!-- project lombok -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+
+
+    <!-- Test -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.carrotsearch</groupId>
+      <artifactId>junit-benchmarks</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Hikari CP -->
+    <dependency>
+      <groupId>com.zaxxer</groupId>
+      <artifactId>HikariCP-java6</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Database Drivers -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
   <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <testSourceDirectory>src/main/java</testSourceDirectory>
+    <defaultGoal>package</defaultGoal>
+
     <plugins>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-idea-plugin</artifactId>
