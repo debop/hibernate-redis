@@ -38,7 +38,7 @@ public class HibernateRedisConfiguration {
     Properties props = new Properties();
 
     props.put(Environment.FORMAT_SQL, "true");
-    props.put(Environment.HBM2DDL_AUTO, "create-drop");
+    props.put(Environment.HBM2DDL_AUTO, "create");
     props.put(Environment.SHOW_SQL, "true");
 
     props.put(Environment.POOL_SIZE, 30);

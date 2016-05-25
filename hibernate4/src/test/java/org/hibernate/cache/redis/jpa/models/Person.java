@@ -6,13 +6,14 @@ import lombok.Setter;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.cache.redis.AbstractHibernateEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
-@org.hibernate.annotations.Cache(region = "account", usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(region = "common", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class Person extends AbstractHibernateEntity {
@@ -28,6 +29,24 @@ public class Person extends AbstractHibernateEntity {
 
   private Float weight = 77.7F;
   private Double height = 188.8D;
+
+  @ManyToMany(mappedBy = "participants")
+  private List<Event> events = new ArrayList<Event>();
+
+  @CollectionTable(name = "EmailAddressSet", joinColumns = @JoinColumn(name = "personId"))
+  @ElementCollection(targetClass = String.class)
+  @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
+  private Set<String> emailAddresses = new HashSet<String>();
+
+  @CollectionTable(name = "PhoneNumberSet", joinColumns = @JoinColumn(name = "productItemId"))
+  @ElementCollection(targetClass = PhoneNumber.class)
+  @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
+  private Set<PhoneNumber> phoneNumbers = new HashSet<PhoneNumber>();
+
+  @CollectionTable(name = "TailsManList", joinColumns = @JoinColumn(name = "personId"))
+  @ElementCollection(targetClass = String.class)
+  @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
+  private List<String> tailsmans = new ArrayList<String>();
 
 
   @Override

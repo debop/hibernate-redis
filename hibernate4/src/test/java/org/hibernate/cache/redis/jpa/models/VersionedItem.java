@@ -8,24 +8,30 @@ import org.hibernate.cache.redis.AbstractHibernateEntity;
 
 import javax.persistence.*;
 
+/**
+ * @author sunghyouk.bae@gmail.com
+ */
 @Entity
-@org.hibernate.annotations.Cache(region = "account", usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(region = "common", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
-public class Account extends AbstractHibernateEntity {
+public class VersionedItem extends AbstractHibernateEntity {
+
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @ManyToOne
-  @JoinColumn(name = "personId")
-  private Person person;
+  @Version
+  private Long version;
+
+  private String name;
+  private String description;
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(person);
+    return Objects.hashCode(name, version);
   }
 
-  private static final long serialVersionUID = -7139682451545212566L;
+  private static final long serialVersionUID = -8467548718319032093L;
 }
