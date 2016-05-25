@@ -96,8 +96,8 @@
       <!-- Hikari CP -->
       <dependency>
         <groupId>com.zaxxer</groupId>
-        <artifactId>HikariCP-java6</artifactId>
-        <version>2.2.5</version>
+        <artifactId>HikariCP</artifactId>
+        <version>2.4.5</version>
         <scope>test</scope>
       </dependency>
 
@@ -195,7 +195,7 @@
     <!-- Hikari CP -->
     <dependency>
       <groupId>com.zaxxer</groupId>
-      <artifactId>HikariCP-java6</artifactId>
+      <artifactId>HikariCP</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -234,7 +234,7 @@
 
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
-    <testSourceDirectory>src/main/java</testSourceDirectory>
+    <testSourceDirectory>src/test/java</testSourceDirectory>
     <defaultGoal>package</defaultGoal>
 
     <plugins>
