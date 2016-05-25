@@ -1,5 +1,6 @@
 package org.hibernate.cache.redis.hibernate4.models;
 
+import com.google.common.base.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
@@ -7,7 +8,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.cache.redis.AbstractHibernateEntity;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Cache(region = "redis:common:versioned", usage = CacheConcurrencyStrategy.READ_WRITE)

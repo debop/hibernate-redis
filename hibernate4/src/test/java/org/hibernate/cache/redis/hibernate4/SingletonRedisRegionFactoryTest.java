@@ -10,6 +10,7 @@ public class SingletonRedisRegionFactoryTest extends AbstractHibernateCacheTest 
 
   @Override
   protected void configCache(Configuration cfg) {
+
     cfg.setProperty(Environment.CACHE_REGION_FACTORY,
                     org.hibernate.cache.redis.hibernate4.SingletonRedisRegionFactory.class.getName());
     cfg.setProperty(Environment.CACHE_PROVIDER_CONFIG, "conf/hibernate-redis.properties");
