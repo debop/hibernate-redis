@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * org.hibernate.examples.mapping.property.enumerated.EnumeratedEntityTest
@@ -20,45 +20,34 @@ import static org.fest.assertions.Assertions.assertThat;
 @Transactional
 public class EnumeratedEntityTest extends AbstractJpaTest {
 
-    @PersistenceContext
-    EntityManager em;
+  @PersistenceContext
+  EntityManager em;
 
-    static EnumeratedEntity entity = new EnumeratedEntity();
+  static EnumeratedEntity entity = new EnumeratedEntity();
 
-    @Test
-    public void enumerated() throws Exception {
-        entity.setIntValue(OrdinalEnum.Second);
-        entity.setStringValue(StringEnum.Integer);
+  @Test
+  public void enumerated() throws Exception {
+    entity.setIntValue(OrdinalEnum.Second);
+    entity.setStringValue(StringEnum.Integer);
 
-        em.persist(entity);
-        em.flush();
-        em.clear();
+    em.persist(entity);
+    em.flush();
+    em.clear();
 
-        EnumeratedEntity loaded = em.find(EnumeratedEntity.class, entity.getId());
-        assertThat(loaded).isNotNull();
-        assertThat(loaded).isEqualTo(entity);
-        assertThat(loaded.getIntValue()).isEqualTo(OrdinalEnum.Second);
-        assertThat(loaded.getStringValue()).isEqualTo(StringEnum.Integer);
+    log.debug("load from database");
+    EnumeratedEntity loaded = em.find(EnumeratedEntity.class, entity.getId());
+    assertThat(loaded).isNotNull();
+    assertThat(loaded).isEqualTo(entity);
+    assertThat(loaded.getIntValue()).isEqualTo(OrdinalEnum.Second);
+    assertThat(loaded.getStringValue()).isEqualTo(StringEnum.Integer);
 
-        loaded = em.find(EnumeratedEntity.class, entity.getId());
-        assertThat(loaded).isNotNull();
-        assertThat(loaded).isEqualTo(entity);
-        assertThat(loaded.getIntValue()).isEqualTo(OrdinalEnum.Second);
-        assertThat(loaded.getStringValue()).isEqualTo(StringEnum.Integer);
-    }
+    em.clear();
 
-    @Test
-    public void loadFromCache() throws Exception {
-        EnumeratedEntity loaded = em.find(EnumeratedEntity.class, entity.getId());
-        assertThat(loaded).isNotNull();
-        assertThat(loaded).isEqualTo(entity);
-        assertThat(loaded.getIntValue()).isEqualTo(OrdinalEnum.Second);
-        assertThat(loaded.getStringValue()).isEqualTo(StringEnum.Integer);
-
-        loaded = em.find(EnumeratedEntity.class, entity.getId());
-        assertThat(loaded).isNotNull();
-        assertThat(loaded).isEqualTo(entity);
-        assertThat(loaded.getIntValue()).isEqualTo(OrdinalEnum.Second);
-        assertThat(loaded.getStringValue()).isEqualTo(StringEnum.Integer);
-    }
+    log.debug("load from cache");
+    loaded = em.find(EnumeratedEntity.class, entity.getId());
+    assertThat(loaded).isNotNull();
+    assertThat(loaded).isEqualTo(entity);
+    assertThat(loaded.getIntValue()).isEqualTo(OrdinalEnum.Second);
+    assertThat(loaded.getStringValue()).isEqualTo(StringEnum.Integer);
+  }
 }

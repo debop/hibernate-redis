@@ -28,23 +28,23 @@ import javax.persistence.Id;
 @Setter
 public class Company extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    public String name;
+  public String name;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name);
+  }
 
-    private static final long serialVersionUID = 7470890978065566926L;
+  private static final long serialVersionUID = 7470890978065566926L;
 }

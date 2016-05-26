@@ -31,25 +31,25 @@ import javax.persistence.*;
 // @SequenceGenerator(name = "UnionSubclassBilling_Seq", sequenceName = "UnionSubclassBilling_Seq")
 public abstract class AbstractBilling extends AbstractHibernateEntity<String> {
 
-    @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @Setter(AccessLevel.PROTECTED)
-    private String id;
+  @Id
+  @GeneratedValue(generator = "uuid")
+  @GenericGenerator(name = "uuid", strategy = "uuid2")
+  @Setter(AccessLevel.PROTECTED)
+  private String id;
 
-    @Column(name = "owner", nullable = false)
-    private String owner;
+  @Column(name = "owner", nullable = false)
+  private String owner;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(owner);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(owner);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("owner", owner);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("owner", owner);
+  }
 
-    private static final long serialVersionUID = 90233307681044105L;
+  private static final long serialVersionUID = 90233307681044105L;
 }

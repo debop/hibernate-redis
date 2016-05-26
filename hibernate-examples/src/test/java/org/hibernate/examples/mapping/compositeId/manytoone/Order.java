@@ -3,15 +3,15 @@ package org.hibernate.examples.mapping.compositeId.manytoone;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.examples.model.AbstractHibernateEntity;
 import org.hibernate.examples.utils.HashTool;
 import org.hibernate.examples.utils.ToStringHelper;
 
-import javax.persistence.CascadeType;
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,39 +24,39 @@ import java.util.List;
  */
 @Entity
 @Table(name = "CompositeId_Order")
-@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
+//@Cache(region = "composite", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
 @Setter
 public class Order extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "orderId")
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "orderId")
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String number;
+  private String number;
 
-    @Temporal(TemporalType.DATE)
-    private Date orderDate;
+  @Temporal(TemporalType.DATE)
+  private Date orderDate;
 
-    @OneToMany(mappedBy = "id.order", cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @LazyCollection(LazyCollectionOption.EXTRA)
-    private List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
+  @OneToMany(mappedBy = "id.order", cascade = {CascadeType.ALL}, orphanRemoval = true)
+  @LazyCollection(LazyCollectionOption.EXTRA)
+  private List<OrderDetail> orderDetails = new ArrayList<OrderDetail>();
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(number);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(number);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("number", number)
-                    .add("orderDate", orderDate);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+                .add("number", number)
+                .add("orderDate", orderDate);
+  }
 
-    private static final long serialVersionUID = -478214079111379653L;
+  private static final long serialVersionUID = -478214079111379653L;
 }

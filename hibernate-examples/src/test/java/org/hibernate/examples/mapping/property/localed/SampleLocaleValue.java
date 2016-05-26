@@ -19,21 +19,22 @@ import javax.persistence.Embeddable;
 @Setter
 public class SampleLocaleValue extends AbstractValueObject implements LocaleValue {
 
-    public SampleLocaleValue() {}
+  public SampleLocaleValue() {
+  }
 
-    public SampleLocaleValue(String title, String description) {
-        this.title = title;
-        this.description = description;
-    }
+  public SampleLocaleValue(String title, String description) {
+    this.title = title;
+    this.description = description;
+  }
 
-    private String title;
+  private String title;
 
-    private String description;
+  private String description;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(title);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(title);
+  }
 
-    private static final long serialVersionUID = -124348975681798754L;
+  private static final long serialVersionUID = -124348975681798754L;
 }

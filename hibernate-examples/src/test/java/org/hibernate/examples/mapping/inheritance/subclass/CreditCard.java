@@ -28,30 +28,30 @@ import javax.persistence.*;
 @Setter
 public class CreditCard extends AbstractBilling {
 
-    private String companyName;
+  private String companyName;
 
-    @Column(table = "Subclass_CreditCard_Card", nullable = false)
-    private String number;
+  @Column(table = "Subclass_CreditCard_Card", nullable = false)
+  private String number;
 
-    @Column(table = "Subclass_CreditCard_Card", nullable = false)
-    private Integer expMonth;
+  @Column(table = "Subclass_CreditCard_Card", nullable = false)
+  private Integer expMonth;
 
-    @Column(table = "Subclass_CreditCard_Card", nullable = false)
-    private Integer expYear;
+  @Column(table = "Subclass_CreditCard_Card", nullable = false)
+  private Integer expYear;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(super.hashCode(), companyName, number);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(super.hashCode(), companyName, number);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("companyName", companyName)
-                    .add("number", number)
-                    .add("expMonth", expMonth)
-                    .add("expYear", expYear);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("companyName", companyName)
+        .add("number", number)
+        .add("expMonth", expMonth)
+        .add("expYear", expYear);
+  }
 
-    private static final long serialVersionUID = 7982685426151968281L;
+  private static final long serialVersionUID = 7982685426151968281L;
 }

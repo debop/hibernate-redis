@@ -1,21 +1,13 @@
 hibernate-redis  [![Build Status](https://travis-ci.org/debop/hibernate-redis.png)](https://travis-ci.org/debop/hibernate-redis)
 ===============
 
-[hibernate][1] (4.2.x.Final, 4.3.x.Final) 2nd level cache using redis server.
-with [jedis][2]  2.4.1 or higher
+[hibernate][1] (4.x, 5.x) 2nd level cache provider using redis server 3.x. with [Redisson][2]
 
-reduce cache size by [Fast-Serialization][fst] and [snappy-java][snappy]. thanks!
-try serialization [benchmark][benchmark].
+Reduce cache size by [Redisson][2] SnappyCodec (see [snappy-java][snappy], [Fast-Serialization][fst])
 
-### NOTE
+### Setup
 
-***Don't use Hibernate 4.3.2.Final, 4.2.9.Final!!! It has bug in CacheKey!***
-Recommend use 4.3.4.Final or 4.2.10.Final
-
-Hibernate 4.3.2.Final CacheKey eliminate entityOrRoleName property for reduce CacheKey size.
-if multiple entity cached in same region, can't figure out wanted entity.
-
-### Maven Repository
+##### Maven Repository
 
 add dependency
 
@@ -23,7 +15,7 @@ add dependency
 <dependency>
     <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis</artifactId>
-    <version>1.6.1</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
@@ -38,7 +30,7 @@ add repository
 </repositories>
 ```
 
-### setup hibernate configuration
+##### setup hibernate configuration
 
 setup hibernate configuration.
 
@@ -46,13 +38,14 @@ setup hibernate configuration.
 // Secondary Cache
 props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
 props.put(Environment.USE_QUERY_CACHE, true);
-props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
+props.put(Environment.CACHE_REGION_FACTORY, org.hibernate.cache.redis.hibernate5.SingletonRedisRegionFactory.class.getName());
 props.put(Environment.CACHE_REGION_PREFIX, "hibernate");
 
 // optional setting for second level cache statistics
 props.setProperty(Environment.GENERATE_STATISTICS, "true");
 props.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
 
+// for Hibernate 4
 props.setProperty(Environment.TRANSACTION_STRATEGY, JdbcTransactionFactory.class.getName());
 
 // configuration for Redis that used by hibernate
@@ -72,25 +65,49 @@ sample for hibernate-redis.properties
  #
  ##########################################################
 
- # Redis Server for hibernate 2nd cache
- redis.host=localhost
- redis.port=6379
+ # Redisson configuration file
+ redisson-config=conf/redisson.yaml
 
- # redis.timeout=2000
- # redis.password=
+ # Cache Expiry settings
+ # 'hibernate5' is second cache prefix
+ # 'common', 'account' is actual region name
+ redis.expiryInSeconds.default=120
+ redis.expiryInSeconds.hibernate5.common=0
+ redis.expiryInSeconds.hibernate5.account=1200
+```
 
- # database for hibernate cache
- # redis.database=0
- redis.database=1
+sample for Redisson configuration (see [more samples](https://github.com/mrniko/redisson/wiki/2.-Configuration) )
 
- # hiberante 2nd cache default expiry (seconds)
- redis.expiryInSeconds=120
+```yaml
+# redisson configuration for redis servers
+# see : https://github.com/mrniko/redisson/wiki/2.-Configuration
 
- # expiry of hibernate.common region (seconds) // hibernate is prefix, region name is common
- redis.expiryInSeconds.hibernate.common=0
-
- # expiry of hibernate.account region (seconds) // hibernate is prefix, region name is account
- redis.expiryInSeconds.hibernate.account=1200
+singleServerConfig:
+  idleConnectionTimeout: 10000
+  pingTimeout: 1000
+  connectTimeout: 1000
+  timeout: 1000
+  retryAttempts: 1
+  retryInterval: 1000
+  reconnectionTimeout: 3000
+  failedAttempts: 1
+  password: null
+  subscriptionsPerConnection: 5
+  clientName: null
+  address:
+  - "//127.0.0.1:6379"
+  subscriptionConnectionMinimumIdleSize: 1
+  subscriptionConnectionPoolSize: 25
+  connectionMinimumIdleSize: 5
+  connectionPoolSize: 100
+  database: 0
+  dnsMonitoring: false
+  dnsMonitoringInterval: 5000
+threads: 0
+# Codec
+codec: !<org.redisson.codec.SnappyCodec> {}
+useLinuxNativeEpoll: false
+eventLoopGroup: null
 ```
 
 ### Setup hibernate entity to use cache
@@ -104,7 +121,7 @@ add @org.hibernate.annotations.Cache annotation to Entity class like this
 @Setter
 public class Item implements Serializable {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
@@ -121,12 +138,12 @@ run "redis-cli monitor" command in terminal. you can see putting cached items, r
 
 ### Sample code
 
-read [HibernateCacheTest.java][3] for more usage.
+see hibernate-examples module
 
 
 
 [1]: http://www.hibernate.org/
-[2]: https://github.com/xetorthio/jedis
+[2]: https://github.com/mrniko/redisson
 [3]: https://github.com/debop/hibernate-redis/blob/master/hibernate-redis/src/test/java/org/hibernate/test/cache/HibernateCacheTest.java
 [4]: http://projects.spring.io/spring-data-jpa/
 [lombok]: http://www.projectlombok.org/

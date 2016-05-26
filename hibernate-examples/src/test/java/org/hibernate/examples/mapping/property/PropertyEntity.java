@@ -29,26 +29,26 @@ import javax.persistence.Lob;
 @Setter
 public class PropertyEntity extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String name;
+  private String name;
 
-    @Lob
-    private String data;
+  @Lob
+  private String data;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name);
+  }
 
-    private static final long serialVersionUID = -8261525789684361722L;
+  private static final long serialVersionUID = -8261525789684361722L;
 }

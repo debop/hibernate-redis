@@ -16,21 +16,21 @@ import java.util.List;
  */
 public interface TreeNodeRepository extends JpaRepository<TreeNode, Long>, QueryDslPredicateExecutor<TreeNode> {
 
-    /**
-     * Tree 상에서 Root 노드 (부모가 없는 노드) 를 조회합니다.
-     *
-     * @return
-     */
-    @Query("select node from TreeNode node where node.parent is null")
-    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-    List<TreeNode> findRoots();
+  /**
+   * Tree 상에서 Root 노드 (부모가 없는 노드) 를 조회합니다.
+   *
+   * @return
+   */
+  @Query("select node from TreeNode node where node.parent is null")
+  @QueryHints({@QueryHint(name = "org.hibernate.cacheable", value = "true")})
+  List<TreeNode> findRoots();
 
-    /**
-     * Tree 상에서 Root 노드 (부모가 없는 노드) 를 조회합니다.
-     * #findRoots() 와 같다.
-     *
-     * @return
-     */
-    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-    List<TreeNode> findByParentIsNull();
+  /**
+   * Tree 상에서 Root 노드 (부모가 없는 노드) 를 조회합니다.
+   * #findRoots() 와 같다.
+   *
+   * @return
+   */
+  @QueryHints({@QueryHint(name = "org.hibernate.cacheable", value = "true")})
+  List<TreeNode> findByParentIsNull();
 }

@@ -15,7 +15,7 @@ import javax.persistence.QueryHint;
  */
 public interface JpaAccountRepository extends JpaRepository<JpaAccount, Long> {
 
-    @Query(value = "select a from JpaAccount a where a.name=:name")
-    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-    JpaAccount findByName(@Param("name") final String name);
+  @Query(value = "select a from JpaAccount a where a.name=:name")
+  @QueryHints({@QueryHint(name = "org.hibernate.cacheable", value = "true")})
+  JpaAccount findByName(@Param("name") final String name);
 }

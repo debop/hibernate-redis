@@ -22,32 +22,32 @@ import javax.persistence.*;
 @Setter
 public class SalesGuy extends AbstractHibernateEntity<Long> {
 
-    protected SalesGuy() {}
+  protected SalesGuy() {}
 
-    public SalesGuy(String name) {
-        this.name = name;
-    }
+  public SalesGuy(String name) {
+    this.name = name;
+  }
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String name;
+  private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private SalesForce salesForce;
+  @ManyToOne(fetch = FetchType.LAZY)
+  private SalesForce salesForce;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name);
+  }
 
-    private static final long serialVersionUID = -1171720938973299196L;
+  private static final long serialVersionUID = -1171720938973299196L;
 }

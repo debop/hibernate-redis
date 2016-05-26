@@ -25,23 +25,23 @@ import javax.persistence.ManyToOne;
 @Setter
 public class Customer extends Person {
 
-    private String mobile;
+  private String mobile;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contactEmployeeId", nullable = false)
-    @LazyToOne(LazyToOneOption.PROXY)
-    private Employee contactEmployee;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "contactEmployeeId", nullable = false)
+  @LazyToOne(LazyToOneOption.PROXY)
+  private Employee contactEmployee;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(mobile);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(mobile);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("mobile", mobile);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("mobile", mobile);
+  }
 
-    private static final long serialVersionUID = 8943550440998265187L;
+  private static final long serialVersionUID = 8943550440998265187L;
 }

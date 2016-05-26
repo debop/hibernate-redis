@@ -14,8 +14,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 public class HibernateConfig extends HibernateH2Configuration {
 
-    @Override
-    public String[] getMappedPackageNames() {
-        return new String[]{ Account.class.getPackage().getName() };
-    }
+  @Override
+  public String[] getMappedPackageNames() {
+    return new String[]{Account.class.getPackage().getName()};
+  }
 }

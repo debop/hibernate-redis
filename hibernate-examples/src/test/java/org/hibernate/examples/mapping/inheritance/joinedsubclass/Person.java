@@ -28,31 +28,31 @@ import javax.persistence.*;
 @Setter
 public abstract class Person extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "personId")
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "personId")
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    @Column(name = "personName", nullable = false, length = 128)
-    private String name;
+  @Column(name = "personName", nullable = false, length = 128)
+  private String name;
 
-    @Column(name = "regidentNo", nullable = false, length = 128)
-    private String regidentNo;
+  @Column(name = "regidentNo", nullable = false, length = 128)
+  private String regidentNo;
 
-    private Integer age;
+  private Integer age;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name, regidentNo);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name, regidentNo);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name)
-                    .add("regidentNo", regidentNo);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name)
+        .add("regidentNo", regidentNo);
+  }
 
-    private static final long serialVersionUID = 823321933233116966L;
+  private static final long serialVersionUID = 823321933233116966L;
 }

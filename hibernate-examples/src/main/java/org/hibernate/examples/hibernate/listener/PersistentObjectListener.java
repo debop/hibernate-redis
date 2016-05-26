@@ -15,24 +15,24 @@ import org.hibernate.persister.entity.EntityPersister;
  */
 public class PersistentObjectListener implements PostLoadEventListener, PostInsertEventListener {
 
-    @Override
-    public void onPostInsert(PostInsertEvent event) {
-        if (event.getEntity() instanceof PersistentObject) {
-            ((PersistentObject) event.getEntity()).onSave();
-        }
+  @Override
+  public void onPostInsert(PostInsertEvent event) {
+    if (event.getEntity() instanceof PersistentObject) {
+      ((PersistentObject) event.getEntity()).onSave();
     }
+  }
 
-    // @Override
-    public boolean requiresPostCommitHanding(EntityPersister persister) {
-        return false;
+  // @Override
+  public boolean requiresPostCommitHanding(EntityPersister persister) {
+    return false;
+  }
+
+  @Override
+  public void onPostLoad(PostLoadEvent event) {
+    if (event.getEntity() instanceof PersistentObject) {
+      ((PersistentObject) event.getEntity()).onLoad();
     }
+  }
 
-    @Override
-    public void onPostLoad(PostLoadEvent event) {
-        if (event.getEntity() instanceof PersistentObject) {
-            ((PersistentObject) event.getEntity()).onLoad();
-        }
-    }
-
-    private static final long serialVersionUID = -2581284706244288775L;
+  private static final long serialVersionUID = -2581284706244288775L;
 }

@@ -20,28 +20,28 @@ import javax.persistence.Embeddable;
 @Setter
 public class ProductImage extends AbstractValueObject {
 
-    // Component가 소유자 Entity를 양방향으로 연관지을 때 사용합니다.
-    @Parent
-    private ProductItem item;
+  // Component가 소유자 Entity를 양방향으로 연관지을 때 사용합니다.
+  @Parent
+  private ProductItem item;
 
-    private String name;
+  private String name;
 
-    private String filename;
+  private String filename;
 
-    private Integer sizeX;
-    private Integer sizeY;
+  private Integer sizeX;
+  private Integer sizeY;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name, filename);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name, filename);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name)
-                    .add("filename", filename);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name)
+        .add("filename", filename);
+  }
 
-    private static final long serialVersionUID = 6488204424105012791L;
+  private static final long serialVersionUID = 6488204424105012791L;
 }

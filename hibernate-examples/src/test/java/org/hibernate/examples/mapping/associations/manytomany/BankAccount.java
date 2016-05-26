@@ -24,35 +24,35 @@ import java.util.Set;
 @Setter
 public class BankAccount extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "accountId")
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "accountId")
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    /**
-     * 은행 계좌 번호
-     */
-    @Column(length = 32)
-    private String accountNumber;
+  /**
+   * 은행 계좌 번호
+   */
+  @Column(length = 32)
+  private String accountNumber;
 
-    /**
-     * 은행 계정은 소유자가 여러명이 된다.
-     */
-    // many-to-many 에서는 둘 중 하나는 mappedBy 를 지정해야 한다. ( hbm에서는 inverse )
-    @ManyToMany(mappedBy = "bankAccounts", cascade = { CascadeType.REFRESH })
-    private Set<AccountOwner> owners = new HashSet<AccountOwner>();
+  /**
+   * 은행 계정은 소유자가 여러명이 된다.
+   */
+  // many-to-many 에서는 둘 중 하나는 mappedBy 를 지정해야 한다. ( hbm에서는 inverse )
+  @ManyToMany(mappedBy = "bankAccounts", cascade = {CascadeType.REFRESH})
+  private Set<AccountOwner> owners = new HashSet<AccountOwner>();
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(accountNumber);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(accountNumber);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("accountNumber", accountNumber);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("accountNumber", accountNumber);
+  }
 
-    private static final long serialVersionUID = -4101571945249649442L;
+  private static final long serialVersionUID = -4101571945249649442L;
 }

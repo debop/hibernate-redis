@@ -27,31 +27,32 @@ import javax.persistence.Id;
 @Setter
 public class Hypothesis extends AbstractHibernateEntity<String> {
 
-    protected Hypothesis() {}
+  protected Hypothesis() {
+  }
 
-    public Hypothesis(final String id) {
-        this.id = id;
-    }
+  public Hypothesis(final String id) {
+    this.id = id;
+  }
 
-    @Id
-    @Setter(AccessLevel.PROTECTED)
-    private String id;
+  @Id
+  @Setter(AccessLevel.PROTECTED)
+  private String id;
 
-    private String description;
+  private String description;
 
-    private Integer position;
+  private Integer position;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(description, position);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(description, position);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("description", description)
-                    .add("position", position);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("description", description)
+        .add("position", position);
+  }
 
-    private static final long serialVersionUID = 6827597657248806590L;
+  private static final long serialVersionUID = 6827597657248806590L;
 }

@@ -27,29 +27,29 @@ import java.util.Set;
 @Setter
 public class Cloud extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String type;
+  private String type;
 
-    private Double length;
+  private Double length;
 
-    @OneToMany(cascade = { CascadeType.ALL })
-    @JoinTable
-    private Set<SnowFlake> producedSnowFlakes = new HashSet<SnowFlake>();
+  @OneToMany(cascade = {CascadeType.ALL})
+  @JoinTable
+  private Set<SnowFlake> producedSnowFlakes = new HashSet<SnowFlake>();
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(type, length);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(type, length);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("type", type)
-                    .add("length", length);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("type", type)
+        .add("length", length);
+  }
 
-    private static final long serialVersionUID = 8894797675268174082L;
+  private static final long serialVersionUID = 8894797675268174082L;
 }

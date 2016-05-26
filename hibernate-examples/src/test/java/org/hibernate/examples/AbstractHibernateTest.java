@@ -17,12 +17,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { HibernateH2Configuration.class })
+@ContextConfiguration(classes = {HibernateH2Configuration.class})
 public abstract class AbstractHibernateTest {
 
-    @Autowired
-    protected SessionFactory sessionFactory;
+  @Autowired
+  protected SessionFactory sessionFactory;
 
-    @Autowired
-    protected HibernateDao dao;
+  @Autowired
+  protected HibernateDao dao;
 }

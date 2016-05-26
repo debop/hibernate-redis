@@ -27,39 +27,40 @@ import java.sql.Timestamp;
 @Setter
 public class OneToManyBid extends AbstractHibernateEntity<Long> {
 
-    protected OneToManyBid() {}
+  protected OneToManyBid() {
+  }
 
-    public OneToManyBid(OneToManyBiddingItem item, BigDecimal amount) {
-        this.item = item;
-        this.item.getBids().add(this);
-        this.amount = amount;
-    }
+  public OneToManyBid(OneToManyBiddingItem item, BigDecimal amount) {
+    this.item = item;
+    this.item.getBids().add(this);
+    this.amount = amount;
+  }
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    @ManyToOne
-    @LazyToOne(LazyToOneOption.PROXY)
-    private OneToManyBiddingItem item;
+  @ManyToOne
+  @LazyToOne(LazyToOneOption.PROXY)
+  private OneToManyBiddingItem item;
 
-    @Column(nullable = false)
-    private BigDecimal amount;
+  @Column(nullable = false)
+  private BigDecimal amount;
 
-    @Transient
-    private Timestamp timestamp;
+  @Transient
+  private Timestamp timestamp;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(amount);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(amount);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("amount", amount);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("amount", amount);
+  }
 
-    private static final long serialVersionUID = 6305076394221526269L;
+  private static final long serialVersionUID = 6305076394221526269L;
 }

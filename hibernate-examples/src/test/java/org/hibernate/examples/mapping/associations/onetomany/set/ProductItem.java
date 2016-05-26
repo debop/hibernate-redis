@@ -30,43 +30,43 @@ import java.util.Set;
 @Setter
 public class ProductItem extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String name;
-    private String description;
-    private BigDecimal initialPrice;
-    private BigDecimal reservePrice;
+  private String name;
+  private String description;
+  private BigDecimal initialPrice;
+  private BigDecimal reservePrice;
 
-    @Temporal(TemporalType.DATE)
-    private Date startDate;
+  @Temporal(TemporalType.DATE)
+  private Date startDate;
 
-    @Temporal(TemporalType.DATE)
-    private Date endDate;
+  @Temporal(TemporalType.DATE)
+  private Date endDate;
 
-    @CollectionTable(name = "ProductItemImages", joinColumns = { @JoinColumn(name = "productItemId") })
-    @ElementCollection(targetClass = ProductImage.class)
-    @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private Set<ProductImage> images = new HashSet<ProductImage>();
+  @CollectionTable(name = "ProductItemImages", joinColumns = {@JoinColumn(name = "productItemId")})
+  @ElementCollection(targetClass = ProductImage.class)
+  @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.ALL)
+  private Set<ProductImage> images = new HashSet<ProductImage>();
 
-    public boolean removeImage(ProductImage image) {
-        return images.remove(image);
-    }
+  public boolean removeImage(ProductImage image) {
+    return images.remove(image);
+  }
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name)
-                    .add("initialPrice", initialPrice)
-                    .add("reservePrice", reservePrice);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name)
+        .add("initialPrice", initialPrice)
+        .add("reservePrice", reservePrice);
+  }
 
-    private static final long serialVersionUID = 9176636190484261550L;
+  private static final long serialVersionUID = 9176636190484261550L;
 }

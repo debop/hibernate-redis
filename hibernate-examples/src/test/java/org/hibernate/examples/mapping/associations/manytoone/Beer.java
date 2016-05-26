@@ -24,33 +24,33 @@ import javax.persistence.*;
 @Setter
 public class Beer extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String name;
-    private Double price = 0.0;
+  private String name;
+  private Double price = 0.0;
 
-    /**
-     * Beer가 저장, 머지, 갱신될 때 Brewery 정보도 갱신하도록 합니다. (이런 경우는 잘 쓰지 않는다)
-     */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
-    @LazyToOne(LazyToOneOption.PROXY)
-    @JoinColumn(name = "breweryId", nullable = false)
-    private Brewery brewery;
+  /**
+   * Beer가 저장, 머지, 갱신될 때 Brewery 정보도 갱신하도록 합니다. (이런 경우는 잘 쓰지 않는다)
+   */
+  @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+  @LazyToOne(LazyToOneOption.PROXY)
+  @JoinColumn(name = "breweryId", nullable = false)
+  private Brewery brewery;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name)
-                    .add("price", price);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name)
+        .add("price", price);
+  }
 
-    private static final long serialVersionUID = 1335724074913569654L;
+  private static final long serialVersionUID = 1335724074913569654L;
 }

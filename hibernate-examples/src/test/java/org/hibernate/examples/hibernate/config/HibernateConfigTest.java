@@ -11,7 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * org.hibernate.examples.hibernate.config.HibernateConfigTest
@@ -21,36 +21,37 @@ import static org.fest.assertions.Assertions.assertThat;
  */
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { HibernateConfig.class })
+@ContextConfiguration(classes = {HibernateConfig.class})
 public class HibernateConfigTest {
 
-    @Autowired SessionFactory sessionFactory;
+  @Autowired
+  SessionFactory sessionFactory;
 
-    @Test
-    @Transactional(readOnly = true)
-    public void configuration() throws Exception {
-        assertThat(sessionFactory).isNotNull();
-        assertThat(sessionFactory.getCurrentSession()).isNotNull();
-    }
+  @Test
+  @Transactional(readOnly = true)
+  public void configuration() throws Exception {
+    assertThat(sessionFactory).isNotNull();
+    assertThat(sessionFactory.getCurrentSession()).isNotNull();
+  }
 
-    @Test
-    @Transactional
-    public void crud() throws Exception {
-        Session session = sessionFactory.getCurrentSession();
+  @Test
+  @Transactional
+  public void crud() throws Exception {
+    Session session = sessionFactory.getCurrentSession();
 
-        Account account = new Account();
-        account.setName("John Smith");
-        account.setCashBalance(500.0);
-        session.save(account);
-        session.flush();
-        session.clear();
+    Account account = new Account();
+    account.setName("John Smith");
+    account.setCashBalance(500.0);
+    session.save(account);
+    session.flush();
+    session.clear();
 
-        Query query = session.createQuery("from Account a where a.id=:id").setLong("id", account.getId()).setCacheable(true);
-        Account a = (Account) query.uniqueResult();
-        assertThat(a).isNotNull();
-        assertThat(a.isPersisted()).isTrue();
-        a.setName("foo");
-        session.saveOrUpdate(a);
-        session.flush();
-    }
+    Query query = session.createQuery("from Account a where a.id=:id").setLong("id", account.getId()).setCacheable(true);
+    Account a = (Account) query.uniqueResult();
+    assertThat(a).isNotNull();
+    assertThat(a.isPersisted()).isTrue();
+    a.setName("foo");
+    session.saveOrUpdate(a);
+    session.flush();
+  }
 }

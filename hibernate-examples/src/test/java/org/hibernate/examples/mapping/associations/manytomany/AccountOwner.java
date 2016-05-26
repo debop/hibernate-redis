@@ -24,38 +24,38 @@ import java.util.Set;
 @Setter
 public class AccountOwner extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "ownerId")
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "ownerId")
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    /**
-     * 사회보장번호 (주민번호)
-     */
-    @Column(length = 32)
-    private String SSN;
+  /**
+   * 사회보장번호 (주민번호)
+   */
+  @Column(length = 32)
+  private String SSN;
 
-    /**
-     * 사용자의 은행계좌 정보
-     * many-to-many 에서는 둘 중 하나는 mappedBy 를 지정해야 한다.
-     */
-    @ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(name = "BankAccountOwners",
-               joinColumns = { @JoinColumn(name = "ownerId") },
-               inverseJoinColumns = { @JoinColumn(name = "accountId") })
-    private Set<BankAccount> bankAccounts = new HashSet<BankAccount>();
+  /**
+   * 사용자의 은행계좌 정보
+   * many-to-many 에서는 둘 중 하나는 mappedBy 를 지정해야 한다.
+   */
+  @ManyToMany(cascade = {CascadeType.ALL})
+  @JoinTable(name = "BankAccountOwners",
+      joinColumns = {@JoinColumn(name = "ownerId")},
+      inverseJoinColumns = {@JoinColumn(name = "accountId")})
+  private Set<BankAccount> bankAccounts = new HashSet<BankAccount>();
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(SSN);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(SSN);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("SSN", SSN);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("SSN", SSN);
+  }
 
-    private static final long serialVersionUID = 6041020627741330687L;
+  private static final long serialVersionUID = 6041020627741330687L;
 }

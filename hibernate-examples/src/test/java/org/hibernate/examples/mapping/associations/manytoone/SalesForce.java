@@ -26,33 +26,33 @@ import java.util.Set;
 @Setter
 public class SalesForce extends AbstractHibernateEntity<Long> {
 
-    protected SalesForce() {}
+  protected SalesForce() {}
 
-    public SalesForce(String corporation) {
-        this.corporation = corporation;
-    }
+  public SalesForce(String corporation) {
+    this.corporation = corporation;
+  }
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String corporation;
+  private String corporation;
 
-    @OneToMany(mappedBy = "salesForce", cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @LazyCollection(LazyCollectionOption.EXTRA)
-    private Set<SalesGuy> salesGuys = new HashSet<SalesGuy>();
+  @OneToMany(mappedBy = "salesForce", cascade = {CascadeType.ALL}, orphanRemoval = true)
+  @LazyCollection(LazyCollectionOption.EXTRA)
+  private Set<SalesGuy> salesGuys = new HashSet<SalesGuy>();
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(corporation);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(corporation);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("corporation", corporation);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("corporation", corporation);
+  }
 
-    private static final long serialVersionUID = -6886236659031901168L;
+  private static final long serialVersionUID = -6886236659031901168L;
 }

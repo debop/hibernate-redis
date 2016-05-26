@@ -3,7 +3,6 @@ package org.hibernate.examples.mapping.compositeId.embeddable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.examples.model.AbstractHibernateEntity;
 import org.hibernate.examples.utils.HashTool;
 import org.hibernate.examples.utils.ToStringHelper;
@@ -19,34 +18,34 @@ import javax.persistence.Entity;
  * @since 2013. 11. 29. 오후 4:41
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
+//@Cache(region = "composite", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
 public class EmbeddableIdCar extends AbstractHibernateEntity<EmbeddableCarIdentifier> {
 
-    protected EmbeddableIdCar() {}
+  protected EmbeddableIdCar() { }
 
-    public EmbeddableIdCar(EmbeddableCarIdentifier id) {
-        this.id = id;
-    }
+  public EmbeddableIdCar(EmbeddableCarIdentifier id) {
+    this.id = id;
+  }
 
-    @EmbeddedId
-    @Column(name = "carId")
-    @Setter(AccessLevel.PROTECTED)
-    private EmbeddableCarIdentifier id;
+  @EmbeddedId
+  @Column(name = "carId")
+  @Setter(AccessLevel.PROTECTED)
+  private EmbeddableCarIdentifier id;
 
-    private String serialNo;
+  private String serialNo;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(id, serialNo);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(id, serialNo);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("serialNo", serialNo);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+                .add("serialNo", serialNo);
+  }
 
-    private static final long serialVersionUID = 3596634438044379341L;
+  private static final long serialVersionUID = 3596634438044379341L;
 }

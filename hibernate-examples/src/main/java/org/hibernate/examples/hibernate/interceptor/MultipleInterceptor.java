@@ -18,84 +18,84 @@ import java.util.*;
 @Slf4j
 public class MultipleInterceptor extends EmptyInterceptor {
 
-    private final List<Interceptor> interceptors = new ArrayList<Interceptor>();
+  private final List<Interceptor> interceptors = new ArrayList<Interceptor>();
 
-    public MultipleInterceptor(Collection<? extends Interceptor> c) {
-        this.interceptors.addAll(c);
+  public MultipleInterceptor(Collection<? extends Interceptor> c) {
+    this.interceptors.addAll(c);
+  }
+
+  public MultipleInterceptor(Interceptor... array) {
+    Collections.addAll(this.interceptors, array);
+  }
+
+  public void addInterceptor(Interceptor interceptor) {
+    this.interceptors.add(interceptor);
+  }
+
+  public void removeInterceptor(Interceptor interceptor) {
+    this.interceptors.remove(interceptor);
+  }
+
+  public boolean exists() {
+    return interceptors.size() > 0;
+  }
+
+  @Override
+  public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+    if (exists()) {
+      for (Interceptor interceptor : interceptors) {
+        interceptor.onDelete(entity, id, state, propertyNames, types);
+      }
     }
+  }
 
-    public MultipleInterceptor(Interceptor... array) {
-        Collections.addAll(this.interceptors, array);
+  @Override
+  public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
+    if (exists()) {
+      for (Interceptor interceptor : interceptors) {
+        interceptor.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
+      }
     }
+    return false;
+  }
 
-    public void addInterceptor(Interceptor interceptor) {
-        this.interceptors.add(interceptor);
+  @Override
+  public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+    if (exists()) {
+      for (Interceptor interceptor : interceptors) {
+        interceptor.onSave(entity, id, state, propertyNames, types);
+      }
     }
+    return false;
+  }
 
-    public void removeInterceptor(Interceptor interceptor) {
-        this.interceptors.remove(interceptor);
+  @Override
+  public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+    if (exists()) {
+      for (Interceptor interceptor : interceptors) {
+        interceptor.onLoad(entity, id, state, propertyNames, types);
+      }
     }
+    return false;
+  }
 
-    public boolean exists() {
-        return interceptors.size() > 0;
+  @Override
+  public void postFlush(Iterator entities) {
+    if (exists()) {
+      for (Interceptor interceptor : interceptors) {
+        interceptor.postFlush(entities);
+      }
     }
+  }
 
-    @Override
-    public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-        if (exists()) {
-            for (Interceptor interceptor : interceptors) {
-                interceptor.onDelete(entity, id, state, propertyNames, types);
-            }
-        }
+  @Override
+  public void preFlush(Iterator entities) {
+    if (exists()) {
+      for (Interceptor interceptor : interceptors) {
+        interceptor.preFlush(entities);
+      }
     }
+  }
 
-    @Override
-    public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
-        if (exists()) {
-            for (Interceptor interceptor : interceptors) {
-                interceptor.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-        if (exists()) {
-            for (Interceptor interceptor : interceptors) {
-                interceptor.onSave(entity, id, state, propertyNames, types);
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
-        if (exists()) {
-            for (Interceptor interceptor : interceptors) {
-                interceptor.onLoad(entity, id, state, propertyNames, types);
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void postFlush(Iterator entities) {
-        if (exists()) {
-            for (Interceptor interceptor : interceptors) {
-                interceptor.postFlush(entities);
-            }
-        }
-    }
-
-    @Override
-    public void preFlush(Iterator entities) {
-        if (exists()) {
-            for (Interceptor interceptor : interceptors) {
-                interceptor.preFlush(entities);
-            }
-        }
-    }
-
-    private static final long serialVersionUID = -818808374889268894L;
+  private static final long serialVersionUID = -818808374889268894L;
 }

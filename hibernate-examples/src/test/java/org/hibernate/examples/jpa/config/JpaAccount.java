@@ -17,25 +17,25 @@ import javax.persistence.*;
 @Setter
 public class JpaAccount extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private Double cashBalance;
+  private Double cashBalance;
 
-    @Column(name = "AccountName", nullable = false, length = 32)
-    private String name;
+  @Column(name = "AccountName", nullable = false, length = 32)
+  private String name;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name);
+  }
 
-    private static final long serialVersionUID = 8986275418970766284L;
+  private static final long serialVersionUID = 8986275418970766284L;
 }

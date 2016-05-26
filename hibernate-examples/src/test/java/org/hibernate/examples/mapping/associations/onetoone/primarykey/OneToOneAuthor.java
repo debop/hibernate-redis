@@ -26,34 +26,34 @@ import javax.persistence.*;
 @Setter
 public class OneToOneAuthor extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "authorId")
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "authorId")
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String name;
+  private String name;
 
-    // FetchType.LAZY 이므로 따로 로드합니다.
-    @OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn
-    private OneToOneBiography biography = new OneToOneBiography(this);
+  // FetchType.LAZY 이므로 따로 로드합니다.
+  @OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+  @PrimaryKeyJoinColumn
+  private OneToOneBiography biography = new OneToOneBiography(this);
 
-    // FetchType.EAGER 이므로 left outer join 으로 로드합니다.
-    @OneToOne(cascade = { CascadeType.ALL })
-    @PrimaryKeyJoinColumn
-    private OneToOnePicture picture = new OneToOnePicture(this);
+  // FetchType.EAGER 이므로 left outer join 으로 로드합니다.
+  @OneToOne(cascade = {CascadeType.ALL})
+  @PrimaryKeyJoinColumn
+  private OneToOnePicture picture = new OneToOnePicture(this);
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name);
+  }
 
-    private static final long serialVersionUID = 9107358535833367961L;
+  private static final long serialVersionUID = 9107358535833367961L;
 }

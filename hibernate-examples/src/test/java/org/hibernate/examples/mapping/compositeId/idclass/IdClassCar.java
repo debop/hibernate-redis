@@ -2,7 +2,6 @@ package org.hibernate.examples.mapping.compositeId.idclass;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.examples.model.AbstractValueObject;
@@ -20,7 +19,7 @@ import javax.persistence.IdClass;
  * @since 2013. 11. 29. 오후 4:35
  */
 @Entity
-@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
+//@Cache(region = "composite", usage = CacheConcurrencyStrategy.READ_WRITE)
 @IdClass(CarIdentifier.class)
 @DynamicInsert
 @DynamicUpdate
@@ -28,26 +27,26 @@ import javax.persistence.IdClass;
 @Setter
 public class IdClassCar extends AbstractValueObject {
 
-    @Id
-    private String brand;
+  @Id
+  private String brand;
 
-    @Id
-    private int year;
+  @Id
+  private int year;
 
-    private String serialNo;
+  private String serialNo;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(brand, year);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(brand, year);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("brand", brand)
-                    .add("year", year)
-                    .add("serialNo", serialNo);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+                .add("brand", brand)
+                .add("year", year)
+                .add("serialNo", serialNo);
+  }
 
-    private static final long serialVersionUID = -2144857053612105427L;
+  private static final long serialVersionUID = -2144857053612105427L;
 }

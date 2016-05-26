@@ -3,7 +3,6 @@ package org.hibernate.examples.mapping.compositeId.manytoone;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.examples.model.AbstractHibernateEntity;
@@ -23,44 +22,44 @@ import java.math.BigDecimal;
  */
 @Entity
 @Table(name = "CompositeId_OrderDetail")
-@org.hibernate.annotations.Cache(region = "example", usage = CacheConcurrencyStrategy.READ_WRITE)
+//@Cache(region = "composite", usage = CacheConcurrencyStrategy.READ_WRITE)
 @DynamicInsert
 @DynamicUpdate
 @Getter
 @Setter
 public class OrderDetail extends AbstractHibernateEntity<OrderDetailIdentifier> {
 
-    protected OrderDetail() {}
+  protected OrderDetail() {}
 
-    public OrderDetail(Order order, Product product) {
-        this.id = new OrderDetailIdentifier(order, product);
-    }
+  public OrderDetail(Order order, Product product) {
+    this.id = new OrderDetailIdentifier(order, product);
+  }
 
-    public OrderDetail(OrderDetailIdentifier id) {
-        this.id = id;
-    }
+  public OrderDetail(OrderDetailIdentifier id) {
+    this.id = id;
+  }
 
-    @EmbeddedId
-    @Setter(AccessLevel.PROTECTED)
-    private OrderDetailIdentifier id;
+  @EmbeddedId
+  @Setter(AccessLevel.PROTECTED)
+  private OrderDetailIdentifier id;
 
-    private BigDecimal unitPrice;
-    private Integer quantity;
-    private Float discount;
+  private BigDecimal unitPrice;
+  private Integer quantity;
+  private Float discount;
 
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(unitPrice, quantity, discount);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(unitPrice, quantity, discount);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("unitPrice", unitPrice)
-                    .add("quantity", quantity)
-                    .add("discount", discount);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+                .add("unitPrice", unitPrice)
+                .add("quantity", quantity)
+                .add("discount", discount);
+  }
 
-    private static final long serialVersionUID = 6958616166017033341L;
+  private static final long serialVersionUID = 6958616166017033341L;
 }

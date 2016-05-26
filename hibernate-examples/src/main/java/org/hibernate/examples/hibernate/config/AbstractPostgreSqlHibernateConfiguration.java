@@ -14,22 +14,22 @@ import java.util.Properties;
  */
 public abstract class AbstractPostgreSqlHibernateConfiguration extends AbstractHibernateConfiguration {
 
-    public static final String DRIVER_CLASS_POSTGRESQL = "org.postgresql.Driver";
-    public static final String DIALECT_POSTGRESQL = "org.hibernate.dialect.PostgreSQL82Dialect";
+  public static final String DRIVER_CLASS_POSTGRESQL = "org.postgresql.Driver";
+  public static final String DIALECT_POSTGRESQL = "org.hibernate.dialect.PostgreSQL82Dialect";
 
-    @Bean
-    @Override
-    public DataSource dataSource() {
-        return buildDataSource(DRIVER_CLASS_POSTGRESQL,
-                               "jdbc:postgresql://localhost/" + getDatabaseName() + "?Set=UTF8",
-                               "root",
-                               "root");
-    }
+  @Bean
+  @Override
+  public DataSource dataSource() {
+    return buildDataSource(DRIVER_CLASS_POSTGRESQL,
+        "jdbc:postgresql://localhost/" + getDatabaseName() + "?Set=UTF8",
+        "root",
+        "root");
+  }
 
-    @Override
-    public Properties hibernateProperties() {
-        Properties props = super.hibernateProperties();
-        props.put(Environment.DIALECT, DIALECT_POSTGRESQL);
-        return props;
-    }
+  @Override
+  public Properties hibernateProperties() {
+    Properties props = super.hibernateProperties();
+    props.put(Environment.DIALECT, DIALECT_POSTGRESQL);
+    return props;
+  }
 }

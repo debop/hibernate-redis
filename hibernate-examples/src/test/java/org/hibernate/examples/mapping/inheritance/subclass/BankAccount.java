@@ -26,22 +26,22 @@ import javax.persistence.Entity;
 @Setter
 public class BankAccount extends AbstractBilling {
 
-    private String account;
-    private String bankname;
-    private String swift;
+  private String account;
+  private String bankname;
+  private String swift;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(super.hashCode(), account, bankname);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(super.hashCode(), account, bankname);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("account", account)
-                    .add("bankname", bankname)
-                    .add("swift", swift);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("account", account)
+        .add("bankname", bankname)
+        .add("swift", swift);
+  }
 
-    private static final long serialVersionUID = -6626110047707984345L;
+  private static final long serialVersionUID = -6626110047707984345L;
 }

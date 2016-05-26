@@ -28,25 +28,25 @@ import javax.persistence.*;
 @Setter
 public abstract class AbstractBilling extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "billingId")
-    @Setter(AccessLevel.PROTECTED)
-    public Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "billingId")
+  @Setter(AccessLevel.PROTECTED)
+  public Long id;
 
-    @Column(name = "owner")
-    private String owner;
+  @Column(name = "owner")
+  private String owner;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(owner);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(owner);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("owner", owner);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("owner", owner);
+  }
 
-    private static final long serialVersionUID = 8802737282954083012L;
+  private static final long serialVersionUID = 8802737282954083012L;
 }

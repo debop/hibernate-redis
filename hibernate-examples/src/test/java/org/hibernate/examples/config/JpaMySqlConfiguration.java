@@ -1,6 +1,6 @@
 package org.hibernate.examples.config;
 
-import org.hibernate.cache.redis.SingletonRedisRegionFactory;
+import org.hibernate.cache.redis.hibernate5.SingletonRedisRegionFactory;
 import org.hibernate.cfg.Environment;
 import org.hibernate.examples.jpa.config.AbstractMySqlJpaConfiguration;
 import org.hibernate.examples.jpa.config.JpaAccount;
@@ -22,33 +22,33 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class JpaMySqlConfiguration extends AbstractMySqlJpaConfiguration {
 
-    @Override
-    public String getDatabaseName() {
-        return "hibernate";
-    }
+  @Override
+  public String getDatabaseName() {
+    return "hibernate";
+  }
 
-    @Override
-    public String[] getMappedPackageNames() {
-        return new String[]{
-                Employee.class.getPackage().getName(),
-                JpaAccount.class.getPackage().getName()
-        };
-    }
+  @Override
+  public String[] getMappedPackageNames() {
+    return new String[]{
+        Employee.class.getPackage().getName(),
+        JpaAccount.class.getPackage().getName()
+    };
+  }
 
-    @Override
-    public Properties jpaProperties() {
-        Properties props = super.jpaProperties();
+  @Override
+  public Properties jpaProperties() {
+    Properties props = super.jpaProperties();
 
-        props.put(Environment.HBM2DDL_AUTO, "create"); // create | spawn | spawn-drop | update | validate | none
+    props.put(Environment.HBM2DDL_AUTO, "create"); // create | spawn | spawn-drop | update | validate | none
 
-        // hibernate second level cache
-        props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
-        props.put(Environment.USE_QUERY_CACHE, true);
-        props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
-        props.put(Environment.CACHE_REGION_PREFIX, "");
-        props.put(Environment.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties");
+    // hibernate second level cache
+    props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
+    props.put(Environment.USE_QUERY_CACHE, true);
+    props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
+    props.put(Environment.CACHE_REGION_PREFIX, "hibernate5");
+    props.put(Environment.CACHE_PROVIDER_CONFIG, "conf/hibernate-redis.properties");
 
 
-        return props;
-    }
+    return props;
+  }
 }

@@ -18,30 +18,30 @@ import javax.persistence.Embeddable;
 @Getter
 public class EmbeddableCarIdentifier extends AbstractValueObject {
 
-    @Column(name = "brand", nullable = false, length = 32)
-    private String brand;
+  @Column(name = "brand", nullable = false, length = 32)
+  private String brand;
 
-    @Column(name = "releaseYear", nullable = false)
-    private int year;
+  @Column(name = "releaseYear", nullable = false)
+  private int year;
 
-    protected EmbeddableCarIdentifier() {}
+  protected EmbeddableCarIdentifier() {}
 
-    public EmbeddableCarIdentifier(String brand, int year) {
-        this.brand = brand;
-        this.year = year;
-    }
+  public EmbeddableCarIdentifier(String brand, int year) {
+    this.brand = brand;
+    this.year = year;
+  }
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(brand, year);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(brand, year);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("brand", brand)
-                    .add("year", year);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+                .add("brand", brand)
+                .add("year", year);
+  }
 
-    private static final long serialVersionUID = -1715963785986881704L;
+  private static final long serialVersionUID = -1715963785986881704L;
 }

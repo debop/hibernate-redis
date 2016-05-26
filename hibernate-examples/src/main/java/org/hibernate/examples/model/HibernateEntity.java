@@ -8,10 +8,10 @@ package org.hibernate.examples.model;
  */
 public interface HibernateEntity<TId> extends PersistentObject {
 
-    /**
-     * Entity의 Identifier 값을 반환합니다.
-     *
-     * @return Identifier value
-     */
-    TId getId();
+  /**
+   * Entity의 Identifier 값을 반환합니다.
+   *
+   * @return Identifier value
+   */
+  TId getId();
 }

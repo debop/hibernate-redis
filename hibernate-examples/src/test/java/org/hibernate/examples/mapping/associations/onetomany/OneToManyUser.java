@@ -28,37 +28,37 @@ import java.util.Set;
 @Setter
 public class OneToManyUser extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "userId")
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "userId")
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String city;
+  private String city;
 
-    @OneToMany(cascade = { CascadeType.ALL })
-    @JoinTable(name = "OneToOne_User_Address")
-    @MapKeyColumn(name = "nick")
-    @LazyCollection(LazyCollectionOption.EXTRA)
-    @Fetch(FetchMode.SUBSELECT)
-    private Map<String, OneToManyAddress> addresses = new HashMap<String, OneToManyAddress>();
+  @OneToMany(cascade = {CascadeType.ALL})
+  @JoinTable(name = "OneToOne_User_Address")
+  @MapKeyColumn(name = "nick")
+  @LazyCollection(LazyCollectionOption.EXTRA)
+  @Fetch(FetchMode.SUBSELECT)
+  private Map<String, OneToManyAddress> addresses = new HashMap<String, OneToManyAddress>();
 
-    @ElementCollection
-    @JoinTable(name = "OneToMany_Nicks", joinColumns = { @JoinColumn(name = "userId") })
-    @Cascade({ org.hibernate.annotations.CascadeType.ALL })
-    private Set<String> nicknames = new HashSet<String>();
+  @ElementCollection
+  @JoinTable(name = "OneToMany_Nicks", joinColumns = {@JoinColumn(name = "userId")})
+  @Cascade({org.hibernate.annotations.CascadeType.ALL})
+  private Set<String> nicknames = new HashSet<String>();
 
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(city);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(city);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("city", city);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("city", city);
+  }
 
-    private static final long serialVersionUID = -1397252295104008999L;
+  private static final long serialVersionUID = -1397252295104008999L;
 }

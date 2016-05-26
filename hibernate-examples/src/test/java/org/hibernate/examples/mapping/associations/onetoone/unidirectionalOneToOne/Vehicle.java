@@ -29,24 +29,24 @@ import javax.persistence.Id;
 @Setter
 public class Vehicle extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "vehicleId")
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue
+  @Column(name = "vehicleId")
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String brand;
+  private String brand;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(brand);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(brand);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("brand", brand);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("brand", brand);
+  }
 
-    private static final long serialVersionUID = -5118283969168355563L;
+  private static final long serialVersionUID = -5118283969168355563L;
 }

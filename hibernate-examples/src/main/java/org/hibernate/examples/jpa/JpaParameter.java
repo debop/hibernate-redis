@@ -14,22 +14,22 @@ import org.hibernate.type.StandardBasicTypes;
 @Slf4j
 public class JpaParameter extends AbstractNamedParameter {
 
-    private org.hibernate.type.Type paramType = StandardBasicTypes.SERIALIZABLE;
+  private org.hibernate.type.Type paramType = StandardBasicTypes.SERIALIZABLE;
 
-    public JpaParameter(String name, Object value) {
-        super(name, value);
-    }
+  public JpaParameter(String name, Object value) {
+    super(name, value);
+  }
 
-    public JpaParameter(String name, Object value, org.hibernate.type.Type paramType) {
-        super(name, value);
-        this.paramType = paramType;
-    }
+  public JpaParameter(String name, Object value, org.hibernate.type.Type paramType) {
+    super(name, value);
+    this.paramType = paramType;
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("paramType", paramType);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("paramType", paramType);
+  }
 
-    private static final long serialVersionUID = -5022556957583530472L;
+  private static final long serialVersionUID = -5022556957583530472L;
 }

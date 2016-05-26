@@ -26,32 +26,32 @@ import javax.persistence.*;
 @Setter
 public class Wheel extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @Column(name = "vehicleId")
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @Column(name = "vehicleId")
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String name;
+  private String name;
 
-    private double diameter;
+  private double diameter;
 
-    @MapsId
-    @OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    // @PrimaryKeyJoinColumn
-    @JoinColumn(name = "vehicleId")
-    private Vehicle vehicle;
+  @MapsId
+  @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  // @PrimaryKeyJoinColumn
+  @JoinColumn(name = "vehicleId")
+  private Vehicle vehicle;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name, diameter);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name, diameter);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name)
-                    .add("diameter", diameter);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+                .add("name", name)
+                .add("diameter", diameter);
+  }
 
-    private static final long serialVersionUID = -6537387709923172615L;
+  private static final long serialVersionUID = -6537387709923172615L;
 }

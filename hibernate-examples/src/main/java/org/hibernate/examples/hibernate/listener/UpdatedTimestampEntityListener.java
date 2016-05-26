@@ -14,21 +14,21 @@ import org.hibernate.examples.model.UpdatedTimestampEntity;
  */
 public class UpdatedTimestampEntityListener implements PreInsertEventListener, PreUpdateEventListener {
 
-    @Override
-    public boolean onPreInsert(PreInsertEvent event) {
-        if (event.getEntity() instanceof UpdatedTimestampEntity) {
-            ((UpdatedTimestampEntity) event.getEntity()).updateUpdatedTimestamp();
-        }
-        return true;
+  @Override
+  public boolean onPreInsert(PreInsertEvent event) {
+    if (event.getEntity() instanceof UpdatedTimestampEntity) {
+      ((UpdatedTimestampEntity) event.getEntity()).updateUpdatedTimestamp();
     }
+    return true;
+  }
 
-    @Override
-    public boolean onPreUpdate(PreUpdateEvent event) {
-        if (event.getEntity() instanceof UpdatedTimestampEntity) {
-            ((UpdatedTimestampEntity) event.getEntity()).updateUpdatedTimestamp();
-        }
-        return true;
+  @Override
+  public boolean onPreUpdate(PreUpdateEvent event) {
+    if (event.getEntity() instanceof UpdatedTimestampEntity) {
+      ((UpdatedTimestampEntity) event.getEntity()).updateUpdatedTimestamp();
     }
+    return true;
+  }
 
-    private static final long serialVersionUID = 1089954764026831038L;
+  private static final long serialVersionUID = 1089954764026831038L;
 }

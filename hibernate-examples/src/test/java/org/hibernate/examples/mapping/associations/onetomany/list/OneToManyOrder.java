@@ -26,28 +26,28 @@ import java.util.List;
 @Setter
 public class OneToManyOrder extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String no;
+  private String no;
 
-    // inverse=true (mappedBy="order")
-    @OneToMany(mappedBy = "order", cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, orphanRemoval = true)
-    @LazyCollection(LazyCollectionOption.EXTRA)
-    private List<OneToManyOrderItem> items = new ArrayList<OneToManyOrderItem>();
+  // inverse=true (mappedBy="order")
+  @OneToMany(mappedBy = "order", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, orphanRemoval = true)
+  @LazyCollection(LazyCollectionOption.EXTRA)
+  private List<OneToManyOrderItem> items = new ArrayList<OneToManyOrderItem>();
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(no);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(no);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("no", no);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+                .add("no", no);
+  }
 
-    private static final long serialVersionUID = 6377149156636760165L;
+  private static final long serialVersionUID = 6377149156636760165L;
 }

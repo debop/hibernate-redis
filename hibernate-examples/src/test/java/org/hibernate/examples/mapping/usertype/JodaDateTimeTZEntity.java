@@ -27,33 +27,33 @@ import javax.persistence.Id;
 @Setter
 public class JodaDateTimeTZEntity extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+  @Id
+  @GeneratedValue
+  private Long id;
 
-    /**
-     * UTC DateTime 과 TimeZone 으로 분리해서 저장하고, 로드 시에는 통합합니다.
-     */
-    @Columns(columns = { @Column(name = "startTime"), @Column(name = "startTimeZone") })
-    @Type(type = "org.hibernate.examples.usertype.JodaDateTimeTZUserType")
-    private DateTime startTZ;
+  /**
+   * UTC DateTime 과 TimeZone 으로 분리해서 저장하고, 로드 시에는 통합합니다.
+   */
+  @Columns(columns = {@Column(name = "startTime"), @Column(name = "startTimeZone")})
+  @Type(type = "org.hibernate.examples.usertype.JodaDateTimeTZUserType")
+  private DateTime startTZ;
 
-    @Columns(columns = { @Column(name = "endTime"), @Column(name = "endTimeZone") })
-    @Type(type = "org.hibernate.examples.usertype.JodaDateTimeTZUserType")
-    private DateTime endTZ;
+  @Columns(columns = {@Column(name = "endTime"), @Column(name = "endTimeZone")})
+  @Type(type = "org.hibernate.examples.usertype.JodaDateTimeTZUserType")
+  private DateTime endTZ;
 
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(startTZ, endTZ);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(startTZ, endTZ);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("startTZ", startTZ)
-                    .add("endTZ", endTZ);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("startTZ", startTZ)
+        .add("endTZ", endTZ);
+  }
 
-    private static final long serialVersionUID = 5531635835898743185L;
+  private static final long serialVersionUID = 5531635835898743185L;
 }

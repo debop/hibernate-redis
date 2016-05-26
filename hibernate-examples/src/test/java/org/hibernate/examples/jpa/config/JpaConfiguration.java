@@ -13,15 +13,15 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @since 2013. 11. 28. 오후 10:37
  */
 @Configuration
-@EnableJpaRepositories(basePackageClasses = { JpaAccountRepository.class })
+@EnableJpaRepositories(basePackageClasses = {JpaAccountRepository.class})
 @EnableTransactionManagement
 public class JpaConfiguration extends JpaH2Configuration {
 
-    @Override
-    public String[] getMappedPackageNames() {
-        return new String[]{
-                JpaAccount.class.getPackage().getName(),
-                Employee.class.getPackage().getName()
-        };
-    }
+  @Override
+  public String[] getMappedPackageNames() {
+    return new String[]{
+        JpaAccount.class.getPackage().getName(),
+        Employee.class.getPackage().getName()
+    };
+  }
 }

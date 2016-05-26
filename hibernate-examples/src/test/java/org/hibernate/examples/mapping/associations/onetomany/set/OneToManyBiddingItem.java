@@ -28,30 +28,30 @@ import java.util.Set;
 @Setter
 public class OneToManyBiddingItem extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String name;
+  private String name;
 
-    private String description;
+  private String description;
 
-    @OneToMany(mappedBy = "item", cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @LazyCollection(LazyCollectionOption.EXTRA)
-    private Set<OneToManyBid> bids = new HashSet<OneToManyBid>();
+  @OneToMany(mappedBy = "item", cascade = {CascadeType.ALL}, orphanRemoval = true)
+  @LazyCollection(LazyCollectionOption.EXTRA)
+  private Set<OneToManyBid> bids = new HashSet<OneToManyBid>();
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name)
-                    .add("description", description);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name)
+        .add("description", description);
+  }
 
-    private static final long serialVersionUID = -5361026108113198323L;
+  private static final long serialVersionUID = -5361026108113198323L;
 }

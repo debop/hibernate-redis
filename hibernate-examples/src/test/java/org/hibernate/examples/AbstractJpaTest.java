@@ -17,9 +17,9 @@ import javax.persistence.EntityManagerFactory;
  */
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { JpaH2Configuration.class })
+@ContextConfiguration(classes = {JpaH2Configuration.class})
 public abstract class AbstractJpaTest {
 
-    @Autowired
-    protected EntityManagerFactory emf;
+  @Autowired
+  protected EntityManagerFactory emf;
 }

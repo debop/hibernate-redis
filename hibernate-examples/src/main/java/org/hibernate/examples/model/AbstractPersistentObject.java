@@ -10,34 +10,32 @@ import org.hibernate.examples.utils.ToStringHelper;
  */
 public abstract class AbstractPersistentObject extends AbstractValueObject implements PersistentObject {
 
-    private boolean persisted;
+  private boolean persisted;
 
-    @Override
-    public boolean isPersisted() {
+  @Override
+  public boolean isPersisted() {
+    return persisted;
+  }
 
+  protected void setPersisted(Boolean v) {
+    persisted = v;
+  }
 
-        return persisted;
-    }
+  @Override
+  public void onSave() {
+    setPersisted(true);
+  }
 
-    protected void setPersisted(Boolean v) {
-        persisted = v;
-    }
+  @Override
+  public void onLoad() {
+    setPersisted(true);
+  }
 
-    @Override
-    public void onSave() {
-        setPersisted(true);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("persisted", persisted);
+  }
 
-    @Override
-    public void onLoad() {
-        setPersisted(true);
-    }
-
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("persisted", persisted);
-    }
-
-    private static final long serialVersionUID = -1668910261730798160L;
+  private static final long serialVersionUID = -1668910261730798160L;
 }

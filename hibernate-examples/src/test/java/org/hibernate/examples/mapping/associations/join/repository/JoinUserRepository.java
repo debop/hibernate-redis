@@ -11,5 +11,5 @@ import org.springframework.data.querydsl.QueryDslPredicateExecutor;
  * @since 2013. 11. 28. 오후 11:18
  */
 public interface JoinUserRepository
-        extends JpaRepository<JoinUser, Long>, QueryDslPredicateExecutor<JoinUser> {
+    extends JpaRepository<JoinUser, Long>, QueryDslPredicateExecutor<JoinUser> {
 }

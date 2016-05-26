@@ -19,28 +19,28 @@ import javax.persistence.Embeddable;
 @Setter
 public class Address extends AbstractValueObject {
 
-    private String street;
-    private String city;
-    private String state;
-    private String country;
+  private String street;
+  private String city;
+  private String state;
+  private String country;
 
-    private String zipcode;
+  private String zipcode;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(zipcode, street, city, state, country);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(zipcode, street, city, state, country);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("zipcode", zipcode)
-                    .add("country", country)
-                    .add("state", state)
-                    .add("city", city)
-                    .add("street", street);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("zipcode", zipcode)
+        .add("country", country)
+        .add("state", state)
+        .add("city", city)
+        .add("street", street);
+  }
 
 
-    private static final long serialVersionUID = -6441062979081642183L;
+  private static final long serialVersionUID = -6441062979081642183L;
 }

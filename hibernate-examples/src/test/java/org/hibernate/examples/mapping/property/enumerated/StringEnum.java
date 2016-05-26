@@ -8,9 +8,9 @@ package org.hibernate.examples.mapping.property.enumerated;
  */
 public enum StringEnum {
 
-    String,
+  String,
 
-    Integer,
+  Integer,
 
-    Decimal
+  Decimal
 }

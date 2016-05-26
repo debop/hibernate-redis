@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * org.hibernate.examples.mapping.associations.onetomany.map.OneToManyMapTest
@@ -20,31 +20,31 @@ import static org.fest.assertions.Assertions.assertThat;
 @Transactional
 public class OneToManyMapTest extends AbstractJpaTest {
 
-    @PersistenceContext
-    EntityManager em;
+  @PersistenceContext
+  EntityManager em;
 
-    @Test
-    public void mapTest() throws Exception {
+  @Test
+  public void mapTest() throws Exception {
 
-        OneToManyCar car = new OneToManyCar();
+    OneToManyCar car = new OneToManyCar();
 
-        OneToManyCarOption option1 = new OneToManyCarOption("option1", 1);
-        OneToManyCarOption option2 = new OneToManyCarOption("option2", 1);
+    OneToManyCarOption option1 = new OneToManyCarOption("option1", 1);
+    OneToManyCarOption option2 = new OneToManyCarOption("option2", 1);
 
-        car.getCarOptions().put("option1", option1);
-        car.getCarOptions().put("option2", option2);
+    car.getCarOptions().put("option1", option1);
+    car.getCarOptions().put("option2", option2);
 
-        car.getOptions().put("stringOption1", "Value1");
-        car.getOptions().put("stringOption2", "Value2");
+    car.getOptions().put("stringOption1", "Value1");
+    car.getOptions().put("stringOption2", "Value2");
 
-        em.persist(car);
-        em.flush();
-        em.clear();
+    em.persist(car);
+    em.flush();
+    em.clear();
 
-        OneToManyCar loaded = em.find(OneToManyCar.class, car.getId());
-        assertThat(loaded).isNotNull();
-        assertThat(loaded.getCarOptions()).hasSize(2);
-        assertThat(loaded.getOptions()).hasSize(2);
+    OneToManyCar loaded = em.find(OneToManyCar.class, car.getId());
+    assertThat(loaded).isNotNull();
+    assertThat(loaded.getCarOptions()).hasSize(2);
+    assertThat(loaded.getOptions()).hasSize(2);
 
-    }
+  }
 }

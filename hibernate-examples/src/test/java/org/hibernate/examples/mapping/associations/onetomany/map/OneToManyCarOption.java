@@ -19,28 +19,29 @@ import javax.persistence.Embeddable;
 @Setter
 public class OneToManyCarOption extends AbstractValueObject {
 
-    public OneToManyCarOption() {}
+  public OneToManyCarOption() {
+  }
 
-    public OneToManyCarOption(String name, Integer value) {
-        this.name = name;
-        this.value = value;
-    }
+  public OneToManyCarOption(String name, Integer value) {
+    this.name = name;
+    this.value = value;
+  }
 
-    private String name;
+  private String name;
 
-    private Integer value;
+  private Integer value;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name)
-                    .add("value", value);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name)
+        .add("value", value);
+  }
 
-    private static final long serialVersionUID = -4017716295243845509L;
+  private static final long serialVersionUID = -4017716295243845509L;
 }

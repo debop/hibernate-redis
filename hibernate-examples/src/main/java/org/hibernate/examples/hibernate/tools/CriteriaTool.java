@@ -18,33 +18,33 @@ import java.util.List;
  */
 public final class CriteriaTool {
 
-    public static Criteria addIn(Criteria criteria, String propertyName, Collection<?> ids) {
-        return criteria.add(Restrictions.in(propertyName, ids));
+  public static Criteria addIn(Criteria criteria, String propertyName, Collection<?> ids) {
+    return criteria.add(Restrictions.in(propertyName, ids));
+  }
+
+  public static Criteria addIn(Criteria criteria, String propertyName, Object[] ids) {
+    return criteria.add(Restrictions.in(propertyName, ids));
+  }
+
+  public static DetachedCriteria addIn(DetachedCriteria dc, String propertyName, Collection<?> ids) {
+    return dc.add(Restrictions.in(propertyName, ids));
+  }
+
+  public static DetachedCriteria addIn(DetachedCriteria dc, String propertyName, Object[] ids) {
+    return dc.add(Restrictions.in(propertyName, ids));
+  }
+
+
+  public static List<Order> toOrders(Sort sort) {
+    List<Order> orders = new ArrayList<Order>();
+
+    for (org.springframework.data.domain.Sort.Order order : sort) {
+      if (order.getDirection() == Sort.Direction.ASC)
+        orders.add(Order.asc(order.getProperty()));
+      else
+        orders.add(Order.desc(order.getProperty()));
     }
 
-    public static Criteria addIn(Criteria criteria, String propertyName, Object[] ids) {
-        return criteria.add(Restrictions.in(propertyName, ids));
-    }
-
-    public static DetachedCriteria addIn(DetachedCriteria dc, String propertyName, Collection<?> ids) {
-        return dc.add(Restrictions.in(propertyName, ids));
-    }
-
-    public static DetachedCriteria addIn(DetachedCriteria dc, String propertyName, Object[] ids) {
-        return dc.add(Restrictions.in(propertyName, ids));
-    }
-
-
-    public static List<Order> toOrders(Sort sort) {
-        List<Order> orders = new ArrayList<Order>();
-
-        for (org.springframework.data.domain.Sort.Order order : sort) {
-            if (order.getDirection() == Sort.Direction.ASC)
-                orders.add(Order.asc(order.getProperty()));
-            else
-                orders.add(Order.desc(order.getProperty()));
-        }
-
-        return orders;
-    }
+    return orders;
+  }
 }

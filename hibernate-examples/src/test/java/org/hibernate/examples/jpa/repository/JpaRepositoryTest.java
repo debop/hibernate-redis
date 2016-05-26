@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * org.hibernate.examples.jpa.repository.JpaRepositoryTest
@@ -23,28 +23,30 @@ import static org.fest.assertions.Assertions.assertThat;
 @Transactional
 public class JpaRepositoryTest extends AbstractJpaTest {
 
-    @Autowired EmployeeRepository empRepository;
-    @PersistenceContext EntityManager em;
+  @Autowired
+  EmployeeRepository empRepository;
+  @PersistenceContext
+  EntityManager em;
 
-    @Test
-    public void injectEmployeeRepository() throws Exception {
-        assertThat(empRepository).isNotNull();
-        List<Employee> employees = empRepository.findAll();
-        assertThat(employees).isNotNull();
-    }
+  @Test
+  public void injectEmployeeRepository() throws Exception {
+    assertThat(empRepository).isNotNull();
+    List<Employee> employees = empRepository.findAll();
+    assertThat(employees).isNotNull();
+  }
 
-    @Test
-    public void employeeFindByEmpNo() {
-        Employee emp = new Employee();
-        emp.setName("Sunghyouk Bae");
-        emp.setEmpNo("21011");
-        emp = empRepository.saveAndFlush(emp);
-        em.clear();
+  @Test
+  public void employeeFindByEmpNo() {
+    Employee emp = new Employee();
+    emp.setName("Sunghyouk Bae");
+    emp.setEmpNo("21011");
+    emp = empRepository.saveAndFlush(emp);
+    em.clear();
 
-        Employee loaded = empRepository.findByEmpNo(emp.getEmpNo());
-        assertThat(loaded).isNotNull();
-        assertThat(loaded).isEqualTo(emp);
-        assertThat(loaded.getUpdatedTimestamp()).isNotNull();
-        log.debug("Employee=[{}]", loaded);
-    }
+    Employee loaded = empRepository.findByEmpNo(emp.getEmpNo());
+    assertThat(loaded).isNotNull();
+    assertThat(loaded).isEqualTo(emp);
+    assertThat(loaded.getUpdatedTimestamp()).isNotNull();
+    log.debug("Employee=[{}]", loaded);
+  }
 }

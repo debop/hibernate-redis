@@ -1,6 +1,6 @@
 package org.hibernate.examples.jpa.repository;
 
-import com.mysema.query.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.examples.AbstractJpaTest;
 import org.hibernate.examples.mapping.Employee;
@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * org.hibernate.examples.jpa.repository.QueryDslRepositoryTest
@@ -24,29 +24,30 @@ import static org.fest.assertions.Assertions.assertThat;
 @Transactional
 public class QueryDslRepositoryTest extends AbstractJpaTest {
 
-    @Autowired
-    EmployeeRepository employeeRepository;
+  @Autowired
+  EmployeeRepository employeeRepository;
 
-    @PersistenceContext
-    EntityManager em;
+  @PersistenceContext
+  EntityManager em;
 
-    @Test
-    public void findAllTest() {
-        Employee emp = new Employee();
-        emp.setName("Sunghyouk Bae");
-        emp.setEmpNo("21011");
-        emp = employeeRepository.save(emp);
+  @Test
+  public void findAllTest() {
+    Employee emp = new Employee();
+    emp.setName("Sunghyouk Bae");
+    emp.setEmpNo("21011");
+    emp = employeeRepository.save(emp);
 
-        QEmployee $ = QEmployee.employee;
-        JPAQuery query = new JPAQuery(em);
+    QEmployee $ = QEmployee.employee;
+    JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
-        Employee loaded = query.from($)
-                               .where($.empNo.eq("21011"))
-                               .uniqueResult($);
+    Employee loaded = queryFactory.select($)
+                                  .from($)
+                                  .where($.empNo.eq("21011"))
+                                  .fetchOne();
 
-        assertThat(loaded).isNotNull();
-        assertThat(loaded.getEmpNo()).isEqualTo(emp.getEmpNo());
-        assertThat(loaded).isEqualTo(emp);
-        assertThat(loaded.isPersisted()).isTrue();
-    }
+    assertThat(loaded).isNotNull();
+    assertThat(loaded.getEmpNo()).isEqualTo(emp.getEmpNo());
+    assertThat(loaded).isEqualTo(emp);
+    assertThat(loaded.isPersisted()).isTrue();
+  }
 }

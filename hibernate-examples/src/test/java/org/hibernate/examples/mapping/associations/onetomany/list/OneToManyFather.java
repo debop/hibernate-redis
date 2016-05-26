@@ -26,30 +26,30 @@ import java.util.List;
 @Setter
 public class OneToManyFather extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String name;
+  private String name;
 
-    // inverse=false
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
-    @JoinTable(name = "OneToMany_Father_Child")
-    @LazyCollection(LazyCollectionOption.EXTRA)
-    @OrderColumn(name = "birthday")                     // @OrderColumn 으로 정렬하여 List를 만듭니다.
-    private List<OneToManyChild> children = new ArrayList<OneToManyChild>();
+  // inverse=false
+  @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+  @JoinTable(name = "OneToMany_Father_Child")
+  @LazyCollection(LazyCollectionOption.EXTRA)
+  @OrderColumn(name = "birthday")                     // @OrderColumn 으로 정렬하여 List를 만듭니다.
+  private List<OneToManyChild> children = new ArrayList<OneToManyChild>();
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name);
+  }
 
-    private static final long serialVersionUID = 7615097053691800164L;
+  private static final long serialVersionUID = 7615097053691800164L;
 }

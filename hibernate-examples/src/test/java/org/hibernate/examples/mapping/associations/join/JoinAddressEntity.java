@@ -28,27 +28,27 @@ import javax.persistence.Id;
 @Setter
 public class JoinAddressEntity extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String street;
-    private String city;
-    private String zipcode;
+  private String street;
+  private String city;
+  private String zipcode;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(street, city, zipcode);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(street, city, zipcode);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                .add("street", street)
-                .add("city", city)
-                .add("zipcode", zipcode);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("street", street)
+        .add("city", city)
+        .add("zipcode", zipcode);
+  }
 
-    private static final long serialVersionUID = 6610359502465293056L;
+  private static final long serialVersionUID = 6610359502465293056L;
 }

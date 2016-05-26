@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * org.hibernate.examples.mapping.inheritance.subclass.SubclassTest
@@ -20,32 +20,32 @@ import static org.fest.assertions.Assertions.assertThat;
 @Transactional
 public class SubclassTest extends AbstractJpaTest {
 
-    @PersistenceContext
-    EntityManager em;
+  @PersistenceContext
+  EntityManager em;
 
-    @Test
-    public void subclassEntity() {
-        BankAccount bankAccount = new BankAccount();
-        bankAccount.setAccount("account");
-        bankAccount.setBankname("은행이름");
-        bankAccount.setOwner("배성혁");
-        em.persist(bankAccount);
+  @Test
+  public void subclassEntity() {
+    BankAccount bankAccount = new BankAccount();
+    bankAccount.setAccount("account");
+    bankAccount.setBankname("은행이름");
+    bankAccount.setOwner("배성혁");
+    em.persist(bankAccount);
 
-        CreditCard creditCard = new CreditCard();
-        creditCard.setNumber("1111-1111-1111-1111");
-        creditCard.setExpYear(2020);
-        creditCard.setExpMonth(12);
-        creditCard.setOwner("배성혁");
-        em.persist(creditCard);
+    CreditCard creditCard = new CreditCard();
+    creditCard.setNumber("1111-1111-1111-1111");
+    creditCard.setExpYear(2020);
+    creditCard.setExpMonth(12);
+    creditCard.setOwner("배성혁");
+    em.persist(creditCard);
 
-        em.flush();
-        em.clear();
+    em.flush();
+    em.clear();
 
-        BankAccount bankAccount1 = em.find(BankAccount.class, bankAccount.getId());
-        assertThat(bankAccount1).isEqualTo(bankAccount);
+    BankAccount bankAccount1 = em.find(BankAccount.class, bankAccount.getId());
+    assertThat(bankAccount1).isEqualTo(bankAccount);
 
-        CreditCard creditCard1 = em.find(CreditCard.class, creditCard.getId());
-        assertThat(creditCard1).isEqualTo(creditCard);
+    CreditCard creditCard1 = em.find(CreditCard.class, creditCard.getId());
+    assertThat(creditCard1).isEqualTo(creditCard);
 
-    }
+  }
 }

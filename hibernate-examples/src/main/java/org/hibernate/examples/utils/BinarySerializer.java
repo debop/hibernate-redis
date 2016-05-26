@@ -18,36 +18,36 @@ import java.io.ObjectOutputStream;
 @Slf4j
 public class BinarySerializer {
 
-    public byte[] serialize(Object graph) {
-        if (graph == null)
-            return ArrayUtils.EMPTY_BYTE_ARRAY;
+  public byte[] serialize(Object graph) {
+    if (graph == null)
+      return ArrayUtils.EMPTY_BYTE_ARRAY;
 
-        try {
-            @Cleanup ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            @Cleanup ObjectOutputStream oos = new ObjectOutputStream(bos);
+    try {
+      @Cleanup ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      @Cleanup ObjectOutputStream oos = new ObjectOutputStream(bos);
 
-            oos.writeObject(graph);
-            oos.flush();
+      oos.writeObject(graph);
+      oos.flush();
 
-            return bos.toByteArray();
-        } catch (Exception e) {
-            log.error("객체 직렬화에 실패했습니다. graph=" + graph, e);
-            throw new RuntimeException(e);
-        }
+      return bos.toByteArray();
+    } catch (Exception e) {
+      log.error("객체 직렬화에 실패했습니다. graph=" + graph, e);
+      throw new RuntimeException(e);
     }
+  }
 
-    @SuppressWarnings("unchecked")
-    public <T> T deserialize(byte[] bytes, Class<T> clazz) {
-        if (ArrayUtils.isEmpty(bytes))
-            return (T) null;
+  @SuppressWarnings("unchecked")
+  public <T> T deserialize(byte[] bytes, Class<T> clazz) {
+    if (ArrayUtils.isEmpty(bytes))
+      return (T) null;
 
-        try {
-            @Cleanup ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-            @Cleanup ObjectInputStream ois = new ObjectInputStream(bis);
-            return (T) ois.readObject();
-        } catch (Exception e) {
-            log.error("객체 역직렬화에 실패했습니다.", e);
-            throw new RuntimeException(e);
-        }
+    try {
+      @Cleanup ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+      @Cleanup ObjectInputStream ois = new ObjectInputStream(bis);
+      return (T) ois.readObject();
+    } catch (Exception e) {
+      log.error("객체 역직렬화에 실패했습니다.", e);
+      throw new RuntimeException(e);
     }
+  }
 }

@@ -23,28 +23,28 @@ import java.util.Date;
 @Setter
 public class LifecycleEntity extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String name;
+  private String name;
 
-    @org.hibernate.annotations.Generated(GenerationTime.INSERT)
-    @Column(insertable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+  @org.hibernate.annotations.Generated(GenerationTime.INSERT)
+  @Column(insertable = false, updatable = false)
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date createdAt;
 
 
-    @org.hibernate.annotations.Generated(GenerationTime.INSERT)
-    @Column(insertable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+  @org.hibernate.annotations.Generated(GenerationTime.INSERT)
+  @Column(insertable = false, updatable = false)
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date updatedAt;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    private static final long serialVersionUID = 9019361741633267121L;
+  private static final long serialVersionUID = 9019361741633267121L;
 }

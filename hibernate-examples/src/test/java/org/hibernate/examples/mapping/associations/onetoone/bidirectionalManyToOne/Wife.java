@@ -26,27 +26,27 @@ import javax.persistence.*;
 @Setter
 public class Wife extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "wifeId")
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "wifeId")
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String name;
+  private String name;
 
-    @OneToOne(mappedBy = "wife", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Husband husband;
+  @OneToOne(mappedBy = "wife", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private Husband husband;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name);
+  }
 
-    private static final long serialVersionUID = -8695477909351734067L;
+  private static final long serialVersionUID = -8695477909351734067L;
 }

@@ -16,26 +16,26 @@ import org.hibernate.examples.utils.ToStringHelper;
 @Setter
 public abstract class AbstractNamedParameter extends AbstractValueObject implements NamedParameter {
 
-    private final String name;
-    private Object value;
+  private final String name;
+  private Object value;
 
-    protected AbstractNamedParameter(String name, Object value) {
-        this.name = name;
-        this.value = value;
-    }
+  protected AbstractNamedParameter(String name, Object value) {
+    this.name = name;
+    this.value = value;
+  }
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name)
-                    .add("value", value);
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name)
+        .add("value", value);
 
-    }
+  }
 
-    private static final long serialVersionUID = 5196081474408493840L;
+  private static final long serialVersionUID = 5196081474408493840L;
 }

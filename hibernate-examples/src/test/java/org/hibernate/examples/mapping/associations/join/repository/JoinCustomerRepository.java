@@ -16,12 +16,12 @@ import java.util.List;
  */
 public interface JoinCustomerRepository extends JpaRepository<JoinCustomer, Long>, QueryDslPredicateExecutor<JoinCustomer> {
 
-    @QueryHints(value = { @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-    JoinCustomer findByName(String name);
+  @QueryHints(value = {@QueryHint(name = "org.hibernate.cacheable", value = "true")})
+  JoinCustomer findByName(String name);
 
-    @QueryHints(value = { @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-    List<JoinCustomer> findByNameLike(String name);
+  @QueryHints(value = {@QueryHint(name = "org.hibernate.cacheable", value = "true")})
+  List<JoinCustomer> findByNameLike(String name);
 
-    @QueryHints(value = { @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-    JoinCustomer findByEmail(String email);
+  @QueryHints(value = {@QueryHint(name = "org.hibernate.cacheable", value = "true")})
+  JoinCustomer findByEmail(String email);
 }

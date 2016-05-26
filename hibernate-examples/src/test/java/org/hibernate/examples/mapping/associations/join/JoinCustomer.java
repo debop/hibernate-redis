@@ -25,61 +25,61 @@ import java.util.Date;
 @Setter
 public class JoinCustomer extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "CustomerId")
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "CustomerId")
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String name;
-    private String email;
+  private String name;
+  private String email;
 
-    @Embedded
-    @AttributeOverrides(
-            {
-                    @AttributeOverride(name = "street",
-                                       column = @Column(name = "Street", table = "JoinCustomerAddress")),
-                    @AttributeOverride(name = "zipcode",
-                                       column = @Column(name = "ZipCode", table = "JoinCustomerAddress")),
-                    @AttributeOverride(name = "city",
-                                       column = @Column(name = "City", table = "JoinCustomerAddress")),
-            }
-    )
-    private JoinAddress joinAddress = new JoinAddress();
+  @Embedded
+  @AttributeOverrides(
+      {
+          @AttributeOverride(name = "street",
+              column = @Column(name = "Street", table = "JoinCustomerAddress")),
+          @AttributeOverride(name = "zipcode",
+              column = @Column(name = "ZipCode", table = "JoinCustomerAddress")),
+          @AttributeOverride(name = "city",
+              column = @Column(name = "City", table = "JoinCustomerAddress")),
+      }
+  )
+  private JoinAddress joinAddress = new JoinAddress();
 
-    @Temporal(TemporalType.TIMESTAMP)
-    // @Generated(GenerationTime.INSERT)
-    @Column(name = "createdAt", insertable = false, updatable = false)
-    private Date createdAt;
+  @Temporal(TemporalType.TIMESTAMP)
+  // @Generated(GenerationTime.INSERT)
+  @Column(name = "createdAt", insertable = false, updatable = false)
+  private Date createdAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    // @Generated(GenerationTime.ALWAYS)
-    @Column(name = "updatedAt", insertable = false, updatable = false)
-    private Date updatedAt;
+  @Temporal(TemporalType.TIMESTAMP)
+  // @Generated(GenerationTime.ALWAYS)
+  @Column(name = "updatedAt", insertable = false, updatable = false)
+  private Date updatedAt;
 
-    @PrePersist
-    private void onPrePersist() {
-        createdAt = new Date();
-    }
+  @PrePersist
+  private void onPrePersist() {
+    createdAt = new Date();
+  }
 
-    @PreUpdate
-    private void onPreUpdate() {
-        updatedAt = new Date();
-    }
+  @PreUpdate
+  private void onPreUpdate() {
+    updatedAt = new Date();
+  }
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name, email);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name, email);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name)
-                    .add("email", email)
-                    .add("createdAt", createdAt)
-                    .add("updatedAt", updatedAt);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name)
+        .add("email", email)
+        .add("createdAt", createdAt)
+        .add("updatedAt", updatedAt);
+  }
 
-    private static final long serialVersionUID = 5214616271922396271L;
+  private static final long serialVersionUID = 5214616271922396271L;
 }

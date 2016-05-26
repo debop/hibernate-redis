@@ -22,25 +22,25 @@ import javax.persistence.*;
 @Setter
 public class Employee extends Person {
 
-    @Column(name = "empNo", nullable = false)
-    private String empNo;
+  @Column(name = "empNo", nullable = false)
+  private String empNo;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.REFRESH })
-    @JoinColumn(name = "companyId")
-    @LazyToOne(LazyToOneOption.PROXY)
-    private Company company;
+  @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+  @JoinColumn(name = "companyId")
+  @LazyToOne(LazyToOneOption.PROXY)
+  private Company company;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(super.hashCode(), empNo, company);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(super.hashCode(), empNo, company);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("empNo", empNo)
-                    .add("company", company);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("empNo", empNo)
+        .add("company", company);
+  }
 
-    private static final long serialVersionUID = 5338078892200915069L;
+  private static final long serialVersionUID = 5338078892200915069L;
 }

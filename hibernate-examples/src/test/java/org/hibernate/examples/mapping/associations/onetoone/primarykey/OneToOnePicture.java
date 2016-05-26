@@ -26,35 +26,35 @@ import javax.persistence.*;
 @Setter
 public class OneToOnePicture extends AbstractHibernateEntity<Long> {
 
-    protected OneToOnePicture() {}
+  protected OneToOnePicture() { }
 
-    public OneToOnePicture(OneToOneAuthor author) {
-        this.author = author;
-    }
+  public OneToOnePicture(OneToOneAuthor author) {
+    this.author = author;
+  }
 
-    @Id
-    @Column(name = "authorId")
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @Column(name = "authorId")
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    @MapsId
-    @OneToOne
-    @JoinColumn(name = "authorId")
-    private OneToOneAuthor author;
+  @MapsId
+  @OneToOne
+  @JoinColumn(name = "authorId")
+  private OneToOneAuthor author;
 
-    private String path;
+  private String path;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(author);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(author);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("author", author)
-                    .add("path", path);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("author", author)
+        .add("path", path);
+  }
 
-    private static final long serialVersionUID = 8050166540766541481L;
+  private static final long serialVersionUID = 8050166540766541481L;
 }

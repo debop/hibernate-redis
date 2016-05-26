@@ -26,28 +26,28 @@ import javax.persistence.*;
 public class OneToManyOrderItem extends AbstractHibernateEntity<Long> {
 
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String name;
+  private String name;
 
-    @ManyToOne
-    @LazyToOne(LazyToOneOption.NO_PROXY)
-    @JoinColumn(name = "orderId")
-    private OneToManyOrder order;
+  @ManyToOne
+  @LazyToOne(LazyToOneOption.NO_PROXY)
+  @JoinColumn(name = "orderId")
+  private OneToManyOrder order;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name);
+  }
 
-    private static final long serialVersionUID = -4968710913293508239L;
+  private static final long serialVersionUID = -4968710913293508239L;
 }

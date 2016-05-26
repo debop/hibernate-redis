@@ -1,6 +1,7 @@
 package org.hibernate.examples.mapping.compositeId.idclass;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.examples.model.AbstractValueObject;
 import org.hibernate.examples.utils.HashTool;
 import org.hibernate.examples.utils.ToStringHelper;
@@ -12,29 +13,30 @@ import org.hibernate.examples.utils.ToStringHelper;
  * @since 2013. 11. 29. 오후 4:32
  */
 @Getter
+@Setter
 public class CarIdentifier extends AbstractValueObject {
 
-    private String brand;
-    private int year;
+  private String brand;
+  private int year;
 
-    protected CarIdentifier() {}
+  protected CarIdentifier() {}
 
-    public CarIdentifier(String brand, int year) {
-        this.brand = brand;
-        this.year = year;
-    }
+  public CarIdentifier(String brand, int year) {
+    this.brand = brand;
+    this.year = year;
+  }
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(brand, year);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(brand, year);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("brand", brand)
-                    .add("year", year);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+                .add("brand", brand)
+                .add("year", year);
+  }
 
-    private static final long serialVersionUID = -8248095183925181094L;
+  private static final long serialVersionUID = -8248095183925181094L;
 }

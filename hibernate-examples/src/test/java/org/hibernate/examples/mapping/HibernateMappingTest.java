@@ -6,7 +6,8 @@ import org.hibernate.examples.AbstractHibernateTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * org.hibernate.examples.mapping.HibernateMappingTest
@@ -17,12 +18,12 @@ import static org.fest.assertions.Assertions.assertThat;
 @Slf4j
 public class HibernateMappingTest extends AbstractHibernateTest {
 
-    @Autowired
-    SessionFactory sessionFactory;
+  @Autowired
+  SessionFactory sessionFactory;
 
-    @Test
-    public void mappingTest() throws Exception {
-        assertThat(sessionFactory).isNotNull();
-    }
+  @Test
+  public void mappingTest() throws Exception {
+    assertThat(sessionFactory).isNotNull();
+  }
 
 }

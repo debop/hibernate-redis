@@ -14,23 +14,23 @@ import java.util.Properties;
  */
 public abstract class AbstractMySqlHibernateConfiguration extends AbstractHibernateConfiguration {
 
-    public static final String DRIVER_CLASS_MYSQL = "com.mysql.jdbc.Driver";
-    public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQL5InnoDBDialect";
+  public static final String DRIVER_CLASS_MYSQL = "com.mysql.jdbc.Driver";
+  public static final String DIALECT_MYSQL = "org.hibernate.dialect.MySQL5InnoDBDialect";
 
-    @Bean
-    @Override
-    public DataSource dataSource() {
-        return buildDataSource(DRIVER_CLASS_MYSQL,
-                               "jdbc:mysql://localhost/" + getDatabaseName(),
-                               "root",
-                               "root");
-    }
+  @Bean
+  @Override
+  public DataSource dataSource() {
+    return buildDataSource(DRIVER_CLASS_MYSQL,
+        "jdbc:mysql://localhost/" + getDatabaseName(),
+        "root",
+        "root");
+  }
 
-    @Override
-    public Properties hibernateProperties() {
-        Properties props = super.hibernateProperties();
-        props.put(Environment.DIALECT, DIALECT_MYSQL);
-        return props;
-    }
+  @Override
+  public Properties hibernateProperties() {
+    Properties props = super.hibernateProperties();
+    props.put(Environment.DIALECT, DIALECT_MYSQL);
+    return props;
+  }
 
 }

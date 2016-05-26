@@ -33,58 +33,58 @@ import java.util.Date;
 @Slf4j
 public class Employee extends AbstractHibernateEntity<Long> implements UpdatedTimestampEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "employee_seq")
-    @Column(name = "employeeId")
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO, generator = "employee_seq")
+  @Column(name = "employeeId")
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    @Column(name = "empNo", nullable = false, length = 32)
-    private String empNo;
+  @Column(name = "empNo", nullable = false, length = 32)
+  private String empNo;
 
-    @Column(name = "employeeName", nullable = false, length = 32)
-    private String name;
+  @Column(name = "employeeName", nullable = false, length = 32)
+  private String name;
 
-    @Column(name = "email", length = 32)
-    private String email;
+  @Column(name = "email", length = 32)
+  private String email;
 
-    @Temporal(TemporalType.DATE)
-    private Date birthday;
+  @Temporal(TemporalType.DATE)
+  private Date birthday;
 
-    @Lob
-    private byte[] binaryData;
+  @Lob
+  private byte[] binaryData;
 
-    @Type(type = "org.hibernate.examples.usertype.JodaDateTimeUserType")
-    private DateTime hireDate;
-    /**
-     * UserType 예
-     */
-    @Type(type = "org.hibernate.examples.usertype.JodaDateTimeUserType")
-    private DateTime updatedTimestamp;
+  @Type(type = "org.hibernate.examples.usertype.JodaDateTimeUserType")
+  private DateTime hireDate;
+  /**
+   * UserType 예
+   */
+  @Type(type = "org.hibernate.examples.usertype.JodaDateTimeUserType")
+  private DateTime updatedTimestamp;
 
-    /**
-     * 엔티티의 최근 갱신 일자를 수정합니다.
-     */
-    @PrePersist
-    @Override
-    public void updateUpdatedTimestamp() {
-        updatedTimestamp = DateTime.now();
-        log.trace("저장하기 전에 UpdatedTimestamp를 갱신합니다. updatedTimestamp=[{}]", updatedTimestamp);
-    }
+  /**
+   * 엔티티의 최근 갱신 일자를 수정합니다.
+   */
+  @PrePersist
+  @Override
+  public void updateUpdatedTimestamp() {
+    updatedTimestamp = DateTime.now();
+    log.trace("저장하기 전에 UpdatedTimestamp를 갱신합니다. updatedTimestamp=[{}]", updatedTimestamp);
+  }
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(empNo, name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(empNo, name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("id", id)
-                    .add("empNo", empNo)
-                    .add("name", name)
-                    .add("email", email);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("id", id)
+        .add("empNo", empNo)
+        .add("name", name)
+        .add("email", email);
+  }
 
-    private static final long serialVersionUID = 6878934074258579705L;
+  private static final long serialVersionUID = 6878934074258579705L;
 }

@@ -24,26 +24,26 @@ import javax.persistence.Id;
 @Setter
 public class Account extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+  @Id
+  @GeneratedValue
+  private Long id;
 
-    private double cashBalance;
+  private double cashBalance;
 
-    @Column(name = "AccountName", nullable = false, length = 32)
-    private String name;
+  @Column(name = "AccountName", nullable = false, length = 32)
+  private String name;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                .add("id", id)
-                .add("name", name);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("id", id)
+        .add("name", name);
+  }
 
-    private static final long serialVersionUID = 8633146002860863953L;
+  private static final long serialVersionUID = 8633146002860863953L;
 }

@@ -18,22 +18,22 @@ import java.util.Properties;
 @EnableTransactionManagement
 public abstract class AbstractPostgreSqlJpaConfiguration extends AbstractJpaConfiguration {
 
-    public static final String DRIVER_CLASS_POSTGRESQL = "org.postgresql.Driver";
-    public static final String DIALECT_POSTGRESQL = "org.hibernate.dialect.PostgreSQL82Dialect";
+  public static final String DRIVER_CLASS_POSTGRESQL = "org.postgresql.Driver";
+  public static final String DIALECT_POSTGRESQL = "org.hibernate.dialect.PostgreSQL82Dialect";
 
-    @Bean
-    @Override
-    public DataSource dataSource() {
-        return buildDataSource(DRIVER_CLASS_POSTGRESQL,
-                               "jdbc:postgresql://localhost/" + getDatabaseName() + "?Set=UTF8",
-                               "root",
-                               "root");
-    }
+  @Bean
+  @Override
+  public DataSource dataSource() {
+    return buildDataSource(DRIVER_CLASS_POSTGRESQL,
+        "jdbc:postgresql://localhost/" + getDatabaseName() + "?Set=UTF8",
+        "root",
+        "root");
+  }
 
-    @Override
-    public Properties jpaProperties() {
-        Properties props = super.jpaProperties();
-        props.put(Environment.DIALECT, DIALECT_POSTGRESQL);
-        return props;
-    }
+  @Override
+  public Properties jpaProperties() {
+    Properties props = super.jpaProperties();
+    props.put(Environment.DIALECT, DIALECT_POSTGRESQL);
+    return props;
+  }
 }

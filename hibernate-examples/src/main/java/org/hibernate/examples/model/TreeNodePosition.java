@@ -19,39 +19,41 @@ import javax.persistence.Embeddable;
 @Setter
 public class TreeNodePosition extends AbstractValueObject {
 
-    @Column(name = "treeLevel")
-    private Integer level;
+  @Column(name = "treeLevel")
+  private Integer level;
 
-    @Column(name = "treeOrder")
-    private Integer order;
+  @Column(name = "treeOrder")
+  private Integer order;
 
-    public TreeNodePosition() {this(0, 0); }
+  public TreeNodePosition() {
+    this(0, 0);
+  }
 
-    public TreeNodePosition(int level, int order) {
-        this.level = level;
-        this.order = order;
-    }
+  public TreeNodePosition(int level, int order) {
+    this.level = level;
+    this.order = order;
+  }
 
-    public TreeNodePosition(TreeNodePosition src) {
-        this(src.level, src.order);
-    }
+  public TreeNodePosition(TreeNodePosition src) {
+    this(src.level, src.order);
+  }
 
-    public void setPosition(int level, int order) {
-        this.level = level;
-        this.order = order;
-    }
+  public void setPosition(int level, int order) {
+    this.level = level;
+    this.order = order;
+  }
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(level, order);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(level, order);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("level", level)
-                    .add("order", order);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("level", level)
+        .add("order", order);
+  }
 
-    private static final long serialVersionUID = -5552929284039433528L;
+  private static final long serialVersionUID = -5552929284039433528L;
 }

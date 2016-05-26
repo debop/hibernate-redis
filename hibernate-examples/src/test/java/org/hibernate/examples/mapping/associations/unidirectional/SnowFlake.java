@@ -27,25 +27,25 @@ import javax.persistence.Id;
 @Setter
 public class SnowFlake extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    private Long id;
+  @Id
+  @GeneratedValue
+  private Long id;
 
-    private String name;
+  private String name;
 
-    private String description;
+  private String description;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name)
-                    .add("description", description);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name)
+        .add("description", description);
+  }
 
-    private static final long serialVersionUID = -4213456151376181467L;
+  private static final long serialVersionUID = -4213456151376181467L;
 }

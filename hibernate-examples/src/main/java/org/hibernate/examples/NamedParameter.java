@@ -10,20 +10,20 @@ import java.io.Serializable;
  */
 public interface NamedParameter extends Serializable {
 
-    /**
-     * 파라미터 명
-     */
-    String getName();
+  /**
+   * 파라미터 명
+   */
+  String getName();
 
-    /**
-     * 파라미터 값 반환
-     */
-    Object getValue();
+  /**
+   * 파라미터 값 반환
+   */
+  Object getValue();
 
-    /**
-     * 파라미터 값 지정
-     *
-     * @param v 파리미터 값
-     */
-    void setValue(Object v);
+  /**
+   * 파라미터 값 지정
+   *
+   * @param v 파리미터 값
+   */
+  void setValue(Object v);
 }

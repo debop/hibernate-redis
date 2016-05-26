@@ -30,68 +30,68 @@ import java.util.Set;
 @Setter
 public class TreeNode extends AbstractHibernateEntity<Long> implements HibernateTreeEntity<TreeNode> {
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String title;
-    private String data;
-    private String description;
+  private String title;
+  private String data;
+  private String description;
 
-    /**
-     * 부모 노드
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @LazyToOne(LazyToOneOption.PROXY)
-    @JoinColumn(name = "ParentId")
-    private TreeNode parent;
+  /**
+   * 부모 노드
+   */
+  @ManyToOne(fetch = FetchType.LAZY)
+  @LazyToOne(LazyToOneOption.PROXY)
+  @JoinColumn(name = "ParentId")
+  private TreeNode parent;
 
-    /**
-     * 자식 노드
-     * mappedBy를 정의하여, child 마다 관리되도록 해야합니다.
-     */
-    @OneToMany(mappedBy = "parent", cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @LazyCollection(LazyCollectionOption.EXTRA)
-    private Set<TreeNode> children = new LinkedHashSet<TreeNode>();
+  /**
+   * 자식 노드
+   * mappedBy를 정의하여, child 마다 관리되도록 해야합니다.
+   */
+  @OneToMany(mappedBy = "parent", cascade = {CascadeType.ALL}, orphanRemoval = true)
+  @LazyCollection(LazyCollectionOption.EXTRA)
+  private Set<TreeNode> children = new LinkedHashSet<TreeNode>();
 
-    /**
-     * 노드의 TreeView 상에서의 위치
-     */
-    TreeNodePosition nodePosition = new TreeNodePosition();
+  /**
+   * 노드의 TreeView 상에서의 위치
+   */
+  TreeNodePosition nodePosition = new TreeNodePosition();
 
-    /**
-     * 자식 노드를 추가합니다.
-     */
-    @Override
-    public void addChild(TreeNode child) {
-        child.setParent(this);
-        children.add(child);
+  /**
+   * 자식 노드를 추가합니다.
+   */
+  @Override
+  public void addChild(TreeNode child) {
+    child.setParent(this);
+    children.add(child);
+  }
+
+  /**
+   * 자식 노드를 삭제합니다.
+   */
+  @Override
+  public void removeChild(TreeNode child) {
+    if (children.contains(child)) {
+      children.remove(child);
+      child.setParent(null);
     }
+  }
 
-    /**
-     * 자식 노드를 삭제합니다.
-     */
-    @Override
-    public void removeChild(TreeNode child) {
-        if (children.contains(child)) {
-            children.remove(child);
-            child.setParent(null);
-        }
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(title);
+  }
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(title);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("id", id)
+        .add("title", title)
+        .add("description", description);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("id", id)
-                    .add("title", title)
-                    .add("description", description);
-    }
-
-    private static final long serialVersionUID = 6573065680420748563L;
+  private static final long serialVersionUID = 6573065680420748563L;
 }

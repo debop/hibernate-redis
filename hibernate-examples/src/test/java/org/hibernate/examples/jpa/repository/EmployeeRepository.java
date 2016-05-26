@@ -17,12 +17,12 @@ import javax.persistence.QueryHint;
  */
 public interface EmployeeRepository extends JpaRepository<Employee, Long>, QueryDslPredicateExecutor<Employee> {
 
-    @Query("select e from Employee e where e.empNo=:empNo")
-    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-    Employee findByEmpNo(@Param("empNo") final String empNo);
+  @Query("select e from Employee e where e.empNo=:empNo")
+  @QueryHints({@QueryHint(name = "org.hibernate.cacheable", value = "true")})
+  Employee findByEmpNo(@Param("empNo") final String empNo);
 
-    @Query("select e from Employee e where e.empNo=:empNo and e.email=:email")
-    @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-    Employee findByEmpNoAndEmail(@Param("empNo") final String empNo,
-                                 @Param("email") final String email);
+  @Query("select e from Employee e where e.empNo=:empNo and e.email=:email")
+  @QueryHints({@QueryHint(name = "org.hibernate.cacheable", value = "true")})
+  Employee findByEmpNoAndEmail(@Param("empNo") final String empNo,
+                               @Param("email") final String email);
 }

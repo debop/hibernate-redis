@@ -8,13 +8,13 @@ package org.hibernate.examples.mapping.property.enumerated;
  */
 public enum OrdinalEnum {
 
-    First,
+  First,
 
-    Second,
+  Second,
 
-    Third,
+  Third,
 
-    Fourth,
+  Fourth,
 
-    Fifth
+  Fifth
 }

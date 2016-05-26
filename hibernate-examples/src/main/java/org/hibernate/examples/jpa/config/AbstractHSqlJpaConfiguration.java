@@ -17,21 +17,21 @@ import java.util.Properties;
 @EnableTransactionManagement
 public abstract class AbstractHSqlJpaConfiguration extends AbstractJpaConfiguration {
 
-    public static final String DRIVER_CLASS_HSQL = "org.hsqldb.jdbcDriver";
-    public static final String DIALECT_HSQL = "org.hibernate.dialect.HSQLDialect";
+  public static final String DRIVER_CLASS_HSQL = "org.hsqldb.jdbcDriver";
+  public static final String DIALECT_HSQL = "org.hibernate.dialect.HSQLDialect";
 
-    @Override
-    public DataSource dataSource() {
-        return buildDataSource(DRIVER_CLASS_HSQL,
-                               "jdbc:hsqldb:mem:" + getDatabaseName() + ";MVCC=TRUE;",
-                               "sa",
-                               "");
-    }
+  @Override
+  public DataSource dataSource() {
+    return buildDataSource(DRIVER_CLASS_HSQL,
+        "jdbc:hsqldb:mem:" + getDatabaseName() + ";MVCC=TRUE;",
+        "sa",
+        "");
+  }
 
-    @Override
-    public Properties jpaProperties() {
-        Properties props = super.jpaProperties();
-        props.put(Environment.DIALECT, DIALECT_HSQL);
-        return props;
-    }
+  @Override
+  public Properties jpaProperties() {
+    Properties props = super.jpaProperties();
+    props.put(Environment.DIALECT, DIALECT_HSQL);
+    return props;
+  }
 }

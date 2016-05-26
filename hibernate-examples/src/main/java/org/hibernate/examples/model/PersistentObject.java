@@ -8,15 +8,15 @@ package org.hibernate.examples.model;
  */
 public interface PersistentObject extends ValueObject {
 
-    boolean isPersisted();
+  boolean isPersisted();
 
-    /**
-     * Object 가 저장되었을 때 #isPersisted() 를 true로 갱신한다.
-     */
-    void onSave();
+  /**
+   * Object 가 저장되었을 때 #isPersisted() 를 true로 갱신한다.
+   */
+  void onSave();
 
-    /**
-     * Object 가 영구저장소에서 로드될 때 #isPersisted() 를 true 로 갱신한다.
-     */
-    void onLoad();
+  /**
+   * Object 가 영구저장소에서 로드될 때 #isPersisted() 를 true 로 갱신한다.
+   */
+  void onLoad();
 }

@@ -14,23 +14,23 @@ import org.hibernate.type.StandardBasicTypes;
  */
 public class HibernateParameter extends AbstractNamedParameter {
 
-    @Getter
-    @Setter
-    private org.hibernate.type.Type paramType = StandardBasicTypes.SERIALIZABLE;
+  @Getter
+  @Setter
+  private org.hibernate.type.Type paramType = StandardBasicTypes.SERIALIZABLE;
 
-    public HibernateParameter(String name, Object value) {
-        super(name, value);
-    }
+  public HibernateParameter(String name, Object value) {
+    super(name, value);
+  }
 
-    public HibernateParameter(String name, Object value, org.hibernate.type.Type paramType) {
-        super(name, value);
-        this.paramType = paramType;
-    }
+  public HibernateParameter(String name, Object value, org.hibernate.type.Type paramType) {
+    super(name, value);
+    this.paramType = paramType;
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper().add("paramType", paramType);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper().add("paramType", paramType);
+  }
 
-    private static final long serialVersionUID = -228167603287695079L;
+  private static final long serialVersionUID = -228167603287695079L;
 }

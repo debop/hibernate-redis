@@ -23,24 +23,24 @@ import javax.persistence.Embeddable;
 @Setter
 public class Address extends AbstractValueObject {
 
-    private String street;
+  private String street;
 
-    private String zipcode;
+  private String zipcode;
 
-    private String city;
+  private String city;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(zipcode, street, city);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(zipcode, street, city);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("zipcode", zipcode)
-                    .add("street", street)
-                    .add("city", city);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("zipcode", zipcode)
+        .add("street", street)
+        .add("city", city);
+  }
 
-    private static final long serialVersionUID = 526892402316852929L;
+  private static final long serialVersionUID = 526892402316852929L;
 }

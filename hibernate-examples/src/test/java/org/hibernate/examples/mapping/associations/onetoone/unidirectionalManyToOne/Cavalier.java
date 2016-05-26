@@ -26,32 +26,32 @@ import javax.persistence.*;
 @Setter
 public class Cavalier extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "horseId")
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "horseId")
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String name;
+  private String name;
 
-    /**
-     * FetchType.LAZY 라면 outer join 이 아니라 따로 로드된다.
-     */
-    @OneToOne // (fetch = FetchType.LAZY)
-    @JoinColumn(name = "horseId")
-    // @LazyToOne(LazyToOneOption.PROXY)
-    private Horse horse;
+  /**
+   * FetchType.LAZY 라면 outer join 이 아니라 따로 로드된다.
+   */
+  @OneToOne // (fetch = FetchType.LAZY)
+  @JoinColumn(name = "horseId")
+  // @LazyToOne(LazyToOneOption.PROXY)
+  private Horse horse;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name);
+  }
 
-    private static final long serialVersionUID = 7850333928981763050L;
+  private static final long serialVersionUID = 7850333928981763050L;
 }

@@ -25,32 +25,33 @@ import java.util.Date;
 @Setter
 public class OneToManyChild extends AbstractHibernateEntity<Long> {
 
-    protected OneToManyChild() {}
+  protected OneToManyChild() {
+  }
 
-    public OneToManyChild(String name) {
-        this.name = name;
-    }
+  public OneToManyChild(String name) {
+    this.name = name;
+  }
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String name;
+  private String name;
 
-    private Date birthday;
+  private Date birthday;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(name);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(name);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("name", name)
-                    .add("birthday", birthday);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("name", name)
+        .add("birthday", birthday);
+  }
 
-    private static final long serialVersionUID = 8340891121768039665L;
+  private static final long serialVersionUID = 8340891121768039665L;
 }

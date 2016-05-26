@@ -19,39 +19,39 @@
          updateCheck="false" monitoring="autodetect" dynamicConfig="false"
          maxBytesLocalHeap="75%" name="access-domain-cache">
 
-    <defaultCache
-            eternal="false"
-            timeToIdleSeconds="120"
-            timeToLiveSeconds="120"
-            overflowToDisk="false"
-            diskPersistent="true"
-            diskExpiryThreadIntervalSeconds="120"
-            memoryStoreEvictionPolicy="LRU"
-            statistics="false"
-            />
+  <defaultCache
+      eternal="false"
+      timeToIdleSeconds="120"
+      timeToLiveSeconds="120"
+      overflowToDisk="false"
+      diskPersistent="true"
+      diskExpiryThreadIntervalSeconds="120"
+      memoryStoreEvictionPolicy="LRU"
+      statistics="false"
+  />
 
-    <cache name="org.hibernate.cache.UpdateTimestampsCache"
-           eternal="false"
-           overflowToDisk="true"
-           statistics="false"
-            />
+  <cache name="org.hibernate.cache.UpdateTimestampsCache"
+         eternal="false"
+         overflowToDisk="true"
+         statistics="false"
+  />
 
-    <cache name="org.hibernate.cache.StandardQueryCache"
-           eternal="false"
-           timeToIdleSeconds="120"
-           timeToLiveSeconds="120"
-           overflowToDisk="true"
-           diskPersistent="false"
-           diskExpiryThreadIntervalSeconds="120"
-           memoryStoreEvictionPolicy="LRU"
-           statistics="false"
-            />
+  <cache name="org.hibernate.cache.StandardQueryCache"
+         eternal="false"
+         timeToIdleSeconds="120"
+         timeToLiveSeconds="120"
+         overflowToDisk="true"
+         diskPersistent="false"
+         diskExpiryThreadIntervalSeconds="120"
+         memoryStoreEvictionPolicy="LRU"
+         statistics="false"
+  />
 
-    <cache name="Main"
-           eternal="false"
-           overflowToDisk="false"
-           memoryStoreEvictionPolicy="LRU"
-           statistics="false"
-            />
+  <cache name="Main"
+         eternal="false"
+         overflowToDisk="false"
+         memoryStoreEvictionPolicy="LRU"
+         statistics="false"
+  />
 
 </ehcache>

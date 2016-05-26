@@ -24,27 +24,27 @@ import javax.persistence.*;
 @DynamicUpdate
 @Getter
 @Setter
-public class EnumeratedEntity extends AbstractHibernateEntity<Long> {
+public class EnumeratedEntity extends AbstractHibernateEntity<Integer> {
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Setter(AccessLevel.PROTECTED)
+  private Integer id;
 
-    // Enumerated 를 쓰면 Enum 값을 원하는 Ordinal 수형으로 DB에 저장하고, 반환받을 수 있다. 대부분 String 을 사용한다.
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "OrdinalValue", nullable = false)
-    private OrdinalEnum intValue = OrdinalEnum.Third;
+  // Enumerated 를 쓰면 Enum 값을 원하는 Ordinal 수형으로 DB에 저장하고, 반환받을 수 있다. 대부분 String 을 사용한다.
+  @Enumerated(EnumType.ORDINAL)
+  @Column(name = "OrdinalValue", nullable = false)
+  private OrdinalEnum intValue = OrdinalEnum.Third;
 
-    // Enumerated 를 쓰면 Enum 값을 원하는 수형으로 DB에 저장하고, 반환받을 수 있다. 대부분 String 을 사용한다.
-    @Enumerated(EnumType.STRING)
-    @Column(name = "StringValue", nullable = false)
-    private StringEnum stringValue = StringEnum.Decimal;
+  // Enumerated 를 쓰면 Enum 값을 원하는 수형으로 DB에 저장하고, 반환받을 수 있다. 대부분 String 을 사용한다.
+  @Enumerated(EnumType.STRING)
+  @Column(name = "StringValue", nullable = false)
+  private StringEnum stringValue = StringEnum.Decimal;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(intValue, stringValue);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(intValue, stringValue);
+  }
 
-    private static final long serialVersionUID = 4071809720463913052L;
+  private static final long serialVersionUID = 4071809720463913052L;
 }

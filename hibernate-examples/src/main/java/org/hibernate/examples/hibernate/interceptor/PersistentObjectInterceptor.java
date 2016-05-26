@@ -15,39 +15,39 @@ import java.io.Serializable;
 @Slf4j
 public class PersistentObjectInterceptor extends EmptyInterceptor {
 
-    public boolean isPersisted(Object entity) {
-        return entity instanceof PersistentObject && ((PersistentObject) entity).isPersisted();
-    }
+  public boolean isPersisted(Object entity) {
+    return entity instanceof PersistentObject && ((PersistentObject) entity).isPersisted();
+  }
 
-    /**
-     * 엔티티 로드 후 {@link org.hibernate.examples.model.PersistentObject#onLoad()} 를 호출합니다.
-     */
-    @Override
-    public boolean onLoad(Object entity,
-                          Serializable id,
-                          Object[] state,
-                          String[] propertyNames,
-                          org.hibernate.type.Type[] types) {
-        if (entity instanceof PersistentObject) {
-            ((PersistentObject) entity).onLoad();
-        }
-        return false;
+  /**
+   * 엔티티 로드 후 {@link org.hibernate.examples.model.PersistentObject#onLoad()} 를 호출합니다.
+   */
+  @Override
+  public boolean onLoad(Object entity,
+                        Serializable id,
+                        Object[] state,
+                        String[] propertyNames,
+                        org.hibernate.type.Type[] types) {
+    if (entity instanceof PersistentObject) {
+      ((PersistentObject) entity).onLoad();
     }
+    return false;
+  }
 
-    /**
-     * 엔티티 저장 후 {@link org.hibernate.examples.model.PersistentObject#onSave()}를 호출합니다.
-     */
-    @Override
-    public boolean onSave(Object entity,
-                          Serializable id,
-                          Object[] state,
-                          String[] propertyNames,
-                          org.hibernate.type.Type[] types) {
-        if (entity instanceof PersistentObject) {
-            ((PersistentObject) entity).onSave();
-        }
-        return false;
+  /**
+   * 엔티티 저장 후 {@link org.hibernate.examples.model.PersistentObject#onSave()}를 호출합니다.
+   */
+  @Override
+  public boolean onSave(Object entity,
+                        Serializable id,
+                        Object[] state,
+                        String[] propertyNames,
+                        org.hibernate.type.Type[] types) {
+    if (entity instanceof PersistentObject) {
+      ((PersistentObject) entity).onSave();
     }
+    return false;
+  }
 
-    private static final long serialVersionUID = -9072457259066614636L;
+  private static final long serialVersionUID = -9072457259066614636L;
 }

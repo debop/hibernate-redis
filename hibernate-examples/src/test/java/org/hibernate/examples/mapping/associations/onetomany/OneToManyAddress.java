@@ -24,23 +24,23 @@ import javax.persistence.Id;
 @Setter
 public class OneToManyAddress extends AbstractHibernateEntity<Long> {
 
-    @Id
-    @GeneratedValue
-    @Setter(AccessLevel.PROTECTED)
-    private Long id;
+  @Id
+  @GeneratedValue
+  @Setter(AccessLevel.PROTECTED)
+  private Long id;
 
-    private String city;
+  private String city;
 
-    @Override
-    public int hashCode() {
-        return HashTool.compute(city);
-    }
+  @Override
+  public int hashCode() {
+    return HashTool.compute(city);
+  }
 
-    @Override
-    public ToStringHelper buildStringHelper() {
-        return super.buildStringHelper()
-                    .add("city", city);
-    }
+  @Override
+  public ToStringHelper buildStringHelper() {
+    return super.buildStringHelper()
+        .add("city", city);
+  }
 
-    private static final long serialVersionUID = -8229206528601220447L;
+  private static final long serialVersionUID = -8229206528601220447L;
 }
