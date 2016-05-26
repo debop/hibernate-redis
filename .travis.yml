@@ -1,10 +1,10 @@
 language: java
 
 script:
-  - "mvn clean install"
+  - "mvn clean package -DskipTests"
 
 jdk:
-  - oraclejdk7
+  - oraclejdk8
 
 services:
   - redis
