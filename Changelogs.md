@@ -2,7 +2,7 @@
 
 
 
-### 2.0.0-SNAPSHOT
+### 2.0.0
 
 Sorry for stopping developments (I was leaved from Java a while)
 
