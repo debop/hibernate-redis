@@ -6,10 +6,10 @@ singleServerConfig:
   pingTimeout: 1000
   connectTimeout: 1000
   timeout: 1000
-  retryAttempts: 3
+  retryAttempts: 1
   retryInterval: 1000
   reconnectionTimeout: 3000
-  failedAttempts: 3
+  failedAttempts: 1
   password: null
   subscriptionsPerConnection: 5
   clientName: null
@@ -23,6 +23,6 @@ singleServerConfig:
   dnsMonitoring: false
   dnsMonitoringInterval: 5000
 threads: 0
-codec: null #!<org.redisson.codec.JsonJacksonCodec> {}
+codec: !<org.redisson.codec.SnappyCodec> {}
 useLinuxNativeEpoll: false
 eventLoopGroup: null

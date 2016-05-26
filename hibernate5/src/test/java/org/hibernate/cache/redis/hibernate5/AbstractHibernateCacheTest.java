@@ -49,7 +49,7 @@ public abstract class AbstractHibernateCacheTest extends BaseCoreFunctionalTestC
   protected void configure(Configuration cfg) {
     super.configure(cfg);
 
-    cfg.setProperty(CACHE_REGION_PREFIX, "");
+    cfg.setProperty(CACHE_REGION_PREFIX, "hibernate5:");
     cfg.setProperty(USE_SECOND_LEVEL_CACHE, "true");
     cfg.setProperty(USE_QUERY_CACHE, "true");
     cfg.setProperty(GENERATE_STATISTICS, "true");

@@ -26,12 +26,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class JpaCacheTest {
 
-  @PersistenceContext
-  EntityManager em;
-  @Autowired
-  EventRepository eventRepository;
-  @Autowired
-  ItemRepository itemRepository;
+  @PersistenceContext EntityManager em;
+  @Autowired EventRepository eventRepository;
+  @Autowired ItemRepository itemRepository;
 
   @Before
   public void clearItems() throws Exception {

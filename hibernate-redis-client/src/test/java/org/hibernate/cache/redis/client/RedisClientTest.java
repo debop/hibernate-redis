@@ -22,6 +22,7 @@ import org.hibernate.cache.redis.AbstractHibernateRedisTest;
 import org.junit.After;
 import org.junit.Test;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -63,7 +64,9 @@ public class RedisClientTest extends AbstractHibernateRedisTest {
   }
 
   @Data
-  static class TestData {
+  static class TestData implements Serializable {
+    private static final long serialVersionUID = -736949543087326836L;
+
     public static TestData of(String name, int age) {
       TestData instance = new TestData();
       instance.setName(name);

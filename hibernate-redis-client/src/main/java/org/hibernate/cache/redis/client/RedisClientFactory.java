@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.Config;
 import org.redisson.Redisson;
 import org.redisson.RedissonClient;
+import org.redisson.codec.SnappyCodec;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,6 +47,12 @@ public final class RedisClientFactory {
   public static RedisClient createRedisClient(@NonNull final URL redissonYamlUrl) {
     try {
       Config config = Config.fromYAML(redissonYamlUrl);
+
+      if (config.getCodec() == null) {
+        config.setCodec(new SnappyCodec());
+      }
+      log.info("Set Redisson Codec = {}", config.getCodec().getClass().getName());
+
       RedissonClient redisson = Redisson.create(config);
       return new RedisClient(redisson);
     } catch (IOException e) {

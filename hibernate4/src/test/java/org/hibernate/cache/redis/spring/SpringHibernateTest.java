@@ -60,7 +60,7 @@ public class SpringHibernateTest {
     log.debug("Region name={}, Element in memory={}, hit count={}",
               regionName, slcs.getElementCountInMemory(), slcs.getHitCount());
 
-    assertThat(regionName).isEqualTo("common");
+    assertThat(regionName).contains("common");
     assertThat(slcs.getElementCountInMemory()).isEqualTo(0);
     assertThat(slcs.getHitCount()).isEqualTo(0);
   }

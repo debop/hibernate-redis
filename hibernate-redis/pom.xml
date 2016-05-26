@@ -66,10 +66,9 @@
             <configuration>
               <artifactSet>
                 <includes>
-                  <include>com.github.debop:*</include>
-                  <!--<include>com.github.debop:hibernate-redis-client</include>-->
-                  <!--<include>com.github.debop:hibernate-redis-hibernate4</include>-->
-                  <!--<include>com.github.debop:hibernate-redis-hibernate5</include>-->
+                  <include>com.github.debop:hibernate-redis-client</include>
+                  <include>com.github.debop:hibernate-redis-hibernate4</include>
+                  <include>com.github.debop:hibernate-redis-hibernate5</include>
                 </includes>
               </artifactSet>
               <createDependencyReducedPom>true</createDependencyReducedPom>

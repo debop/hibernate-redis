@@ -78,8 +78,9 @@ public class RedisClient {
 
   @SuppressWarnings("unchecked")
   public <T> T get(final String region, final Object key) {
-    log.trace("retrive cache item. region={}, key={}", region, key);
-    return (T) getCache(region).get(key);
+    T cacheItem = (T) getCache(region).get(key);
+    log.trace("retrieve cache item. region={}, key={}, value={}", region, key, cacheItem);
+    return cacheItem;
   }
 
   public boolean isExpired(final String region, final Object key) {

@@ -23,6 +23,6 @@ singleServerConfig:
   dnsMonitoring: false
   dnsMonitoringInterval: 5000
 threads: 0
-codec: null #!<org.redisson.codec.JsonJacksonCodec> {}
+codec: !<org.redisson.codec.SnappyCodec> {}
 useLinuxNativeEpoll: false
 eventLoopGroup: null
