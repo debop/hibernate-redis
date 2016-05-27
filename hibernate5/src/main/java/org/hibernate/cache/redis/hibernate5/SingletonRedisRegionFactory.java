@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.client.RedisClientFactory;
+import org.hibernate.cache.redis.util.RedisCacheUtil;
 
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -51,7 +52,8 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
     this.options = options;
     try {
       if (redis == null) {
-        this.redis = RedisClientFactory.createRedisClient(getCacheProvierConfigPath());
+        RedisCacheUtil.loadCacheProperties(properties);
+        this.redis = RedisClientFactory.createRedisClient(RedisCacheUtil.getRedissonConfigPath());
       }
       referenceCount.incrementAndGet();
       log.info("RedisRegionFactory is started.");

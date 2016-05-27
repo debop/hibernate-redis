@@ -37,9 +37,6 @@ import java.util.Properties;
 @Slf4j
 public abstract class RedisDataRegion implements Region {
 
-  public static final int DEFAULT_TIMEOUT = 60;
-  public static final String EXPIRE_IN_SECONDS = "redis.expiryInSeconds";
-
   @Getter
   protected final RedisAccessStrategyFactory accessStrategyFactory;
 
@@ -55,7 +52,7 @@ public abstract class RedisDataRegion implements Region {
   protected final RedisClient redis;
 
   @Getter
-  private final int expireInSeconds;  // seconds
+  private final int expiryInSeconds;  // seconds
 
   @Getter
   protected boolean regionDeleted = false;
@@ -68,7 +65,8 @@ public abstract class RedisDataRegion implements Region {
     this.redis = redis;
     this.regionName = regionName;
 
-    this.expireInSeconds = RedisCacheUtil.getExpireInSeconds(this.regionName, DEFAULT_TIMEOUT);
+    this.expiryInSeconds = RedisCacheUtil.getExpiryInSeconds(this.regionName);
+    log.debug("redis region={}, expiryInSeconds={}", regionName, expiryInSeconds);
   }
 
   /**

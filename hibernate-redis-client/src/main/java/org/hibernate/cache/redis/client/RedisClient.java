@@ -21,6 +21,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.cache.redis.util.RedisCacheUtil;
 import org.redisson.Redisson;
 import org.redisson.RedissonClient;
 import org.redisson.core.RMapCache;
@@ -40,7 +41,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class RedisClient {
 
-  public static final int DEFAULT_EXPIRY_IN_SECONDS = 120;
   public static final String DEFAULT_REGION_NAME = "hibernate";
 
   @Getter
@@ -55,7 +55,7 @@ public class RedisClient {
   }
 
   public RedisClient(RedissonClient redisson) {
-    this(redisson, DEFAULT_EXPIRY_IN_SECONDS);
+    this(redisson, RedisCacheUtil.DEFAULT_EXPIRY_IN_SECONDS);
   }
 
   @SneakyThrows

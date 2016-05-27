@@ -14,40 +14,25 @@
  * limitations under the License.
  */
 
-package org.hibernate.cache.redis.client;
+package org.hibernate.cache.redis.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.cache.redis.util.RedisCacheUtil;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-/**
- * @author debop sunghyouk.bae@gmail.com
- */
 @Slf4j
 public class HibernateRedisConfigTest {
 
   @Test
   public void loadFromPropertiesFile() throws Exception {
-    String path = "conf/hibernate-redis.properties";
-    FileInputStream file = new FileInputStream(path);
-    assertThat(file).isNotNull();
-
-    Properties props = new Properties();
-    props.load(file);
-    testProperties(props);
-  }
-
-  @Test
-  public void loadFromPropertiesInResources() throws Exception {
-    String path = "conf/hibernate-redis.properties";
-    InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+    String path = "file:conf/hibernate-redis.properties";
+    InputStream is = RedisCacheUtil.getFileInputStream(path);
     assertThat(is).isNotNull();
 
     Properties props = new Properties();
@@ -55,14 +40,29 @@ public class HibernateRedisConfigTest {
     testProperties(props);
   }
 
-  private void testProperties(Properties props) {
+  @Test
+  public void loadFromPropertiesInResources() throws Exception {
+    String path = "classpath:conf/hibernate-redis.properties";
+    InputStream is = RedisCacheUtil.getFileInputStream(path);
+    assertThat(is).isNotNull();
+
+    Properties props = new Properties();
+    props.load(is);
+    testProperties(props);
+  }
+
+  private void testProperties(Properties props) throws Exception {
     assertThat(props).isNotNull();
 
+    RedisCacheUtil.loadCacheProperties(props);
     log.debug("all properties: {}", props.toString());
 
     String redissonConf = props.getProperty("redisson-config");
     assertThat(redissonConf).isNotEmpty();
-    assertThat(new File(redissonConf).exists()).isTrue();
 
+    // default expiry
+    int defaultExpiry = RedisCacheUtil.getExpiryInSeconds("xx");
+    log.debug("defaultExpiry={}", defaultExpiry);
+    assertThat(defaultExpiry).isEqualTo(RedisCacheUtil.getDefaultExpiryInSeconds());
   }
 }

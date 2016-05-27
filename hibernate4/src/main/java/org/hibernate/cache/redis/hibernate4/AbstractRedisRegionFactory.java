@@ -27,9 +27,9 @@ import org.hibernate.cache.spi.*;
 import org.hibernate.cache.spi.access.AccessType;
 import org.hibernate.cfg.Settings;
 
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Abstract Hibernate 4.x 2nd Redis Region Factory
@@ -39,17 +39,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 @Slf4j
 abstract class AbstractRedisRegionFactory implements RegionFactory {
-
-  /**
-   * The Hibernate system property specifying the location of the redis configuration file name.
-   * If not set, redis.xml will be looked for in the root of the classpath.
-   * If set to say redis-1.xml, redis-1.xml will be looked for in the root of the classpath.
-   */
-  public static final String IO_REDIS_CACHE_CONFIGURATION_RESOURCE_NAME = "io.redis.cache.configurationResourceName";
-
-  public static final String REDISSON_CONFIG = "redisson-config";
-  public static final String DEFAULT_REDISSON_CONFIG_PATH = "classpath:conf/redisson.yaml";
-
 
   /**
    * Settings object for the Hibernate persistence unit.
@@ -63,7 +52,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
   /**
    * Region names
    */
-  protected final Set<String> regionNames = new ConcurrentSkipListSet<String>();
+  protected final Set<String> regionNames = new HashSet<String>();
 
   /**
    * RedisClient instance.
@@ -73,11 +62,6 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
   protected AbstractRedisRegionFactory(Properties props) {
     this.props = props;
   }
-
-  protected String getCacheProvierConfigPath() {
-    return props.getProperty(REDISSON_CONFIG, DEFAULT_REDISSON_CONFIG_PATH);
-  }
-
 
   /**
    * Whether to optimize for minimals puts or minimal gets.

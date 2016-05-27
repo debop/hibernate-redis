@@ -27,8 +27,9 @@ import org.hibernate.cache.redis.hibernate5.strategy.RedisAccessStrategyFactoryI
 import org.hibernate.cache.spi.*;
 import org.hibernate.cache.spi.access.AccessType;
 
+import java.util.HashSet;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.Set;
 
 /**
  * Abstract Hibernate 5.x 2nd Redis Region Factory
@@ -39,23 +40,13 @@ import java.util.concurrent.ConcurrentSkipListSet;
 @Slf4j
 public abstract class AbstractRedisRegionFactory implements RegionFactory {
 
-  /**
-   * The Hibernate system property specifying the location of the redis configuration file name.
-   * If not set, redis.xml will be looked for in the root of the classpath.
-   * If set to say redis-1.xml, redis-1.xml will be looked for in the root of the classpath.
-   */
-  public static final String IO_REDIS_CACHE_CONFIGURATION_RESOURCE_NAME = "io.redis.cache.configurationResourceName";
-
-  public static final String REDISSON_CONFIG = "redisson-config";
-  public static final String DEFAULT_REDISSON_CONFIG_PATH = "classpath:conf/redisson.yaml";
-
   protected final Properties props;
   protected SessionFactoryOptions options;
   protected final RedisAccessStrategyFactory accessStrategyFactory = new RedisAccessStrategyFactoryImpl();
   /**
    * Region names
    */
-  protected final ConcurrentSkipListSet<String> regionNames = new ConcurrentSkipListSet<String>();
+  protected final Set<String> regionNames = new HashSet<String>();
 
   /**
    * {@link RedisClient} instance.
@@ -64,10 +55,6 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory {
 
   protected AbstractRedisRegionFactory(@NonNull Properties props) {
     this.props = props;
-  }
-
-  protected String getCacheProvierConfigPath() {
-    return props.getProperty(REDISSON_CONFIG, DEFAULT_REDISSON_CONFIG_PATH);
   }
 
   public boolean isMinimalPutsEnabledByDefault() {

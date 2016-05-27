@@ -17,25 +17,27 @@
 package org.hibernate.cache.redis;
 
 import lombok.SneakyThrows;
+import org.hibernate.cache.redis.util.RedisCacheUtil;
 import org.redisson.Config;
 import org.redisson.Redisson;
 import org.redisson.RedissonClient;
 
-import java.io.File;
+import java.io.InputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 public abstract class AbstractHibernateRedisTest {
 
-  public static final String REDISSON_CONFIG = "conf/redisson.yaml";
+  public static final String REDISSON_CONFIG = "classpath:conf/redisson.yaml";
 
   @SneakyThrows
   public static RedissonClient createRedisson() {
-    File file = new File(REDISSON_CONFIG);
-    assertThat(file.exists()).isTrue();
 
-    Config config = Config.fromYAML(file);
+    InputStream is = RedisCacheUtil.getFileInputStream(REDISSON_CONFIG);
+    assertThat(is).isNotNull();
+    Config config = Config.fromYAML(is);
+
     return Redisson.create(config);
   }
 }

@@ -38,10 +38,6 @@ import java.util.Properties;
 @Slf4j
 public abstract class RedisDataRegion implements Region {
 
-  private static final String CACHE_LOCK_TIMEOUT_PROPERTY = "io.redis.hibernate.cache_lock_timeout";
-  private static final int DEFAULT_CACHE_LOCK_TIMEOUT = 60 * 1000; // 60 seconds
-  private static final String EXPIRE_IN_SECONDS = "redis.expiryInSeconds";
-
   @Getter
   protected final RedisAccessStrategyFactory accessStrategyFactory;
 
@@ -55,12 +51,10 @@ public abstract class RedisDataRegion implements Region {
    */
   @Getter
   protected final RedisClient redis;
-
   @Getter
   private final int cacheLockTimeout; // milliseconds
-
   @Getter
-  private final int expireInSeconds;  // seconds
+  private final int expiryInSeconds;  // seconds
 
   @Getter
   protected boolean regionDeleted = false;
@@ -73,12 +67,9 @@ public abstract class RedisDataRegion implements Region {
     this.redis = redis;
     this.name = regionName;
 
-    this.cacheLockTimeout =
-        Integer.decode(props.getProperty(CACHE_LOCK_TIMEOUT_PROPERTY,
-            String.valueOf(DEFAULT_CACHE_LOCK_TIMEOUT)));
-
-    int defaultExpires = Integer.decode(RedisCacheUtil.getProperty(EXPIRE_IN_SECONDS, "120"));
-    this.expireInSeconds = RedisCacheUtil.getExpireInSeconds(name, defaultExpires);
+    this.cacheLockTimeout = 0;
+    this.expiryInSeconds = RedisCacheUtil.getExpiryInSeconds(name);
+    log.debug("redis region={}, expiryInSeconds={}", regionName, expiryInSeconds);
   }
 
   /**
