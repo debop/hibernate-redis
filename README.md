@@ -20,7 +20,15 @@ add dependency
 ```
 
 add repository
-
+```xml
+<repositories>
+    <repository>
+        <id>jcenter</id>
+        <url>http://jcenter.bintray.com</url>
+    </repository>
+</repositories>
+```
+or
 ```xml
 <repositories>
     <repository>
@@ -32,7 +40,7 @@ add repository
 
 ##### setup hibernate configuration
 
-setup hibernate configuration.
+setup hibernate configuration (Note package name for hibernate 4 / hibernate 5)
 
 ```java
 // Secondary Cache
