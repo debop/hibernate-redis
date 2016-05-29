@@ -301,6 +301,16 @@
         <version>2.8.2</version>
         <inherited>false</inherited>
       </plugin>
+
+      <plugin>
+        <groupId>com.rimerosolutions.maven.plugins</groupId>
+        <artifactId>wrapper-maven-plugin</artifactId>
+        <version>0.0.4</version>
+        <configuration>
+          <mavenVersion>3.3.9</mavenVersion>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 
