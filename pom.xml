@@ -218,8 +218,18 @@
       <scope>test</scope>
     </dependency>
 
-
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>jcenter</id>
+      <url>http://jcenter.bintray.com/</url>
+    </repository>
+    <repository>
+      <id>mavenCenter</id>
+      <url>http://repo1.maven.com/maven2</url>
+    </repository>
+  </repositories>
 
   <build>
     <defaultGoal>package</defaultGoal>
