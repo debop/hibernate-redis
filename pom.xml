@@ -68,6 +68,25 @@
   <dependencyManagement>
     <dependencies>
 
+      <!-- Redisson -->
+      <dependency>
+        <groupId>org.redisson</groupId>
+        <artifactId>redisson</artifactId>
+        <version>2.2.14</version>
+      </dependency>
+
+      <dependency>
+        <groupId>de.ruedigermoeller</groupId>
+        <artifactId>fst</artifactId>
+        <version>2.46</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.xerial.snappy</groupId>
+        <artifactId>snappy-java</artifactId>
+        <version>1.1.2.4</version>
+      </dependency>
+
       <!-- Logging -->
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -94,7 +113,7 @@
       <dependency>
         <groupId>com.zaxxer</groupId>
         <artifactId>HikariCP</artifactId>
-        <version>2.4.5</version>
+        <version>2.4.6</version>
         <scope>test</scope>
       </dependency>
 
@@ -102,13 +121,13 @@
       <dependency>
         <groupId>com.h2database</groupId>
         <artifactId>h2</artifactId>
-        <version>1.3.175</version>
+        <version>1.4.192</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
-        <version>5.1.27</version>
+        <version>6.0.2</version>
         <scope>test</scope>
       </dependency>
 
@@ -235,23 +254,10 @@
     <defaultGoal>package</defaultGoal>
 
     <plugins>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-idea-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-          <downloadSources>true</downloadSources>
-          <downloadJavadocs>true</downloadJavadocs>
-          <dependenciesAsLibraries>true</dependenciesAsLibraries>
-          <useFullNames>false</useFullNames>
-        </configuration>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.5.1</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -262,7 +268,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>2.2.1</version>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <id>attach-sources</id>
