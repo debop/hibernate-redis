@@ -283,7 +283,7 @@
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.0.0</version>
         <configuration>
-          <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+          <!--<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>-->
         </configuration>
       </plugin>
       <plugin>
