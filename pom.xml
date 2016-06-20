@@ -327,7 +327,7 @@
       <plugin>
         <groupId>com.rimerosolutions.maven.plugins</groupId>
         <artifactId>wrapper-maven-plugin</artifactId>
-        <version>0.0.4</version>
+        <version>0.0.5</version>
         <configuration>
           <mavenVersion>3.3.9</mavenVersion>
         </configuration>
