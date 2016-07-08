@@ -1,0 +1,21 @@
+rootProject.name = 'hibernate-redis-parent'
+
+include ':hibernate-redis-client'
+include ':hibernate-redis-hibernate4'
+include ':hibernate-redis-hibernate5'
+include ':hibernate-redis'
+/*
+ * Copyright (c) 2016. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
+//include ':hibernate-examples'
+
+project(':hibernate-redis-client').projectDir = "$rootDir/hibernate-redis-client" as File
+project(':hibernate-redis-hibernate4').projectDir = "$rootDir/hibernate4" as File
+project(':hibernate-redis-hibernate5').projectDir = "$rootDir/hibernate5" as File
+project(':hibernate-redis').projectDir = "$rootDir/hibernate-redis" as File
+//project(':hibernate-examples').projectDir = "$rootDir/hibernate-examples" as File

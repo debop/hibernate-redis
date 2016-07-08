@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2016. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
+description = 'examples'
+
+dependencies {
+    compile project(":hibernate-redis")
+    compile("org.hibernate:hibernate-core:$hibernate5_version") {
+        exclude(module: 'jboss-logging')
+    }
+    compile "org.hibernate:hibernate-entitymanager:$hibernate5_version"
+    compile "org.springframework:spring-orm:$spring_version"
+    compile("org.springframework.data:spring-data-jpa:$spring_data_jpa_version") {
+        exclude(module: 'spring-core')
+        exclude(module: 'spring-context')
+        exclude(module: 'spring-beans')
+        exclude(module: 'jcl-over-slf4j')
+    }
+    compile("org.springframework.boot:spring-boot-starter-data-jpa:$spring_boot_version") {
+        exclude(module: 'spring-data-jpa')
+        exclude(module: 'spring-aop')
+    }
+    compile "com.zaxxer:HikariCP:$hikaricp_java7_version"
+    compile "org.apache.commons:commons-lang3:$commons_lang3_version"
+    compile "joda-time:joda-time:$joda_time_version"
+    compile "org.joda:joda-convert:$joda_convert_version"
+
+    compile "com.querydsl:querydsl-jpa:$querydsl_version"
+    compile("com.querydsl:querydsl-apt:$querydsl_version") {
+        exclude(module: 'javassist')
+    }
+
+    testCompile "org.springframework.boot:spring-boot-starter-test:$spring_boot_version"
+}

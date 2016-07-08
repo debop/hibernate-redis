@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2016. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
 package org.hibernate.examples.utils;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -17,8 +25,7 @@ import java.util.Properties;
 @Slf4j
 public class DataSources {
 
-  private DataSources() {
-  }
+  private DataSources() {}
 
   public static final String HSQL_DRIVER_CLASS_NAME = "org.hsql.jdbcDriver";
   public static final String H2_DRIVER_CLASS_NAME = "org.h2.Driver";
