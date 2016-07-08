@@ -11,8 +11,6 @@ buildscript {
 }
 
 allprojects {
-    apply plugin: 'maven'
-
     group = 'com.github.debop'
     version = '2.0.2-SNAPSHOT'
 }
