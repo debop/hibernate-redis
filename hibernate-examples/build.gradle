@@ -1,11 +1,3 @@
-/*
- * Copyright (c) 2016. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
- * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
- * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
- * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
- * Vestibulum commodo. Ut rhoncus gravida arcu.
- */
-
 description = 'examples'
 
 dependencies {
@@ -36,4 +28,66 @@ dependencies {
     }
 
     testCompile "org.springframework.boot:spring-boot-starter-test:$spring_boot_version"
+}
+
+sourceSets {
+    main.java.srcDirs = ['src/main/java']
+    test.java.srcDirs = ['src/test/java']
+
+    generated.java.srcDirs = ['src/main/generated']
+    testGenerated.java.srcDirs = ['src/test/generated']
+}
+
+task generateQueryDSL(type: JavaCompile, group: 'build', description: 'Generates the QueryDSL query types') {
+    source = sourceSets.main.java
+    classpath = configurations.compile
+    options.compilerArgs = [
+            "-proc:only",
+            "-processor", "com.querydsl.apt.jpa.JPAAnnotationProcessor"
+    ]
+    destinationDir = sourceSets.generated.java.srcDirs.iterator().next()
+}
+
+compileJava {
+    dependsOn generateQueryDSL
+    source generateQueryDSL.destinationDir
+}
+
+compileGeneratedJava {
+    dependsOn generateQueryDSL
+    options.warnings = false
+    classpath += sourceSets.main.runtimeClasspath
+}
+
+task testGenerateQueryDSL(type: JavaCompile, group: 'verification', description: 'Generates the Test QueryDSL query types') {
+    source = [sourceSets.main.java, sourceSets.test.java]
+    classpath = configurations.testCompile
+    options.compilerArgs = [
+            "-proc:only",
+            "-processor", "com.querydsl.apt.jpa.JPAAnnotationProcessor"
+    ]
+    destinationDir = sourceSets.testGenerated.java.srcDirs.iterator().next()
+}
+
+compileTestJava {
+    dependsOn testGenerateQueryDSL
+    source += testGenerateQueryDSL.destinationDir
+}
+
+compileTestGeneratedJava {
+    dependsOn testGenerateQueryDSL
+    options.warnings = false
+    classpath += sourceSets.test.runtimeClasspath
+}
+
+clean {
+    delete sourceSets.generated.java.srcDirs
+    delete sourceSets.testGenerated.java.srcDirs
+}
+
+idea {
+    module {
+        sourceDirs += file("src/generated/java")
+        testSourceDirs += file("src/test-generated/java")
+    }
 }
