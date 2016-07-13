@@ -16,6 +16,7 @@ dependencies {
 
     testCompile "org.hibernate:hibernate-testing:$hibernate5_version"
 
+    testCompile "org.springframework.boot:spring-boot-autoconfigure:$spring_boot_version"
     testCompile "org.springframework.data:spring-data-jpa:$spring_data_jpa_version"
     testCompile "org.springframework:spring-orm:$spring_version"
 }

@@ -1,9 +1,13 @@
 hibernate-redis  [![Build Status](https://travis-ci.org/debop/hibernate-redis.png)](https://travis-ci.org/debop/hibernate-redis)
 ===============
 
-[hibernate][1] (4.x, 5.x) 2nd level cache provider using redis server 3.x. with [Redisson][2]
+[hibernate][1] (4.x, 5.1.x) 2nd level cache provider using redis server 3.x. with [Redisson][2]
 
 Reduce cache size by [Redisson][2] SnappyCodec (see [snappy-java][snappy], [Fast-Serialization][fst])
+
+### Note
+
+hibernate-core 5.2.x based on Java 8, so we are not support hibernate 5.2.x or higer yet.
 
 ### Setup
 

@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2016. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+  ~ Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+  ~ Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+  ~ Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+  ~ Vestibulum commodo. Ut rhoncus gravida arcu.
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -14,9 +22,9 @@
   <description>hibernate examples for hibernate 5</description>
 
   <properties>
-    <hibernate.version>5.1.0.Final</hibernate.version>
-    <springboot.version>1.3.5.RELEASE</springboot.version>
-    <querydsl.version>4.1.1</querydsl.version>
+    <hibernate.version>5.2.1.Final</hibernate.version>
+    <springboot.version>1.3.6.RELEASE</springboot.version>
+    <querydsl.version>4.1.3</querydsl.version>
   </properties>
 
   <dependencies>
