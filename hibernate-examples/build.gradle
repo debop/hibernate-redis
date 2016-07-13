@@ -1,0 +1,93 @@
+description = 'examples'
+
+dependencies {
+    compile project(":hibernate-redis")
+    compile("org.hibernate:hibernate-core:$hibernate5_version") {
+        exclude(module: 'jboss-logging')
+    }
+    compile "org.hibernate:hibernate-entitymanager:$hibernate5_version"
+    compile "org.springframework:spring-orm:$spring_version"
+    compile("org.springframework.data:spring-data-jpa:$spring_data_jpa_version") {
+        exclude(module: 'spring-core')
+        exclude(module: 'spring-context')
+        exclude(module: 'spring-beans')
+        exclude(module: 'jcl-over-slf4j')
+    }
+    compile("org.springframework.boot:spring-boot-starter-data-jpa:$spring_boot_version") {
+        exclude(module: 'spring-data-jpa')
+        exclude(module: 'spring-aop')
+    }
+    compile "com.zaxxer:HikariCP:$hikaricp_java7_version"
+    compile "org.apache.commons:commons-lang3:$commons_lang3_version"
+    compile "joda-time:joda-time:$joda_time_version"
+    compile "org.joda:joda-convert:$joda_convert_version"
+
+    compile "com.querydsl:querydsl-jpa:$querydsl_version"
+    compile("com.querydsl:querydsl-apt:$querydsl_version") {
+        exclude(module: 'javassist')
+    }
+
+    testCompile "org.springframework.boot:spring-boot-starter-test:$spring_boot_version"
+}
+
+sourceSets {
+    main.java.srcDirs = ['src/main/java']
+    test.java.srcDirs = ['src/test/java']
+
+    generated.java.srcDirs = ['src/main/generated']
+    testGenerated.java.srcDirs = ['src/test/generated']
+}
+
+task generateQueryDSL(type: JavaCompile, group: 'build', description: 'Generates the QueryDSL query types') {
+    source = sourceSets.main.java
+    classpath = configurations.compile
+    options.compilerArgs = [
+            "-proc:only",
+            "-processor", "com.querydsl.apt.jpa.JPAAnnotationProcessor"
+    ]
+    destinationDir = sourceSets.generated.java.srcDirs.iterator().next()
+}
+
+compileJava {
+    dependsOn generateQueryDSL
+    source generateQueryDSL.destinationDir
+}
+
+compileGeneratedJava {
+    dependsOn generateQueryDSL
+    options.warnings = false
+    classpath += sourceSets.main.runtimeClasspath
+}
+
+task testGenerateQueryDSL(type: JavaCompile, group: 'verification', description: 'Generates the Test QueryDSL query types') {
+    source = [sourceSets.main.java, sourceSets.test.java]
+    classpath = configurations.testCompile
+    options.compilerArgs = [
+            "-proc:only",
+            "-processor", "com.querydsl.apt.jpa.JPAAnnotationProcessor"
+    ]
+    destinationDir = sourceSets.testGenerated.java.srcDirs.iterator().next()
+}
+
+compileTestJava {
+    dependsOn testGenerateQueryDSL
+    source += testGenerateQueryDSL.destinationDir
+}
+
+compileTestGeneratedJava {
+    dependsOn testGenerateQueryDSL
+    options.warnings = false
+    classpath += sourceSets.test.runtimeClasspath
+}
+
+clean {
+    delete sourceSets.generated.java.srcDirs
+    delete sourceSets.testGenerated.java.srcDirs
+}
+
+idea {
+    module {
+        sourceDirs += file("src/generated/java")
+        testSourceDirs += file("src/test-generated/java")
+    }
+}

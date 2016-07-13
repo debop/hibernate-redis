@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2016. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
 package org.hibernate.cache.redis.jpa;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {JpaCacheConfiguration.class})
-@Transactional
+@Transactional(rollbackFor = {})
 public class JpaCacheTest {
 
   @PersistenceContext EntityManager em;

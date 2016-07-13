@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2016. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
+description = 'hibernate4'
+dependencies {
+    compile project(':hibernate-redis-client')
+
+    optional("org.hibernate:hibernate-core:$hibernate4_version") {
+        exclude(module: 'jboss-logging')
+    }
+    optional "org.hibernate:hibernate-entitymanager:$hibernate4_version"
+
+    testCompile "org.hibernate:hibernate-testing:$hibernate4_version"
+
+    testCompile "org.springframework.data:spring-data-jpa:$spring_data_jpa_version"
+    testCompile "org.springframework:spring-orm:$spring_version"
+}

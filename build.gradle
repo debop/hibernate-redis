@@ -1,0 +1,71 @@
+/*
+ * Copyright (c) 2016. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
+buildscript {
+
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven { url "https://repo.spring.io/plugins-release" }
+    }
+    dependencies {
+        classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
+    }
+}
+
+allprojects {
+    group = 'com.github.debop'
+    version = '2.0.2'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    apply plugin: 'propdeps'
+    apply plugin: 'propdeps-maven'
+    apply plugin: 'propdeps-idea'
+
+    sourceCompatibility = JavaVersion.VERSION_1_6
+    targetCompatibility = JavaVersion.VERSION_1_6
+
+    compileTestJava {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    task packageSources(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+
+    }
+    artifacts.archives packageSources
+
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+
+
+    dependencies {
+        compile "org.slf4j:slf4j-api:$slf4j_version"
+        compile "ch.qos.logback:logback-classic:$logback_version"
+        compile "org.projectlombok:lombok:$lombok_version"
+
+        testCompile "junit:junit:$junit_version"
+        testCompile "org.assertj:assertj-core:$assertj_core_version"
+        testCompile "com.carrotsearch:junit-benchmarks:$junit_benchmarks_version"
+
+        testCompile "com.zaxxer:HikariCP:$hikaricp_java7_version"
+        testCompile "com.h2database:h2:$h2_version"
+        testCompile "mysql:mysql-connector-java:$mysql_connector_java_version"
+        testCompile "com.google.guava:guava:$guava_version"
+        testCompile "org.springframework:spring-test:$spring_version"
+    }
+
+
+}

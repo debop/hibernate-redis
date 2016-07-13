@@ -1,0 +1,13 @@
+rootProject.name = 'hibernate-redis-parent'
+
+include ':hibernate-redis-client'
+include ':hibernate-redis-hibernate4'
+include ':hibernate-redis-hibernate5'
+include ':hibernate-redis'
+include ':hibernate-examples'
+
+project(':hibernate-redis-client').projectDir = "$rootDir/hibernate-redis-client" as File
+project(':hibernate-redis-hibernate4').projectDir = "$rootDir/hibernate4" as File
+project(':hibernate-redis-hibernate5').projectDir = "$rootDir/hibernate5" as File
+project(':hibernate-redis').projectDir = "$rootDir/hibernate-redis" as File
+project(':hibernate-examples').projectDir = "$rootDir/hibernate-examples" as File
