@@ -19,7 +19,7 @@ add dependency
 <dependency>
     <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
 </dependency>
 ```
 
@@ -40,6 +40,27 @@ or
         <url>http://dl.bintray.com/debop/maven</url>
     </repository>
 </repositories>
+```
+
+optional dependencies.
+Redisson support various codec (serializer, compression). you can choose other codec. see Redisson Help.
+
+```xml
+<dependency>
+    <groupId>org.redisson</groupId>
+    <artifactId>redisson</artifactId>
+    <version>${redisson.version}</version>
+</dependency>
+<dependency>
+    <groupId>de.ruedigermoeller</groupId>
+    <artifactId>fst</artifactId>
+    <version>${fst.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.xerial.snappy</groupId>
+    <artifactId>snappy-java</artifactId>
+    <version>${snappy-java.version}</version>
+</dependency>
 ```
 
 ##### setup hibernate configuration
