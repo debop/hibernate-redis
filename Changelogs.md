@@ -1,6 +1,11 @@
 # Hibernate-Redis Change logs
 
 
+### 2.0.2
+
+- [improve] add more information to README.md
+- [new] change build tool from Maven to Gradle (Build QueryDSL annotation process for Gradle)
+- [improve] upgrade Redisson 2.2.17
 
 ### 2.0.1
 
@@ -14,7 +19,6 @@ Sorry for stopping developments (I was leaved from Java a while)
 - [new] Change redis driver from [Jedis](https://github.com/xetorthio/jedis) to [Redisson](https://github.com/mrniko/redisson)
 - [new] Support Redis Cluster, Elasticache, Sentinel, Master-Slaves
 - [new] Hibernate Example code update for Hibernate 5 and QueryDSL 4.x
-
 - [todo] Build tool changes from maven to gradle (help me ...)
 
 ##### Known Bugs
