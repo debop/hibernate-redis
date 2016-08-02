@@ -1,4 +1,3 @@
-merge.into = project(":hibernate-redis")
 
 dependencies {
     compile "org.redisson:redisson:$redisson_version"
