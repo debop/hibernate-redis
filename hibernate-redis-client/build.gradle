@@ -1,0 +1,7 @@
+
+dependencies {
+    compile "org.redisson:redisson:$redisson_version"
+    compile "de.ruedigermoeller:fst:$fst_java7_version"
+    compile "org.xerial.snappy:snappy-java:$snappy_java_version"
+}
+

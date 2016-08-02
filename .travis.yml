@@ -1,18 +1,20 @@
 language: java
 
-script:
-  - "mvn clean package -DskipTests"
-
 jdk:
   - oraclejdk8
+
+script: "./gradlew clean build -x test"
 
 services:
   - redis
 
-env:
-  - MAVEN_OPTS="-ea -server -Xmx8192m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:PermSize=256M -XX:MaxPermSize=512M"
-
 # whitelist
 branches:
   only:
+    - 2.x
     - master
+
+cache:
+  directories:
+    - $HOME/.m2
+    - $HOME/.gradle

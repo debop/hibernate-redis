@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2016. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
+ */
+
 package org.hibernate.cache.redis.jpa;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -8,6 +16,7 @@ import org.hibernate.cache.redis.jpa.models.Account;
 import org.hibernate.cache.redis.jpa.repository.EventRepository;
 import org.hibernate.cfg.Environment;
 import org.hibernate.resource.transaction.backend.jta.internal.JtaTransactionCoordinatorBuilderImpl;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -73,7 +82,7 @@ public class JpaCacheConfiguration {
     return props;
   }
 
-  @Bean
+  @Bean(destroyMethod = "close")
   public DataSource dataSource() {
     HikariConfig config = new HikariConfig();
 
@@ -114,6 +123,7 @@ public class JpaCacheConfiguration {
   }
 
   @Bean
+  @ConditionalOnMissingBean
   public PlatformTransactionManager transactionManager() throws IOException {
     return new JpaTransactionManager(entityManagerFactory());
   }

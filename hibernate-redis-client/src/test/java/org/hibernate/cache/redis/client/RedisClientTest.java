@@ -1,23 +1,16 @@
 /*
- * Copyright 2002-2015 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) 2016. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+ * Morbi non lorem porttitor neque feugiat blandit. Ut vitae ipsum eget quam lacinia accumsan.
+ * Etiam sed turpis ac ipsum condimentum fringilla. Maecenas magna.
+ * Proin dapibus sapien vel ante. Aliquam erat volutpat. Pellentesque sagittis ligula eget metus.
+ * Vestibulum commodo. Ut rhoncus gravida arcu.
  */
 
 package org.hibernate.cache.redis.client;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.hibernate.cache.redis.AbstractHibernateRedisTest;
 import org.junit.After;
 import org.junit.Test;
@@ -49,7 +42,7 @@ public class RedisClientTest extends AbstractHibernateRedisTest {
   public void simpleValueGetSet() throws Exception {
     client.set(REGION_NAME, "simpleValue", 123);
     Thread.sleep(10);
-    assertThat(client.get(REGION_NAME, "simpleValue")).isEqualTo(123);
+    Assertions.assertThat(client.<Integer>get(REGION_NAME, "simpleValue")).isEqualTo(123);
   }
 
   @Test
@@ -90,7 +83,7 @@ public class RedisClientTest extends AbstractHibernateRedisTest {
   public void deleteCacheItem() {
     client.set(REGION_NAME, "deleteKey", "value");
     assertThat(client.exists(REGION_NAME, "deleteKey")).isTrue();
-    assertThat(client.get(REGION_NAME, "deleteKey")).isEqualTo("value");
+    assertThat(client.<String>get(REGION_NAME, "deleteKey")).isEqualTo("value");
 
     client.del(REGION_NAME, "deleteKey");
     assertThat(client.exists(REGION_NAME, "deleteKey")).isFalse();

@@ -1,9 +1,13 @@
 hibernate-redis  [![Build Status](https://travis-ci.org/debop/hibernate-redis.png)](https://travis-ci.org/debop/hibernate-redis)
 ===============
 
-[hibernate][1] (4.x, 5.x) 2nd level cache provider using redis server 3.x. with [Redisson][2]
+[hibernate][1] (4.x, 5.1.x) 2nd level cache provider using redis server 3.x. with [Redisson][2]
 
 Reduce cache size by [Redisson][2] SnappyCodec (see [snappy-java][snappy], [Fast-Serialization][fst])
+
+### Note
+
+hibernate-core 5.2.x based on Java 8, so we are not support hibernate 5.2.x or higer yet.
 
 ### Setup
 
@@ -15,7 +19,7 @@ add dependency
 <dependency>
     <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
 </dependency>
 ```
 
@@ -36,6 +40,27 @@ or
         <url>http://dl.bintray.com/debop/maven</url>
     </repository>
 </repositories>
+```
+
+optional dependencies.
+Redisson support various codec (serializer, compression). you can choose other codec. see Redisson Help.
+
+```xml
+<dependency>
+    <groupId>org.redisson</groupId>
+    <artifactId>redisson</artifactId>
+    <version>${redisson.version}</version>
+</dependency>
+<dependency>
+    <groupId>de.ruedigermoeller</groupId>
+    <artifactId>fst</artifactId>
+    <version>${fst.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.xerial.snappy</groupId>
+    <artifactId>snappy-java</artifactId>
+    <version>${snappy-java.version}</version>
+</dependency>
 ```
 
 ##### setup hibernate configuration
