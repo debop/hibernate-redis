@@ -67,6 +67,10 @@ subprojects {
         testCompile "com.google.guava:guava:$guava_version"
         testCompile "org.springframework:spring-test:$spring_version"
     }
+}
 
+defaultTasks 'clean', 'build', 'shadowJar'
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.14.1'
 }
