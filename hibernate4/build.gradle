@@ -7,6 +7,9 @@
  */
 
 description = 'hibernate4'
+
+merge.into project(":hibernate-redis")
+
 dependencies {
     compile project(':hibernate-redis-client')
 
