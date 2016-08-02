@@ -17,6 +17,8 @@ dependencies {
 }
 
 shadowJar {
+    configurations = [project.configurations.compile]
+
     baseName = 'hibernate-redis'
     classifier = null
 
@@ -24,5 +26,13 @@ shadowJar {
         include project(':hibernate-redis-client')
         include project(':hibernate-redis-hibernate4')
         include project(':hibernate-redis-hibernate5')
+    }
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) {
+            from components.shadow
+        }
     }
 }
