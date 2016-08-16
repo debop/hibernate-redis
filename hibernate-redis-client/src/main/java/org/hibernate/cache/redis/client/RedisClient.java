@@ -114,9 +114,9 @@ public class RedisClient {
 
     RMapCache<Object, Object> cache = redisson.getMapCache(region);
     if (timeout > 0L) {
-      cache.put(key, value, timeout, unit);
+      cache.fastPut(key, value, timeout, unit);
     } else {
-      cache.put(key, value);
+      cache.fastPut(key, value);
     }
   }
 
