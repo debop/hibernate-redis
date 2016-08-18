@@ -39,12 +39,14 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    task packageSources(type: Jar) {
+    task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = 'sources'
         from sourceSets.main.allSource
-
     }
-    artifacts.archives packageSources
+
+    artifacts {
+        archives sourcesJar
+    }
 
     repositories {
         jcenter()
@@ -69,7 +71,7 @@ subprojects {
     }
 }
 
-defaultTasks 'clean', 'build', 'shadowJar'
+defaultTasks 'clean', 'shadowJar', 'publishToMavenLocal'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.14.1'
