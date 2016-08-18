@@ -71,7 +71,7 @@
                   <include>com.github.debop:hibernate-redis-hibernate5</include>
                 </includes>
               </artifactSet>
-              <createDependencyReducedPom>true</createDependencyReducedPom>
+              <!--<createDependencyReducedPom>true</createDependencyReducedPom>-->
               <createSourcesJar>true</createSourcesJar>
             </configuration>
           </execution>
