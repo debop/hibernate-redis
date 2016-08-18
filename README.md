@@ -9,6 +9,8 @@ Reduce cache size by [Redisson][2] SnappyCodec (see [snappy-java][snappy], [Fast
 
 hibernate-core 5.2.x based on Java 8, so we are not support hibernate 5.2.x or higer yet.
 
+see `h-5.2.x` branch 
+
 ### Setup
 
 ##### Maven Repository
