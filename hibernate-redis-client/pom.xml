@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>hibernate-redis-parent</artifactId>
+    <groupId>com.github.debop</groupId>
+    <version>2.0.4-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>hibernate-redis-client</artifactId>
+  <name>client</name>
+  <description>redis client module</description>
+
+  <dependencies>
+
+    <!-- Redisson -->
+    <dependency>
+      <groupId>org.redisson</groupId>
+      <artifactId>redisson</artifactId>
+      <version>${redisson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.ruedigermoeller</groupId>
+      <artifactId>fst</artifactId>
+      <version>${fst.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.xerial.snappy</groupId>
+      <artifactId>snappy-java</artifactId>
+      <version>1.1.2.6</version>
+    </dependency>
+
+  </dependencies>
+</project>
