@@ -19,10 +19,10 @@ package org.hibernate.cache.redis.client;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.Config;
 import org.redisson.Redisson;
-import org.redisson.RedissonClient;
+import org.redisson.api.RedissonClient;
 import org.redisson.codec.SnappyCodec;
+import org.redisson.config.Config;
 
 import java.io.File;
 import java.io.IOException;
