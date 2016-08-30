@@ -2,7 +2,7 @@
 
 ### 2.1.0
 
-- 
+- [bugfix] fix dependencies 
 
 ### 2.0.4
 
