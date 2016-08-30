@@ -1,5 +1,18 @@
 # Hibernate-Redis Change logs
 
+### 2.1.0
+
+- [bugfix] fix dependencies 
+
+### 2.0.4
+
+- [improve] cache set by Redisson `fastPut` instead of `put`
+- [update] library update (Redisson 2.3.0)
+
+### 2.0.3
+
+- [bugfix] fix : not found dependency library (hibernate-redis-client...)
+           add gradle shadow task
 
 ### 2.0.2
 

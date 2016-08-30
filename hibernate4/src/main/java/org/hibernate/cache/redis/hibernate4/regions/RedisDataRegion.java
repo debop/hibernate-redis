@@ -1,17 +1,17 @@
 /*
- * Copyright 2002-2015 the original author or authors.
- *
+ * Copyright (c) 2016. Sunghyouk Bae <sunghyouk.bae@gmail.com>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.hibernate.cache.redis.hibernate4.regions;
@@ -86,9 +86,15 @@ public abstract class RedisDataRegion implements Region {
    */
   @Override
   public void destroy() throws CacheException {
-    // NOTE: HA 구성 시에는 region 을 삭제할 필요는 없습니다.
-    // NOTE: 단 Cache 조회 시 expiration 되었는지 확인해야 합니다.
-    log.info("destroy region... but not delete redis key. region=[{}]", name);
+    // NOTE: No need to delete region in HA mode
+    //    if (regionDeleted)
+//      return;
+//    try {
+//      redis.deleteRegion(regionName);
+//      regionDeleted = true;
+//    } catch (Exception ignored) {
+//      log.warn("Fail to destroy.", ignored);
+//    }
   }
 
   /**
