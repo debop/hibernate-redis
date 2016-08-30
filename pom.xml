@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~  Copyright 2016. the original author or authors.
+  ~ Copyright (c) 2016. Sunghyouk Bae <sunghyouk.bae@gmail.com>
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
   ~
-  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~       http://www.apache.org/licenses/LICENSE-2.0
   ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
+  ~
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -79,7 +80,7 @@
     <hibernate4.version>4.3.11.Final</hibernate4.version>
     <hibernate5.version>5.1.1.Final</hibernate5.version>
 
-    <springframework.version>4.2.7.RELEASE</springframework.version>
+    <springframework.version>4.3.2.RELEASE</springframework.version>
     <spring.boot.version>1.4.0.RELEASE</spring.boot.version>
 
     <redisson.version>2.3.0</redisson.version>
@@ -147,6 +148,7 @@
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
         <version>3.5.2</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>com.carrotsearch</groupId>
