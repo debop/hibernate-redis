@@ -3,7 +3,7 @@
 ### 2.0.4
 
 - [improve] cache set by Redisson `fastPut` instead of `put`
-- [update] library update
+- [update] library update (Redisson 2.3.0)
 
 ### 2.0.3
 
