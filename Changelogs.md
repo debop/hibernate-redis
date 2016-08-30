@@ -1,5 +1,9 @@
 # Hibernate-Redis Change logs
 
+### 2.1.1
+
+- change build tool from maven to gradle.
+
 ### 2.1.0
 
 - [bugfix] fix dependencies 
