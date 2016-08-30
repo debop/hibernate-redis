@@ -1,17 +1,17 @@
 /*
- * Copyright 2002-2015 the original author or authors.
- *
+ * Copyright (c) 2016. Sunghyouk Bae <sunghyouk.bae@gmail.com>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.hibernate.cache.redis.util;
@@ -62,13 +62,13 @@ public final class RedisCacheUtil {
                                               RESOURCE_URL_PREFIX + "conf/hibernate-redis.properties");
     InputStream is = null;
     try {
-      log.info("Loading cache properties... path={}", cachePropsPath);
+      log.debug("Loading cache properties... path={}", cachePropsPath);
       is = getFileInputStream(cachePropsPath);
       cacheProperties.load(is);
       loadDefaultExpiry();
 
     } catch (Exception e) {
-      log.warn("Fail to load cache properties. path=" + cachePropsPath, e);
+      log.warn("Fail to load cache properties. path={}", cachePropsPath, e);
     } finally {
       if (is != null) {
         try { is.close(); } catch (Exception ignored) {}
@@ -135,7 +135,7 @@ public final class RedisCacheUtil {
 
       return Integer.parseInt(value);
     } catch (Exception e) {
-      log.warn("Fail to get expiryInSeconds in region={}", region);
+      log.warn("Fail to get expiryInSeconds in region={}", region, e);
       return defaultExpiryInSeconds;
     }
   }
@@ -156,7 +156,7 @@ public final class RedisCacheUtil {
       log.trace("get property. key={}, value={}, defaultValue={}", key, value, defaultValue);
       return value;
     } catch (Exception ignored) {
-      log.warn("error occurred in reading properties. key=" + key, ignored);
+      log.warn("error occurred in reading properties. key={}", key, ignored);
       return defaultValue;
     }
   }

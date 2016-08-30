@@ -6,10 +6,33 @@
  * Vestibulum commodo. Ut rhoncus gravida arcu.
  */
 
+apply plugin: 'com.github.johnrengelman.shadow'
+
 description = 'hibernate-redis'
 
 dependencies {
     compile project(':hibernate-redis-client')
     compile project(':hibernate-redis-hibernate4')
     compile project(':hibernate-redis-hibernate5')
+}
+
+shadowJar {
+    configurations = [project.configurations.compile]
+
+    baseName = 'hibernate-redis'
+    classifier = null
+
+    dependencies {
+        include project(':hibernate-redis-client')
+        include project(':hibernate-redis-hibernate4')
+        include project(':hibernate-redis-hibernate5')
+    }
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) {
+            from components.shadow
+        }
+    }
 }
