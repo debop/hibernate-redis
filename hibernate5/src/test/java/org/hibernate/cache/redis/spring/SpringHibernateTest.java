@@ -74,7 +74,7 @@ public class SpringHibernateTest {
     SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics(Item.class);
 
     log.debug("Region name={}, Element in memory={}, hit count={}",
-        regionName, slcs.getElementCountInMemory(), slcs.getHitCount());
+              regionName, slcs.getElementCountInMemory(), slcs.getHitCount());
 
     assertThat(regionName).contains("common");
     assertThat(slcs.getElementCountInMemory()).isEqualTo(0);
