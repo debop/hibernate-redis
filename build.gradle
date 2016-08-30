@@ -29,7 +29,7 @@ buildscript {
 
 allprojects {
     group = 'com.github.debop'
-    version = '2.1.0'
+    version = '2.1.1-SNAPSHOT'
 }
 
 subprojects {
@@ -76,6 +76,7 @@ subprojects {
         testCompile "mysql:mysql-connector-java:$mysql_connector_java_version"
         testCompile "com.google.guava:guava:$guava_version"
         testCompile "org.springframework:spring-test:$spring_version"
+        testCompile "org.springframework.boot:spring-boot-starter-test:$spring_boot_version"
     }
 }
 
