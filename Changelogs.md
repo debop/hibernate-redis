@@ -1,5 +1,9 @@
 # Hibernate-Redis Change logs
 
+### 2.1.0
+
+- [bugfix] fix dependencies 
+
 ### 2.0.4
 
 - [improve] cache set by Redisson `fastPut` instead of `put`
