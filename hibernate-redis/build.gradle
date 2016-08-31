@@ -39,10 +39,9 @@ shadowJar {
     }
 }
 
-publishing {
-    publications {
-        shadow(MavenPublication) {
-            from components.shadow
-        }
+publishing.publications {
+    shadow(MavenPublication) {
+        from components.shadow
     }
 }
+
