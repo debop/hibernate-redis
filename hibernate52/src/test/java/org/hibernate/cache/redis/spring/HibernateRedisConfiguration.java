@@ -14,58 +14,45 @@
  *
  */
 
-package org.hibernate.cache.redis.jpa;
+package org.hibernate.cache.redis.spring;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.redis.hibernate5.SingletonRedisRegionFactory;
+import org.hibernate.SessionFactory;
+import org.hibernate.cache.redis.hibernate52.SingletonRedisRegionFactory;
 import org.hibernate.cache.redis.jpa.models.Account;
-import org.hibernate.cache.redis.jpa.repository.EventRepository;
 import org.hibernate.cfg.Environment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.hibernate4.HibernateExceptionTranslator;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.orm.hibernate4.HibernateTransactionManager;
+import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.Properties;
 
-import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
+import static org.hibernate.cfg.AvailableSettings.AUTOCOMMIT;
+import static org.hibernate.cfg.AvailableSettings.RELEASE_CONNECTIONS;
 
 @Slf4j
 @Configuration
-@EnableTransactionManagement
-@EnableJpaRepositories(basePackageClasses = {EventRepository.class})
-public class JpaCacheConfiguration {
+public class HibernateRedisConfiguration {
 
   public String getDatabaseName() {
     return "hibernate";
   }
 
-  /**
-   * 매핑할 엔티티 클래스가 정의된 package name 의 배열
-   */
   public String[] getMappedPackageNames() {
     return new String[]{
         Account.class.getPackage().getName()
     };
   }
 
-  /**
-   * JPA 환경 설정 정보
-   *
-   * @return 설정 정보
-   */
-  public Properties jpaProperties() {
+  public Properties hibernateProperties() {
     Properties props = new Properties();
 
     props.put(Environment.FORMAT_SQL, "true");
@@ -74,11 +61,18 @@ public class JpaCacheConfiguration {
 
     props.put(Environment.POOL_SIZE, 30);
 
+    // NOTE: 명시적인 Transaction 하에서만 DB에 적용되도록 false 정의한다.
+    props.setProperty(AUTOCOMMIT, "false");
+
+    // 참고 : http://stackoverflow.com/questions/15573370/my-spring-application-leaks-database-connections-whereas-i-use-the-public-roo-c
+    // 기본값을 사용하면 connection이 release 되지 않을 수 있다.
+    props.setProperty(RELEASE_CONNECTIONS, "after_transaction");
+
     // Secondary Cache
     props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
     props.put(Environment.USE_QUERY_CACHE, true);
     props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
-    props.put(Environment.CACHE_REGION_PREFIX, "hibernate5");
+    props.put(Environment.CACHE_REGION_PREFIX, "hibernate52");
     props.put(Environment.CACHE_PROVIDER_CONFIG, "conf/hibernate-redis.properties");
 
     props.setProperty(Environment.GENERATE_STATISTICS, "true");
@@ -87,10 +81,11 @@ public class JpaCacheConfiguration {
     // NOTE: Don't use TRANSACTION_COORDINATOR_STRATEGY
 //    props.setProperty(Environment.TRANSACTION_COORDINATOR_STRATEGY, JtaTransactionCoordinatorBuilderImpl.class.getName());
 
+
     return props;
   }
 
-  @Bean(destroyMethod = "close")
+  @Bean
   public DataSource dataSource() {
     HikariConfig config = new HikariConfig();
 
@@ -106,51 +101,29 @@ public class JpaCacheConfiguration {
   }
 
   @Bean
-  public EntityManagerFactory entityManagerFactory() throws IOException {
-    log.info("Create EntityManagerFactory Bean...");
-
-    LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-
-    String[] packagenames = getMappedPackageNames();
-    if (packagenames != null && packagenames.length > 0) {
-      log.debug("Scan JPA entities... packages=[{}]", arrayToCommaDelimitedString(packagenames));
-      factoryBean.setPackagesToScan(packagenames);
-    }
-
-    factoryBean.setJpaProperties(jpaProperties());
+  public SessionFactory sessionFactory() throws IOException {
+    LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
+    factoryBean.setPackagesToScan(getMappedPackageNames());
     factoryBean.setDataSource(dataSource());
-
-    HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
-    adapter.setGenerateDdl(true);
-    factoryBean.setJpaVendorAdapter(adapter);
+    factoryBean.setHibernateProperties(hibernateProperties());
 
     factoryBean.afterPropertiesSet();
-    log.info("Created EntityManagerFactory Bean");
 
     return factoryBean.getObject();
   }
 
   @Bean
-  public PlatformTransactionManager transactionManager() throws IOException {
-    return new JpaTransactionManager(entityManagerFactory());
+  public PlatformTransactionManager transactionManager(SessionFactory sf) throws IOException {
+    return new HibernateTransactionManager(sf);
   }
 
-  /**
-   * Hibernate 에외를 변환하는 {@link HibernateExceptionTranslator} 를 Spring 의 ApplicationContext에 등록합니다.
-   */
-  // NOTE: 이거 꼭 정의해야 합니다.
   @Bean
   public HibernateExceptionTranslator hibernateExceptionTranslator() {
     return new HibernateExceptionTranslator();
   }
 
-  /**
-   * 예외를 변환하는 Processor를 동록합니다.
-   *
-   * @return {@link PersistenceExceptionTranslationPostProcessor} instance.
-   */
   @Bean
-  public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+  public PersistenceExceptionTranslationPostProcessor exceptionTranslator() {
     return new PersistenceExceptionTranslationPostProcessor();
   }
 }

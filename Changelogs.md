@@ -1,8 +1,9 @@
 # Hibernate-Redis Change logs
 
-### 2.1.1
+### 2.2.0
 
 - change build tool from maven to gradle.
+- [new] support hibernate 5.2.x (use org.hibernate.cache.redis.hibernate52.RedisRegionFactory)
 
 ### 2.1.0
 

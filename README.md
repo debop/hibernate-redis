@@ -1,15 +1,17 @@
 hibernate-redis  [![Build Status](https://travis-ci.org/debop/hibernate-redis.png)](https://travis-ci.org/debop/hibernate-redis)
 ===============
 
-[hibernate][1] (4.x, 5.1.x) 2nd level cache provider using redis server 3.x. with [Redisson][2]
+[hibernate][1] (4.x, 5.1.x, 5.2.x) 2nd level cache provider using redis server 3.x. with [Redisson][2] 2.3.x
 
 Reduce cache size by [Redisson][2] SnappyCodec (see [snappy-java][snappy], [Fast-Serialization][fst])
 
 ### Note
 
-hibernate-core 5.2.x based on Java 8, so we are not support hibernate 5.2.x or higer yet.
+hibernate-core 5.2.x based on Java 8, use hibernate-redis 2.2.0 or higher 
 
-see `h-5.2.x` branch 
+Region factory for hibernate 5.2.x is hibernate.redis.cache.hibernate52.SingletonRedisRegionFactory
+
+
 
 ### Setup
 
@@ -21,7 +23,7 @@ add dependency
 <dependency>
     <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis</artifactId>
-    <version>2.1.0</version>
+    <version>2.2.0</version>
 </dependency>
 ```
 
@@ -67,13 +69,13 @@ Redisson support various codec (serializer, compression). you can choose other c
 
 ##### setup hibernate configuration
 
-setup hibernate configuration (Note package name for hibernate 4 / hibernate 5)
+setup hibernate configuration (Note package name for hibernate 4 / hibernate 5 / hibernate52)
 
 ```java
 // Secondary Cache
 props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
 props.put(Environment.USE_QUERY_CACHE, true);
-props.put(Environment.CACHE_REGION_FACTORY, org.hibernate.cache.redis.hibernate5.SingletonRedisRegionFactory.class.getName());
+props.put(Environment.CACHE_REGION_FACTORY, org.hibernate.cache.redis.hibernate52.SingletonRedisRegionFactory.class.getName());
 props.put(Environment.CACHE_REGION_PREFIX, "hibernate");
 
 // optional setting for second level cache statistics

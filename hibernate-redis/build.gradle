@@ -22,6 +22,7 @@ dependencies {
     compile project(':hibernate-redis-client')
     compile project(':hibernate-redis-hibernate4')
     compile project(':hibernate-redis-hibernate5')
+    compile project(':hibernate-redis-hibernate52')
 
     compile "org.redisson:redisson:$redisson_version"
 }
@@ -36,6 +37,7 @@ shadowJar {
         include project(':hibernate-redis-client')
         include project(':hibernate-redis-hibernate4')
         include project(':hibernate-redis-hibernate5')
+        include project(':hibernate-redis-hibernate52')
     }
 }
 
