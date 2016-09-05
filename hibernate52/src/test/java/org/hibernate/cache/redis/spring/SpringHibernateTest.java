@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.hibernate.cache.redis.spring;
@@ -33,6 +32,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -108,6 +108,7 @@ public class SpringHibernateTest {
   }
 
   @Test
+  @Transactional
   public void simpleEntityCaching() throws Exception {
     sf.getCache().evictEntityRegion(Item.class);
 
@@ -175,6 +176,7 @@ public class SpringHibernateTest {
   }
 
   @Test
+  @Transactional
   public void hqlLoad() throws Exception {
     sf.getCache().evictEntityRegion(Item.class);
     SecondLevelCacheStatistics slcs = getSecondLevelCacheStatistics(Item.class);
@@ -217,6 +219,7 @@ public class SpringHibernateTest {
   }
 
   @Test
+  @Transactional
   public void nonrestrictCaching() throws Exception {
     sf.getCache().evictEntityRegion(Account.class);
     sf.getCache().evictEntityRegion(Person.class);
@@ -320,8 +323,8 @@ public class SpringHibernateTest {
     for (Item item : items) {
       session.delete(item);
     }
+//    session.flush();
     tx.commit();
-    session.flush();
     session.close();
   }
 }

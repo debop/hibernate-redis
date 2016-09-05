@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.hibernate.cache.redis.spring;
@@ -23,12 +22,13 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cache.redis.hibernate52.SingletonRedisRegionFactory;
 import org.hibernate.cache.redis.jpa.models.Account;
 import org.hibernate.cfg.Environment;
+import org.hibernate.resource.transaction.backend.jta.internal.JtaTransactionCoordinatorBuilderImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.orm.hibernate4.HibernateExceptionTranslator;
-import org.springframework.orm.hibernate4.HibernateTransactionManager;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.orm.hibernate5.HibernateExceptionTranslator;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
@@ -78,8 +78,8 @@ public class HibernateRedisConfiguration {
     props.setProperty(Environment.GENERATE_STATISTICS, "true");
     props.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
 
-    // NOTE: Don't use TRANSACTION_COORDINATOR_STRATEGY
-//    props.setProperty(Environment.TRANSACTION_COORDINATOR_STRATEGY, JtaTransactionCoordinatorBuilderImpl.class.getName());
+    // NOTE: Must use TRANSACTION_COORDINATOR_STRATEGY in Hibernate
+    props.setProperty(Environment.TRANSACTION_COORDINATOR_STRATEGY, JtaTransactionCoordinatorBuilderImpl.class.getName());
 
 
     return props;
