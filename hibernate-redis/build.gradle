@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 apply plugin: 'com.github.johnrengelman.shadow'
@@ -19,19 +18,24 @@ apply plugin: 'com.github.johnrengelman.shadow'
 description = 'hibernate-redis'
 
 dependencies {
+
+    // shadow indicate dependency for merged jar pom
+    shadow "org.redisson:redisson:$redisson_version"
+    shadow "org.slf4j:slf4j-api:$slf4j_version"
+    shadow "ch.qos.logback:logback-classic:$logback_version"
+
     compile project(':hibernate-redis-client')
     compile project(':hibernate-redis-hibernate4')
     compile project(':hibernate-redis-hibernate5')
     compile project(':hibernate-redis-hibernate52')
 
-    compile "org.redisson:redisson:$redisson_version"
 }
 
 shadowJar {
     configurations = [project.configurations.compile]
 
     baseName = 'hibernate-redis'
-    classifier = null
+    classifier = ''
 
     dependencies {
         include project(':hibernate-redis-client')
@@ -39,11 +43,16 @@ shadowJar {
         include project(':hibernate-redis-hibernate5')
         include project(':hibernate-redis-hibernate52')
     }
+
+    mergeServiceFiles()
 }
 
 publishing.publications {
     shadow(MavenPublication) {
+        artifact sourcesJar
         from components.shadow
     }
+
+//    repositories { mavenCentral() }
 }
 
