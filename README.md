@@ -25,7 +25,7 @@ add dependency
 </dependency>
 ```
 
-add repository
+add repository (until added to central Maven)
 ```xml
 <repositories>
     <repository>
