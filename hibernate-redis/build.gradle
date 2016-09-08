@@ -22,7 +22,6 @@ dependencies {
     // shadow indicate dependency for merged jar pom
     shadow "org.redisson:redisson:$redisson_version"
     shadow "org.slf4j:slf4j-api:$slf4j_version"
-    shadow "ch.qos.logback:logback-classic:$logback_version"
 
     compile project(':hibernate-redis-client')
     compile project(':hibernate-redis-hibernate4')
