@@ -23,7 +23,10 @@ dependencies {
     optional("org.hibernate:hibernate-core:$hibernate52_version") {
         exclude(module: 'jboss-logging')
     }
-    optional "org.hibernate:hibernate-entitymanager:$hibernate52_version"
+    optional("org.hibernate:hibernate-entitymanager:$hibernate52_version") {
+        exclude(module: 'jboss-logging')
+    }
+
     testCompile "org.hibernate:hibernate-testing:$hibernate52_version"
 
     testCompile "org.springframework.boot:spring-boot-autoconfigure:$spring_boot_version"
