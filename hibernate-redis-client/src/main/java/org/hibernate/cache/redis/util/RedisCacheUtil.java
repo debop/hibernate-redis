@@ -58,6 +58,7 @@ public final class RedisCacheUtil {
    * @return hibernate-redis configuration
    */
   public static Properties loadCacheProperties(final Properties props) {
+    cacheProperties.putAll(props);
     String cachePropsPath = props.getProperty("hibernate.cache.provider_configuration_file_resource_path",
                                               RESOURCE_URL_PREFIX + "conf/hibernate-redis.properties");
     InputStream is = null;

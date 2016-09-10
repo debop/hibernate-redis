@@ -7,7 +7,7 @@ Reduce cache size by [Redisson][2] SnappyCodec (see [snappy-java][snappy], [Fast
 
 ### Note
 
-hibernate-core 5.2.x based on Java 8, use hibernate-redis 2.2.0 or higher 
+hibernate-core 5.2.x based on Java 8, use hibernate-redis 2.2.0 or higher
 
 Region factory for hibernate 5.2.x is hibernate.redis.cache.hibernate52.SingletonRedisRegionFactory
 
@@ -145,6 +145,27 @@ threads: 0
 codec: !<org.redisson.codec.SnappyCodec> {}
 useLinuxNativeEpoll: false
 eventLoopGroup: null
+```
+
+### Hibernate configuration via Spring [Application property files](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-application-property-files)
+
+In Spring applications, the hibernate- and hibernate-redis configuration represented above can be configured within
+Spring application property files like below.
+
+```ini
+spring.jpa.properties.hibernate.cache.use_second_level_cache=true
+spring.jpa.properties.hibernate.cache.use_query_cache=true
+spring.jpa.properties.hibernate.cache.region.factory_class=org.hibernate.cache.redis.hibernate52.SingletonRedisRegionFactory
+spring.jpa.properties.hibernate.cache.region_prefix=hibernate
+
+spring.jpa.properties.hibernate.cache.use_structured_entries=true
+spring.jpa.properties.hibernate.generate_statistics=true
+
+spring.jpa.properties.redisson-config=classpath:conf/redisson.yaml
+
+spring.jpa.properties.redis.expiryInSeconds.default=120
+spring.jpa.properties.redis.expiryInSeconds.hibernate5.common=0
+spring.jpa.properties.redis.expiryInSeconds.hibernate5.account=1200
 ```
 
 ### Setup hibernate entity to use cache
