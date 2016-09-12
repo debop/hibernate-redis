@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 buildscript {
@@ -29,7 +28,7 @@ buildscript {
 
 allprojects {
     group = 'com.github.debop'
-    version = '2.1.0'
+    version = '2.2.0'
 }
 
 subprojects {
@@ -64,8 +63,8 @@ subprojects {
 
     dependencies {
         compile "org.slf4j:slf4j-api:$slf4j_version"
-        compile "ch.qos.logback:logback-classic:$logback_version"
-        compile "org.projectlombok:lombok:$lombok_version"
+        optional "ch.qos.logback:logback-classic:$logback_version"
+        optional "org.projectlombok:lombok:$lombok_version"
 
         testCompile "junit:junit:$junit_version"
         testCompile "org.assertj:assertj-core:$assertj_core_version"
@@ -76,10 +75,11 @@ subprojects {
         testCompile "mysql:mysql-connector-java:$mysql_connector_java_version"
         testCompile "com.google.guava:guava:$guava_version"
         testCompile "org.springframework:spring-test:$spring_version"
+        testCompile "org.springframework.boot:spring-boot-starter-test:$spring_boot_version"
     }
 }
 
-defaultTasks 'clean', 'shadowJar', 'publishToMavenLocal'
+defaultTasks 'clean', 'build', 'shadowJar', 'publishToMavenLocal'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.0'

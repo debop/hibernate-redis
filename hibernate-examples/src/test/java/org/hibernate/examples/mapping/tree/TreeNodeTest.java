@@ -1,7 +1,24 @@
+/*
+ * Copyright (c) 2016. Sunghyouk Bae <sunghyouk.bae@gmail.com>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.hibernate.examples.mapping.tree;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.examples.AbstractJpaTest;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,9 +45,18 @@ public class TreeNodeTest extends AbstractJpaTest {
   @Autowired
   TreeNodeRepository repository;
 
+  @Before
+  public void setup() {
+    repository.deleteAll();
+  }
+
+  @After
+  public void cleanUp() {
+//    repository.deleteAll();
+  }
+
   @Test
   public void buildTreeTest() {
-
     TreeNode root = new TreeNode();
     root.setTitle("root");
 
@@ -54,6 +80,8 @@ public class TreeNodeTest extends AbstractJpaTest {
 
     repository.saveAndFlush(root);
     em.clear();
+
+    log.debug("root={}", root);
 
     TreeNode node = repository.findOne(child1.getId());
 
@@ -98,9 +126,11 @@ public class TreeNodeTest extends AbstractJpaTest {
     repository.saveAndFlush(root);
     em.clear();
 
+    log.debug("root={}", root);
+
     TreeNode node = repository.findOne(child1.getId());
     repository.delete(node);
-    em.flush();
+    repository.flush();
     em.clear();
 
     List<TreeNode> roots = repository.findRoots();

@@ -11,8 +11,7 @@ services:
 # whitelist
 branches:
   only:
-    - 2.x
-    - master
+    - devel
 
 cache:
   directories:
