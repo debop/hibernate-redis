@@ -111,9 +111,9 @@ public final class RedisCacheUtil {
   }
 
   /**
-   * Get redisson configuration file path (redisson.yaml)
+   * Get Redisson configuration file path (redisson.yaml)
    *
-   * @return redison configuration yaml file path
+   * @return Redisson configuration yaml file path
    */
   public static String getRedissonConfigPath() {
     return cacheProperties.getProperty(REDISSON_CONFIG, DEFAULT_REDISSON_CONFIG_PATH);
