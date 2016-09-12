@@ -28,7 +28,7 @@ buildscript {
 
 allprojects {
     group = 'com.github.debop'
-    version = '2.2.0-SNAPSHOT'
+    version = '2.2.1-SNAPSHOT'
 }
 
 subprojects {
@@ -63,8 +63,8 @@ subprojects {
 
     dependencies {
         compile "org.slf4j:slf4j-api:$slf4j_version"
-        compile "ch.qos.logback:logback-classic:$logback_version"
-        compile "org.projectlombok:lombok:$lombok_version"
+        optional "ch.qos.logback:logback-classic:$logback_version"
+        optional "org.projectlombok:lombok:$lombok_version"
 
         testCompile "junit:junit:$junit_version"
         testCompile "org.assertj:assertj-core:$assertj_core_version"
@@ -79,7 +79,7 @@ subprojects {
     }
 }
 
-defaultTasks 'clean', 'shadowJar', 'publishToMavenLocal'
+defaultTasks 'clean', 'build', 'shadowJar', 'publishToMavenLocal'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.0'
