@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.hibernate.cache.redis.client;
@@ -65,22 +64,24 @@ public final class RedisClientFactory {
   public static RedisClient createRedisClient(@NonNull final String redissonYamlPath) {
     log.trace("load redisson config yaml file. path={}", redissonYamlPath);
 
+    String path = null;
+    URL url = null;
+
     if (redissonYamlPath.startsWith("classpath:")) {
-      String path = redissonYamlPath.substring("classpath:".length());
-      URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+      path = redissonYamlPath.substring("classpath:".length());
+      url = Thread.currentThread().getContextClassLoader().getResource(path);
 
       log.trace("load redisson yaml. path={}, url={}", path, url);
       return createRedisClient(url);
     } else {
-      String path = redissonYamlPath;
+      path = redissonYamlPath;
       if (redissonYamlPath.startsWith("file:")) {
         path = path.substring("file:".length());
       }
-      File file = new File(path);
-      URL url = file.toURI().toURL();
-
-      log.trace("load redisson yaml. path={}, url={}", path, url);
-      return createRedisClient(url);
+      url = new File(path).toURI().toURL();
     }
+    log.trace("load redisson yaml. path={}, url={}", path, url);
+    return createRedisClient(url);
+
   }
 }
