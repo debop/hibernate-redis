@@ -28,7 +28,7 @@ buildscript {
 
 allprojects {
     group = 'com.github.debop'
-    version = '2.2.0-SNAPSHOT'
+    version = '2.2.0'
 }
 
 subprojects {

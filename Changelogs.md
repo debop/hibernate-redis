@@ -2,8 +2,9 @@
 
 ### 2.2.0
 
-- change build tool from maven to gradle.
 - [new] support hibernate 5.2.x (use org.hibernate.cache.redis.hibernate52.RedisRegionFactory)
+- [improve] hibernate configuration via Spring Application property files.
+- [update] change build tool from maven to gradle.
 
 ### 2.1.0
 
