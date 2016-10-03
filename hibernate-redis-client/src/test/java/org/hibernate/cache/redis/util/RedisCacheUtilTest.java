@@ -27,8 +27,8 @@ public class RedisCacheUtilTest {
     assertThat(expire).isEqualTo(RedisCacheUtil.getDefaultExpiryInSeconds());
 
     assertThat(RedisCacheUtil.getExpiryInSeconds("default")).isEqualTo(360);
-    assertThat(RedisCacheUtil.getExpiryInSeconds("hibernate5.common")).isEqualTo(0);
-    assertThat(RedisCacheUtil.getExpiryInSeconds("hibernate5.account")).isEqualTo(1200);
+    assertThat(RedisCacheUtil.getExpiryInSeconds("hibernate.common")).isEqualTo(0);
+    assertThat(RedisCacheUtil.getExpiryInSeconds("hibernate.account")).isEqualTo(1200);
   }
 
   @Test
@@ -37,14 +37,14 @@ public class RedisCacheUtilTest {
     Properties props = new Properties();
     props.setProperty("hibernate.cache.provider_configuration_file_resource_path", "");
     props.setProperty("redis.expiryInSeconds.default", "240");
-    props.setProperty("redis.expiryInSeconds.hibernate5.common", "0");
-    props.setProperty("redis.expiryInSeconds.hibernate5.account", "2400");
+    props.setProperty("redis.expiryInSeconds.hibernate.common", "0");
+    props.setProperty("redis.expiryInSeconds.hibernate.account", "2400");
 
     RedisCacheUtil.loadCacheProperties(props);
 
     assertThat(RedisCacheUtil.getExpiryInSeconds("default")).isEqualTo(240);
-    assertThat(RedisCacheUtil.getExpiryInSeconds("hibernate5.common")).isEqualTo(0);
-    assertThat(RedisCacheUtil.getExpiryInSeconds("hibernate5.account")).isEqualTo(2400);
+    assertThat(RedisCacheUtil.getExpiryInSeconds("hibernate.common")).isEqualTo(0);
+    assertThat(RedisCacheUtil.getExpiryInSeconds("hibernate.account")).isEqualTo(2400);
   }
 
   @Test

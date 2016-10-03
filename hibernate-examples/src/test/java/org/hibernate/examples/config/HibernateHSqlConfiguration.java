@@ -38,7 +38,7 @@ public class HibernateHSqlConfiguration extends AbstractHSqlHibernateConfigurati
     props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
     props.put(Environment.USE_QUERY_CACHE, true);
     props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
-    props.put(Environment.CACHE_REGION_PREFIX, "hibernate5");
+    props.put(Environment.CACHE_REGION_PREFIX, "hibernate");
     props.put(Environment.CACHE_PROVIDER_CONFIG, "conf/hibernate-redis.properties");
 
 

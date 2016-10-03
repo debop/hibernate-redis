@@ -99,12 +99,4 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
       log.warn("Fail to clear region... name=" + getName(), ignored);
     }
   }
-
-  public void evict(Object key) {
-    remove(key);
-  }
-
-  public void evictAll() {
-    clear();
-  }
 }
