@@ -46,6 +46,11 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+    compileJava.options.encoding = 'UTF-8'
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
     task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = 'sources'
         from sourceSets.main.allSource

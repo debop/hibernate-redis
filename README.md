@@ -7,6 +7,8 @@ Reduce cache size by [Redisson][2] SnappyCodec (see [snappy-java][snappy], [Fast
 
 ### Note
 
+From 2.2.1 onwards Hibernate region naming (hibernate.cache.region_prefix) has been simplified to "hibernate".
+
 hibernate-core 5.2.x based on Java 8, use hibernate-redis 2.2.0 or higher
 
 Region factory for hibernate 5.2.x is hibernate.redis.cache.hibernate52.SingletonRedisRegionFactory
@@ -106,11 +108,11 @@ sample for hibernate-redis.properties
  redisson-config=conf/redisson.yaml
 
  # Cache Expiry settings
- # 'hibernate5' is second cache prefix
+ # 'hibernate' is second cache prefix
  # 'common', 'account' is actual region name
  redis.expiryInSeconds.default=120
- redis.expiryInSeconds.hibernate5.common=0
- redis.expiryInSeconds.hibernate5.account=1200
+ redis.expiryInSeconds.hibernate.common=0
+ redis.expiryInSeconds.hibernate.account=1200
 ```
 
 sample for Redisson configuration (see [more samples](https://github.com/mrniko/redisson/wiki/2.-Configuration) )
@@ -164,8 +166,8 @@ spring.jpa.properties.hibernate.generate_statistics=true
 spring.jpa.properties.redisson-config=classpath:conf/redisson.yaml
 
 spring.jpa.properties.redis.expiryInSeconds.default=120
-spring.jpa.properties.redis.expiryInSeconds.hibernate5.common=0
-spring.jpa.properties.redis.expiryInSeconds.hibernate5.account=1200
+spring.jpa.properties.redis.expiryInSeconds.hibernate.common=0
+spring.jpa.properties.redis.expiryInSeconds.hibernate.account=1200
 ```
 
 ### Setup hibernate entity to use cache
