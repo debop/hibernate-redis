@@ -1,6 +1,6 @@
 hibernate-redis  
 ===============
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.debop/hibernate-redis.svg)](https://repo1.maven.org/maven2/io/github/debop/hibernate-redis) [![Build Status](https://travis-ci.org/debop/hibernate-redis.png)](https://travis-ci.org/debop/hibernate-redis)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.debop/hibernate-redis.svg)](https://repo1.maven.org/maven2/com/github/debop/hibernate-redis) [![Build Status](https://travis-ci.org/debop/hibernate-redis.png)](https://travis-ci.org/debop/hibernate-redis)
 
 [hibernate][1] (4.x, 5.1.x, 5.2.x) 2nd level cache provider using redis server 3.x. with [Redisson][2] 2.3.x
 
