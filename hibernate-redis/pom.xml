@@ -18,22 +18,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <!--<parent>-->
-  <!--<artifactId>hibernate-redis-parent</artifactId>-->
-  <!--<groupId>com.github.debop</groupId>-->
-  <!--<version>2.3.0-SNAPSHOT</version>-->
-  <!--</parent>-->
+  <parent>
+    <artifactId>hibernate-redis-parent</artifactId>
+    <groupId>com.github.debop</groupId>
+    <version>2.3.0-SNAPSHOT</version>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>hibernate-redis</artifactId>
   <packaging>jar</packaging>
-  <groupId>com.github.debop</groupId>
-  <version>2.3.0-SNAPSHOT</version>
-
 
   <name>hibernate-redis</name>
   <url>https://github.com/debop/hibernate-redis</url>
-  <description>Hibnernate 2nd cache provider with Redis</description>
+  <description>Hibernate 2nd cache provider with Redis</description>
 
   <properties>
     <hibernate.redis.version>2.3.0-SNAPSHOT</hibernate.redis.version>
@@ -85,6 +82,25 @@
 
   <build>
     <plugins>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.3</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <includeDependencySources>true</includeDependencySources>
+              <dependencySourceIncludes>
+                <dependencySourceInclude>com.github.debop:*</dependencySourceInclude>
+              </dependencySourceIncludes>
+              <excludePackageNames>org.hibernate.examples.*</excludePackageNames>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>

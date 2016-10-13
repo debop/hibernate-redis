@@ -47,10 +47,23 @@
   </modules>
 
   <scm>
-    <connection>scm:git:git@github.com:debop/hibernate-redis.git</connection>
-    <url>scm:git:git@github.com:debop/hibernate-redis.git</url>
-    <developerConnection>scm:git:git@github.com:debop/hibernate-redis.git</developerConnection>
+    <connection>scm:git:ssh://git@github.com:debop/hibernate-redis.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:debop/hibernate-redis.git</developerConnection>
+    <url>https://github.com/debop/hibernate-redis</url>
+    <tag>HEAD</tag>
   </scm>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
   <issueManagement>
     <system>github</system>
     <url>http://github.com/debop/hibernate-redis/issues</url>
@@ -75,7 +88,8 @@
     <developer>
       <id>johnou</id>
       <name>Johno Crawford</name>
-      <email></email>
+      <email>johno@sulake.com</email>
+      <organization>Sulake</organization>
       <roles>
         <role>Developer</role>
       </roles>
@@ -306,17 +320,6 @@
 
   </dependencies>
 
-  <repositories>
-    <repository>
-      <id>jcenter</id>
-      <url>http://jcenter.bintray.com/</url>
-    </repository>
-    <repository>
-      <id>mavenCenter</id>
-      <url>http://repo1.maven.com/maven2</url>
-    </repository>
-  </repositories>
-
   <build>
     <defaultGoal>package</defaultGoal>
 
@@ -345,14 +348,13 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.0.0</version>
-        <configuration>
-          <!--<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>-->
-        </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -384,6 +386,7 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
@@ -391,7 +394,35 @@
         <inherited>false</inherited>
       </plugin>
 
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5</version>
+      </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.4</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
