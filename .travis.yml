@@ -3,7 +3,7 @@ language: java
 jdk:
   - oraclejdk8
 
-script: "./gradlew clean build -x test"
+script: "mvn clean install -DskipTests=true"
 
 services:
   - redis

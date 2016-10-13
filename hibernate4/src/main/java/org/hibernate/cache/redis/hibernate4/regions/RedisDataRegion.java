@@ -56,9 +56,6 @@ public abstract class RedisDataRegion implements Region {
   @Getter
   private final int expiryInSeconds;  // seconds
 
-  @Getter
-  protected boolean regionDeleted = false;
-
   protected RedisDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
                             RedisClient redis,
                             String regionName,
@@ -87,14 +84,6 @@ public abstract class RedisDataRegion implements Region {
   @Override
   public void destroy() throws CacheException {
     // NOTE: No need to delete region in HA mode
-    //    if (regionDeleted)
-//      return;
-//    try {
-//      redis.deleteRegion(regionName);
-//      regionDeleted = true;
-//    } catch (Exception ignored) {
-//      log.warn("Fail to destroy.", ignored);
-//    }
   }
 
   /**
