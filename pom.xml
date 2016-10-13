@@ -47,8 +47,8 @@
   </modules>
 
   <scm>
-    <connection>scm:git:ssh://git@github.com:debop/hibernate-redis.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com:debop/hibernate-redis.git</developerConnection>
+    <connection>scm:git:ssh://git@github.com/debop/hibernate-redis.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/debop/hibernate-redis.git</developerConnection>
     <url>https://github.com/debop/hibernate-redis</url>
     <tag>HEAD</tag>
   </scm>
