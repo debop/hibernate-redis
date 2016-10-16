@@ -19,7 +19,7 @@ package org.hibernate.cache.redis.jpa;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.redis.hibernate52.ConfigurableSingletonRedisRegionFactory;
+import org.hibernate.cache.redis.hibernate52.SingletonRedisRegionFactory;
 import org.hibernate.cache.redis.jpa.models.Account;
 import org.hibernate.cache.redis.jpa.repository.EventRepository;
 import org.hibernate.cfg.Environment;
@@ -77,7 +77,7 @@ public class JpaCacheConfiguration {
     // Secondary Cache
     props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
     props.put(Environment.USE_QUERY_CACHE, true);
-    props.put(Environment.CACHE_REGION_FACTORY, ConfigurableSingletonRedisRegionFactory.class.getName());
+    props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
     props.put(Environment.CACHE_REGION_PREFIX, "hibernate");
     props.put(Environment.CACHE_PROVIDER_CONFIG, "conf/hibernate-redis.properties");
 
