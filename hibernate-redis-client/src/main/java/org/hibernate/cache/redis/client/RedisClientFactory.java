@@ -11,6 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.hibernate.cache.redis.client;
@@ -37,6 +38,20 @@ public final class RedisClientFactory {
 
   private RedisClientFactory() {}
 
+  public static RedisClient createRedisClient(@NonNull final Config config) {
+    try {
+      if (config.getCodec() == null) {
+        config.setCodec(new SnappyCodec());
+      }
+      log.debug("Set Redisson Codec = {}", config.getCodec().getClass().getName());
+      RedissonClient redisson = Redisson.create(config);
+      return new RedisClient(redisson);
+    } catch (Exception e) {
+      log.error("Fail to create RedisClient.", e);
+      throw new RuntimeException(e);
+    }
+  }
+
   /**
    * Create {@link RedisClient} instance by properties
    *
@@ -46,14 +61,7 @@ public final class RedisClientFactory {
   public static RedisClient createRedisClient(@NonNull final URL redissonYamlUrl) {
     try {
       Config config = Config.fromYAML(redissonYamlUrl);
-
-      if (config.getCodec() == null) {
-        config.setCodec(new SnappyCodec());
-      }
-      log.debug("Set Redisson Codec = {}", config.getCodec().getClass().getName());
-
-      RedissonClient redisson = Redisson.create(config);
-      return new RedisClient(redisson);
+      return createRedisClient(config);
     } catch (IOException e) {
       log.error("Error in create RedisClient. redissonYamlUrl={}", redissonYamlUrl, e);
       throw new RuntimeException(e);
@@ -73,13 +81,13 @@ public final class RedisClientFactory {
 
       log.trace("load redisson yaml. path={}, url={}", path, url);
       return createRedisClient(url);
-    } else {
-      path = redissonYamlPath;
-      if (redissonYamlPath.startsWith("file:")) {
-        path = path.substring("file:".length());
-      }
-      url = new File(path).toURI().toURL();
     }
+
+    path = redissonYamlPath;
+    if (redissonYamlPath.startsWith("file:")) {
+      path = path.substring("file:".length());
+    }
+    url = new File(path).toURI().toURL();
     log.trace("load redisson yaml. path={}, url={}", path, url);
     return createRedisClient(url);
 

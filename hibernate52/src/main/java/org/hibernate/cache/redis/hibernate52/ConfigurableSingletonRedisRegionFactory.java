@@ -22,25 +22,30 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.client.RedisClientFactory;
-import org.hibernate.cache.redis.util.RedisCacheUtil;
+import org.hibernate.cache.redis.config.RedissonConfigFactory;
+import org.hibernate.cache.redis.config.SingleRedissonConfigFactory;
 
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Singleton Hibernate 5.2.x or higher 2nd Cache Region Factory using Redis
+ * ConfigurableSingletonRedisRegionFactory
  *
  * @author sunghyouk.bae@gmail.com
- * @since 2015. 8. 28.
  */
 @Slf4j
-public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
+public class ConfigurableSingletonRedisRegionFactory extends SingletonRedisRegionFactory {
 
-  protected final AtomicInteger referenceCount = new AtomicInteger();
-
-  public SingletonRedisRegionFactory(@NonNull Properties props) {
+  public ConfigurableSingletonRedisRegionFactory(@NonNull Properties props) {
     super(props);
-    log.info("create SingletonRedisRegionFactory instance.");
+  }
+
+  @Override
+  @Synchronized
+  protected void setupFromRedissonConfig() {
+    if (redis == null) {
+      RedissonConfigFactory configFactory = new SingleRedissonConfigFactory();
+      redis = RedisClientFactory.createRedisClient(configFactory.create());
+    }
   }
 
   @Override
@@ -52,8 +57,7 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
     this.options = options;
     try {
       if (redis == null) {
-        RedisCacheUtil.loadCacheProperties(properties);
-        this.redis = RedisClientFactory.createRedisClient(RedisCacheUtil.getRedissonConfigPath());
+        setupFromRedissonConfig();
       }
       if (redis != null)
         referenceCount.incrementAndGet();
@@ -62,24 +66,4 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
       throw new CacheException(e);
     }
   }
-
-  @Override
-  @Synchronized
-  public void stop() {
-    if (this.redis == null)
-      return;
-
-    if (referenceCount.decrementAndGet() == 0) {
-      log.debug("RedisRegionFactory is stopping...");
-      try {
-        redis.shutdown();
-        redis = null;
-        log.info("RedisRegionFactory is stopped.");
-      } catch (Exception ignored) {
-        log.error("Fail to stop SingletonRedisRegionFactory.", ignored);
-      }
-    }
-  }
-
-  private static final long serialVersionUID = 1858232236910287076L;
 }
