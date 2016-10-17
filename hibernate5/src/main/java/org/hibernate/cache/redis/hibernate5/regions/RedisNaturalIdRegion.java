@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.client.RedisClient;
+import org.hibernate.cache.redis.hibernate5.ConfigurableRedisRegionFactory;
 import org.hibernate.cache.redis.hibernate5.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.spi.CacheDataDescription;
 import org.hibernate.cache.spi.NaturalIdRegion;
@@ -38,12 +39,12 @@ import java.util.Properties;
 public class RedisNaturalIdRegion extends RedisTransactionalDataRegion implements NaturalIdRegion {
 
   public RedisNaturalIdRegion(RedisAccessStrategyFactory accessStrategyFactory,
-                              RedisClient redis,
+                              RedisClient redis, ConfigurableRedisRegionFactory configurableRedisRegionFactory,
                               String regionName,
                               SessionFactoryOptions options,
                               CacheDataDescription metadata,
                               Properties props) {
-    super(accessStrategyFactory, redis, regionName, options, metadata, props);
+    super(accessStrategyFactory, redis, configurableRedisRegionFactory, regionName, options, metadata, props);
   }
 
   @Override
