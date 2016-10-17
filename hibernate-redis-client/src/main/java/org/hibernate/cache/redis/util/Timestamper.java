@@ -21,9 +21,7 @@ package org.hibernate.cache.redis.util;
  * Not valid across multiple VMs. Yet, the identifier is based on time, so that the drifting
  * across a cluster should not ever be large...
  */
-public final class Timestamper {
-
-    private Timestamper() { }
+public final class Timestamper implements CacheTimestamper {
 
     /**
      * Returns an increasing unique value based on the System.currentTimeMillis()
@@ -31,7 +29,8 @@ public final class Timestamper {
      *
      * @return uniquely & increasing value
      */
-    public static long next() {
+    @Override
+    public long next() {
       return System.nanoTime();
     }
 }

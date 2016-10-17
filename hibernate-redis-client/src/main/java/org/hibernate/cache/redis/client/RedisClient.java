@@ -24,9 +24,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.redis.util.RedisCacheUtil;
 import org.redisson.Redisson;
 import org.redisson.api.RMapCache;
+import org.redisson.api.RScript;
 import org.redisson.api.RedissonClient;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -40,8 +42,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class RedisClient {
-
-  public static final String DEFAULT_REGION_NAME = "hibernate";
 
   @Getter
   private final RedissonClient redisson;
@@ -66,6 +66,13 @@ public class RedisClient {
     if (expiryInSeconds >= 0) {
       this.expiryInSeconds = expiryInSeconds;
     }
+  }
+
+  public long nextTimestamp(final List<Object> keys) {
+    return redisson.getScript().eval(RScript.Mode.READ_WRITE,
+            "redis.call('setnx', KEYS[1], ARGV[1]); " +
+            "return redis.call('incr', KEYS[1]);",
+            RScript.ReturnType.INTEGER, keys, System.currentTimeMillis());
   }
 
   public long dbSize() {
