@@ -17,7 +17,6 @@
 package org.hibernate.cache.redis.hibernate52;
 
 import lombok.NonNull;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.cache.CacheException;
@@ -56,11 +55,6 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory {
 
   protected AbstractRedisRegionFactory(@NonNull Properties props) {
     this.props = props;
-  }
-
-  @Synchronized
-  protected void setupFromRedissonConfig() {
-    // Implement programmatic configuration
   }
 
   public boolean isMinimalPutsEnabledByDefault() {

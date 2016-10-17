@@ -21,6 +21,7 @@ import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.cache.CacheException;
+import org.hibernate.cache.redis.client.RedisClient;
 import org.hibernate.cache.redis.client.RedisClientFactory;
 import org.hibernate.cache.redis.util.RedisCacheUtil;
 
@@ -36,24 +37,29 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
 
-  protected final AtomicInteger referenceCount = new AtomicInteger();
+  private final AtomicInteger referenceCount = new AtomicInteger();
 
   public SingletonRedisRegionFactory(@NonNull Properties props) {
     super(props);
     log.info("create SingletonRedisRegionFactory instance.");
   }
 
+  @Synchronized
+  protected RedisClient createRedisClient() {
+    return RedisClientFactory.createRedisClient(RedisCacheUtil.getRedissonConfigPath());
+  }
+
   @Override
   @Synchronized
   public void start(SessionFactoryOptions options, Properties properties) throws CacheException {
-    log.debug("SingletonRedisRegionFactory is strting... optinos={}, properties={}",
+    log.debug("SingletonRedisRegionFactory is starting... options={}, properties={}",
               options, properties);
 
     this.options = options;
     try {
       if (redis == null) {
         RedisCacheUtil.loadCacheProperties(properties);
-        this.redis = RedisClientFactory.createRedisClient(RedisCacheUtil.getRedissonConfigPath());
+        this.redis = createRedisClient();
       }
       if (redis != null)
         referenceCount.incrementAndGet();
