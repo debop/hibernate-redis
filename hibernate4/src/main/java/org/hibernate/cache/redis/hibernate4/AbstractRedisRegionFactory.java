@@ -20,12 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.client.RedisClient;
 import org.hibernate.cache.redis.client.RedisClientFactory;
-import org.hibernate.cache.redis.client.RedisTimestamper;
 import org.hibernate.cache.redis.hibernate4.regions.*;
 import org.hibernate.cache.redis.hibernate4.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.redis.hibernate4.strategy.RedisAccessStrategyFactoryImpl;
 import org.hibernate.cache.redis.util.CacheTimestamper;
 import org.hibernate.cache.redis.util.RedisCacheUtil;
+import org.hibernate.cache.redis.util.Timestamper;
 import org.hibernate.cache.spi.*;
 import org.hibernate.cache.spi.access.AccessType;
 import org.hibernate.cfg.Settings;
@@ -62,7 +62,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory, Configurable
 
   @Override
   public CacheTimestamper createCacheTimestamper(RedisClient redisClient, String cacheKey) {
-    return new RedisTimestamper(redisClient, cacheKey);
+    return new Timestamper();
   }
 
   public RedisClient createRedisClient() {

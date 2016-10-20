@@ -22,12 +22,12 @@ import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.client.RedisClient;
 import org.hibernate.cache.redis.client.RedisClientFactory;
-import org.hibernate.cache.redis.client.RedisTimestamper;
 import org.hibernate.cache.redis.hibernate52.regions.*;
 import org.hibernate.cache.redis.hibernate52.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.redis.hibernate52.strategy.RedisAccessStrategyFactoryImpl;
 import org.hibernate.cache.redis.util.CacheTimestamper;
 import org.hibernate.cache.redis.util.RedisCacheUtil;
+import org.hibernate.cache.redis.util.Timestamper;
 import org.hibernate.cache.spi.*;
 import org.hibernate.cache.spi.access.AccessType;
 
@@ -58,7 +58,7 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory, Confi
 
   @Override
   public CacheTimestamper createCacheTimestamper(RedisClient redisClient, String cacheKey) {
-    return new RedisTimestamper(redisClient, cacheKey);
+    return new Timestamper();
   }
 
   public RedisClient createRedisClient() {

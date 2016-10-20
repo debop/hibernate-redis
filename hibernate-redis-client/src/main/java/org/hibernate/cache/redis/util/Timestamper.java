@@ -16,6 +16,8 @@
 
 package org.hibernate.cache.redis.util;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * Generates increasing identifiers (in a single VM only).
  * Not valid across multiple VMs. Yet, the identifier is based on time, so that the drifting
@@ -23,15 +25,23 @@ package org.hibernate.cache.redis.util;
  */
 public final class Timestamper implements CacheTimestamper {
 
-    /**
-     * Returns an increasing unique value based on the System.currentTimeMillis()
-     * with some additional reserved space for a counter.
-     *
-     * @return uniquely & increasing value
-     */
+    private final AtomicLong VALUE = new AtomicLong();
+    private final int BIN_DIGITS = 12;
+    private final short ONE_MS = 1 << BIN_DIGITS;
+
     @Override
     public long next() {
-      return System.nanoTime();
+        while (true) {
+            long base = System.currentTimeMillis() << BIN_DIGITS;
+            long maxValue = base + ONE_MS - 1;
+
+            for (long current = VALUE.get(), update = Math.max(base, current + 1); update < maxValue;
+                 current = VALUE.get(), update = Math.max(base, current + 1)) {
+                if (VALUE.compareAndSet(current, update)) {
+                    return update;
+                }
+            }
+        }
     }
 }
 

@@ -3,6 +3,7 @@ package org.hibernate.cache.redis.hibernate52;
 import lombok.NonNull;
 import org.hibernate.cache.redis.client.RedisClient;
 import org.hibernate.cache.redis.client.RedisClientFactory;
+import org.hibernate.cache.redis.client.RedisTimestamper;
 import org.hibernate.cache.redis.util.CacheTimestamper;
 import org.hibernate.cache.redis.util.RedisCacheUtil;
 
@@ -24,12 +25,6 @@ public class CustomRedisRegionFactory extends SingletonRedisRegionFactory {
 
     @Override
     public CacheTimestamper createCacheTimestamper(RedisClient redisClient, String cacheKey) {
-        // Generates increasing identifiers (in a single VM only).
-        return new CacheTimestamper() {
-            @Override
-            public long next() {
-                return System.currentTimeMillis();
-            }
-        };
+        return new RedisTimestamper(redisClient, cacheKey);
     }
 }
