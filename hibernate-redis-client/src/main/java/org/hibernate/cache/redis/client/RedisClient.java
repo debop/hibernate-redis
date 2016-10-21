@@ -22,7 +22,6 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.redis.util.RedisCacheUtil;
-import org.redisson.Redisson;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RScript;
 import org.redisson.api.RedissonClient;
@@ -44,15 +43,13 @@ import java.util.concurrent.TimeUnit;
 public class RedisClient {
 
   @Getter
-  private final RedissonClient redisson;
+  private final transient RedissonClient redisson;
 
   @Getter
   @Setter
   private int expiryInSeconds;
 
-  public RedisClient() {
-    this(Redisson.create());
-  }
+  // no default constructor to avoid automatically creating redis client if this object is cloned
 
   public RedisClient(RedissonClient redisson) {
     this(redisson, RedisCacheUtil.DEFAULT_EXPIRY_IN_SECONDS);
