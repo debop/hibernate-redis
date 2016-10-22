@@ -30,12 +30,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 /**
  * RedisClient implemented using Redisson library
  * <p>
  * see https://github.com/mrniko/redisson
+ *
+ * WARNING: no default constructor to avoid automatically creating Redis client.
  *
  * @author debop sunghyouk.bae@gmail.com
  */
@@ -48,8 +52,6 @@ public class RedisClient {
   @Getter
   @Setter
   private int expiryInSeconds;
-
-  // no default constructor to avoid automatically creating redis client if this object is cloned
 
   public RedisClient(RedissonClient redisson) {
     this(redisson, RedisCacheUtil.DEFAULT_EXPIRY_IN_SECONDS);
@@ -116,7 +118,7 @@ public class RedisClient {
     log.trace("set cache item. region={}, key={}, timeout={}, unit={}",
               region, key, timeout, unit);
 
-    RMapCache<Object, Object> cache = redisson.getMapCache(region);
+    RMapCache<Object, Object> cache = getCache(region);
     if (timeout > 0L) {
       cache.fastPut(key, value, timeout, unit);
     } else {
@@ -153,7 +155,17 @@ public class RedisClient {
     redisson.shutdown();
   }
 
+  private final ConcurrentMap<String, RMapCache<Object, Object>> caches = new ConcurrentHashMap<String, RMapCache<Object, Object>>();
+
   private RMapCache<Object, Object> getCache(final String region) {
-    return redisson.getMapCache(region);
+    RMapCache<Object, Object> cache = caches.get(region);
+    if (cache == null) {
+      cache = redisson.getMapCache(region);
+      RMapCache<Object, Object> concurrent = caches.putIfAbsent(region, cache);
+      if (concurrent != null) {
+        cache = concurrent;
+      }
+    }
+    return cache;
   }
 }
