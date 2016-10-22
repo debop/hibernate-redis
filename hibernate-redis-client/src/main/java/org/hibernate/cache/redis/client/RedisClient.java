@@ -22,13 +22,16 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.redis.util.RedisCacheUtil;
-import org.redisson.Redisson;
 import org.redisson.api.RMapCache;
+import org.redisson.api.RScript;
 import org.redisson.api.RedissonClient;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,23 +39,19 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * see https://github.com/mrniko/redisson
  *
+ * WARNING: no default constructor to avoid automatically creating Redis client.
+ *
  * @author debop sunghyouk.bae@gmail.com
  */
 @Slf4j
 public class RedisClient {
 
-  public static final String DEFAULT_REGION_NAME = "hibernate";
-
   @Getter
-  private final RedissonClient redisson;
+  private final transient RedissonClient redisson;
 
   @Getter
   @Setter
   private int expiryInSeconds;
-
-  public RedisClient() {
-    this(Redisson.create());
-  }
 
   public RedisClient(RedissonClient redisson) {
     this(redisson, RedisCacheUtil.DEFAULT_EXPIRY_IN_SECONDS);
@@ -66,6 +65,13 @@ public class RedisClient {
     if (expiryInSeconds >= 0) {
       this.expiryInSeconds = expiryInSeconds;
     }
+  }
+
+  public long nextTimestamp(final List<Object> keys) {
+    return redisson.getScript().eval(RScript.Mode.READ_WRITE,
+            "redis.call('setnx', KEYS[1], ARGV[1]); " +
+            "return redis.call('incr', KEYS[1]);",
+            RScript.ReturnType.INTEGER, keys, System.currentTimeMillis());
   }
 
   public long dbSize() {
@@ -112,7 +118,7 @@ public class RedisClient {
     log.trace("set cache item. region={}, key={}, timeout={}, unit={}",
               region, key, timeout, unit);
 
-    RMapCache<Object, Object> cache = redisson.getMapCache(region);
+    RMapCache<Object, Object> cache = getCache(region);
     if (timeout > 0L) {
       cache.fastPut(key, value, timeout, unit);
     } else {
@@ -149,7 +155,17 @@ public class RedisClient {
     redisson.shutdown();
   }
 
+  private final ConcurrentMap<String, RMapCache<Object, Object>> caches = new ConcurrentHashMap<String, RMapCache<Object, Object>>();
+
   private RMapCache<Object, Object> getCache(final String region) {
-    return redisson.getMapCache(region);
+    RMapCache<Object, Object> cache = caches.get(region);
+    if (cache == null) {
+      cache = redisson.getMapCache(region);
+      RMapCache<Object, Object> concurrent = caches.putIfAbsent(region, cache);
+      if (concurrent != null) {
+        cache = concurrent;
+      }
+    }
+    return cache;
   }
 }

@@ -19,6 +19,7 @@ package org.hibernate.cache.redis.hibernate4.regions;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.client.RedisClient;
+import org.hibernate.cache.redis.hibernate4.ConfigurableRedisRegionFactory;
 import org.hibernate.cache.redis.hibernate4.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.spi.CacheDataDescription;
 import org.hibernate.cache.spi.EntityRegion;
@@ -41,11 +42,11 @@ import java.util.Properties;
 public class RedisEntityRegion extends RedisTransactionalDataRegion implements EntityRegion {
 
   public RedisEntityRegion(RedisAccessStrategyFactory accessStrategyFactory,
-                           RedisClient redis,
+                           RedisClient redis, ConfigurableRedisRegionFactory configurableRedisRegionFactory,
                            String regionName,
                            Settings settings,
                            CacheDataDescription metadata, Properties props) {
-    super(accessStrategyFactory, redis, regionName, settings, metadata, props);
+    super(accessStrategyFactory, redis, configurableRedisRegionFactory, regionName, settings, metadata, props);
   }
 
   @Override

@@ -1,5 +1,6 @@
-hibernate-redis  [![Build Status](https://travis-ci.org/debop/hibernate-redis.png)](https://travis-ci.org/debop/hibernate-redis)
+hibernate-redis  
 ===============
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.debop/hibernate-redis.svg)](https://repo1.maven.org/maven2/com/github/debop/hibernate-redis) [![Build Status](https://travis-ci.org/debop/hibernate-redis.png)](https://travis-ci.org/debop/hibernate-redis)
 
 [hibernate][1] (4.x, 5.1.x, 5.2.x) 2nd level cache provider using redis server 3.x. with [Redisson][2] 2.3.x
 
@@ -7,13 +8,13 @@ Reduce cache size by [Redisson][2] SnappyCodec (see [snappy-java][snappy], [Fast
 
 ### Note
 
+Redisson 2.5.0 has a known issue with ElasticacheServers config see https://github.com/redisson/redisson/pull/672 .
+
 From 2.2.1 onwards Hibernate region naming (hibernate.cache.region_prefix) has been simplified to "hibernate".
 
 hibernate-core 5.2.x based on Java 8, use hibernate-redis 2.2.0 or higher
 
 Region factory for hibernate 5.2.x is hibernate.redis.cache.hibernate52.SingletonRedisRegionFactory
-
-
 
 ### Setup
 
@@ -25,30 +26,11 @@ add dependency
 <dependency>
     <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis</artifactId>
-    <version>2.2.0</version>
+    <version>2.3.0</version>
 </dependency>
 ```
 
-add repository (until added to central Maven)
-```xml
-<repositories>
-    <repository>
-        <id>jcenter</id>
-        <url>http://jcenter.bintray.com</url>
-    </repository>
-</repositories>
-```
-or
-```xml
-<repositories>
-    <repository>
-        <id>debop-releases-bintray</id>
-        <url>http://dl.bintray.com/debop/maven</url>
-    </repository>
-</repositories>
-```
-
-optional dependencies.
+Optional dependencies.
 Redisson support various codec (serializer, compression). you can choose other codec. see Redisson Help.
 
 ```xml

@@ -17,6 +17,7 @@
 package org.hibernate.cache.redis.hibernate4.regions;
 
 import org.hibernate.cache.redis.client.RedisClient;
+import org.hibernate.cache.redis.hibernate4.ConfigurableRedisRegionFactory;
 import org.hibernate.cache.redis.hibernate4.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.spi.QueryResultsRegion;
 
@@ -31,9 +32,9 @@ import java.util.Properties;
 public class RedisQueryResultsRegion extends RedisGeneralDataRegion implements QueryResultsRegion {
 
   public RedisQueryResultsRegion(RedisAccessStrategyFactory accessStrategyFactory,
-                                 RedisClient redis,
+                                 RedisClient redis, ConfigurableRedisRegionFactory configurableRedisRegionFactory,
                                  String regionName,
                                  Properties props) {
-    super(accessStrategyFactory, redis, regionName, props);
+    super(accessStrategyFactory, redis, configurableRedisRegionFactory, regionName, props);
   }
 }

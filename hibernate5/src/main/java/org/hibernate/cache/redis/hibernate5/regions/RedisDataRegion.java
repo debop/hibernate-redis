@@ -20,9 +20,10 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.client.RedisClient;
+import org.hibernate.cache.redis.hibernate5.ConfigurableRedisRegionFactory;
 import org.hibernate.cache.redis.hibernate5.strategy.RedisAccessStrategyFactory;
+import org.hibernate.cache.redis.util.CacheTimestamper;
 import org.hibernate.cache.redis.util.RedisCacheUtil;
-import org.hibernate.cache.redis.util.Timestamper;
 import org.hibernate.cache.spi.Region;
 
 import java.util.Map;
@@ -51,16 +52,19 @@ public abstract class RedisDataRegion implements Region {
   @Getter
   protected final RedisClient redis;
 
+  private final CacheTimestamper cacheTimestamper;
+
   @Getter
   private final int expiryInSeconds;  // seconds
 
   public RedisDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
-                         RedisClient redis,
+                         RedisClient redis, ConfigurableRedisRegionFactory configurableRedisRegionFactory,
                          String regionName,
                          Properties props) {
     this.accessStrategyFactory = accessStrategyFactory;
     this.redis = redis;
     this.regionName = regionName;
+    this.cacheTimestamper = configurableRedisRegionFactory.createCacheTimestamper(redis, regionName);
 
     this.expiryInSeconds = RedisCacheUtil.getExpiryInSeconds(this.regionName);
     log.debug("redis region={}, expiryInSeconds={}", regionName, expiryInSeconds);
@@ -139,7 +143,7 @@ public abstract class RedisDataRegion implements Region {
 
   @Override
   public long nextTimestamp() {
-    return Timestamper.next();
+    return cacheTimestamper.next();
   }
 
   @Override

@@ -18,7 +18,6 @@ package org.hibernate.cache.redis.hibernate4;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
-import org.hibernate.cache.redis.client.RedisClientFactory;
 import org.hibernate.cache.redis.util.RedisCacheUtil;
 import org.hibernate.cfg.Settings;
 
@@ -44,7 +43,8 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
     try {
       if (redis == null) {
         RedisCacheUtil.loadCacheProperties(properties);
-        this.redis = RedisClientFactory.createRedisClient(RedisCacheUtil.getRedissonConfigPath());
+        this.redis = createRedisClient();
+        this.cacheTimestamper = createCacheTimestamper(redis, RedisRegionFactory.class.getName());
       }
       log.info("RedisRegionFactory is started");
     } catch (Exception e) {
@@ -61,6 +61,7 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
     try {
       redis.shutdown();
       redis = null;
+      cacheTimestamper = null;
       log.info("RedisRegionFactory is stopped.");
     } catch (Exception e) {
       log.error("Fail to stop RedisRegionFactory.", e);
