@@ -8,6 +8,8 @@ Reduce cache size by [Redisson][2] SnappyCodec (see [snappy-java][snappy], [Fast
 
 ### Note
 
+Redisson 2.5.0 has a known issue with ElasticacheServers config see https://github.com/redisson/redisson/pull/672 .
+
 From 2.2.1 onwards Hibernate region naming (hibernate.cache.region_prefix) has been simplified to "hibernate".
 
 hibernate-core 5.2.x based on Java 8, use hibernate-redis 2.2.0 or higher
