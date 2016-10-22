@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{ISO8601} %-5p [%t] (%c) %m %x%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+
+        <Logger name="org.hibernate" level="WARN"/>
+        <Logger name="org.springframework" level="WARN"/>
+
+        <Logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" level="INFO"/>
+
+        <!-- statement.getWarnings() is expensive, set to ERROR in production -->
+        <Logger name="org.hibernate.engine.jdbc.spi.SqlExceptionHelper" level="WARN"/>
+    </Loggers>
+</Configuration>
