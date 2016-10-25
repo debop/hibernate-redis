@@ -39,10 +39,10 @@ public class PersistenceContext {
         config.setMaximumPoolSize(databaseConfig.getMaximumPoolSize());
         config.setIdleTimeout(TimeUnit.SECONDS.toMillis(databaseConfig.getIdleTimeout()));
         config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(databaseConfig.getConnectionTimeout()));
-        config.setDriverClassName(databaseConfig.getGameDriver());
-        config.setJdbcUrl(databaseConfig.getGameUrl());
-        config.addDataSourceProperty("user", databaseConfig.getGameUser());
-        config.addDataSourceProperty("password", databaseConfig.getGamePassword());
+        config.setDriverClassName(databaseConfig.getDriver());
+        config.setJdbcUrl(databaseConfig.getUrl());
+        config.addDataSourceProperty("user", databaseConfig.getUrl());
+        config.addDataSourceProperty("password", databaseConfig.getPassword());
         config.addDataSourceProperty("cachePrepStmts", true);
         config.addDataSourceProperty("prepStmtCacheSize", 250);
         config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);

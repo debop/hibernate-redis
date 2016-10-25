@@ -13,17 +13,17 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 @PropertySource("classpath:db.properties")
 public class DatabaseConfig {
 
-    @Value("${db.game.url}")
-    private String gameUrl;
+    @Value("${db.url}")
+    private String url;
 
-    @Value("${db.game.driver}")
-    private String gameDriver;
+    @Value("${db.driver}")
+    private String driver;
 
-    @Value("${db.game.user}")
-    private String gameUser;
+    @Value("${db.user}")
+    private String user;
 
-    @Value("${db.game.password}")
-    private String gamePassword;
+    @Value("${db.password}")
+    private String password;
 
     /**
      * "For maximum performance and responsiveness to spike demands, we recommend not setting this value and instead
@@ -31,32 +31,32 @@ public class DatabaseConfig {
      *
      * @see <a href="https://github.com/brettwooldridge/HikariCP/wiki/Configuration">https://github.com/brettwooldridge/HikariCP/wiki/Configuration</a>
      */
-    @Value("${db.game.minimumIdle:0}")
+    @Value("${db.minimumIdle:0}")
     private int minimumIdle;
 
-    @Value("${db.game.maximumPoolSize:20}")
+    @Value("${db.maximumPoolSize:20}")
     private int maximumPoolSize;
 
-    @Value("${db.game.idleTimeout:45}")
+    @Value("${db.idleTimeout:45}")
     private int idleTimeout;
 
-    @Value("${db.game.connectionTimeout:12}")
+    @Value("${db.connectionTimeout:12}")
     private int connectionTimeout;
 
-    public String getGameUrl() {
-        return gameUrl;
+    public String getUrl() {
+        return url;
     }
 
-    public String getGameDriver() {
-        return gameDriver;
+    public String getDriver() {
+        return driver;
     }
 
-    public String getGameUser() {
-        return gameUser;
+    public String getUser() {
+        return user;
     }
 
-    public String getGamePassword() {
-        return gamePassword;
+    public String getPassword() {
+        return password;
     }
 
     public int getMinimumIdle() {

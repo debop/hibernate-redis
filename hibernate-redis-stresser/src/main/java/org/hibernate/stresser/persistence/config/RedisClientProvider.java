@@ -30,8 +30,6 @@ public class RedisClientProvider {
         clusterConfig.setScanInterval(2000);
         clusterConfig.addNodeAddress(StringUtils.tokenizeToStringArray(redisNodes, ",", true, true));
         config.setCodec(new SnappyCodec());
-        //config.setThreads(4);
-        //config.setNettyThreads(4);
         redisClient = Redisson.create(config);
     }
 

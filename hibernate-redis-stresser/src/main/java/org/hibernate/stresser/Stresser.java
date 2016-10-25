@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * WARNING: Running this application will run destructive commands on the database it connects to.
+ * WARNING: Running this application will execute destructive commands on the database it connects to.
  *
  * @author Johno Crawford (johno@sulake.com)
  */
