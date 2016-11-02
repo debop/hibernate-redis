@@ -8,8 +8,6 @@ Reduce cache size by [Redisson][2] SnappyCodec (see [snappy-java][snappy], [Fast
 
 ### Note
 
-Redisson 2.5.0 has a known issue with ElasticacheServers config see https://github.com/redisson/redisson/pull/672 .
-
 From 2.2.1 onwards Hibernate region naming (hibernate.cache.region_prefix) has been simplified to "hibernate".
 
 hibernate-core 5.2.x based on Java 8, use hibernate-redis 2.2.0 or higher
@@ -26,7 +24,7 @@ add dependency
 <dependency>
     <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis</artifactId>
-    <version>2.3.0</version>
+    <version>2.3.2</version>
 </dependency>
 ```
 
@@ -51,9 +49,9 @@ Redisson support various codec (serializer, compression). you can choose other c
 </dependency>
 ```
 
-##### setup hibernate configuration
+##### Setup hibernate configuration
 
-setup hibernate configuration (Note package name for hibernate 4 / hibernate 5 / hibernate52)
+Setup hibernate configuration (Note package name for hibernate 4 / hibernate 5 / hibernate52)
 
 ```java
 // Secondary Cache
@@ -62,20 +60,20 @@ props.put(Environment.USE_QUERY_CACHE, true);
 props.put(Environment.CACHE_REGION_FACTORY, org.hibernate.cache.redis.hibernate52.SingletonRedisRegionFactory.class.getName());
 props.put(Environment.CACHE_REGION_PREFIX, "hibernate");
 
-// optional setting for second level cache statistics
+// Optional setting for second level cache statistics
 props.setProperty(Environment.GENERATE_STATISTICS, "true");
 props.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
 
-// for Hibernate 4
+// Hibernate 4
 props.setProperty(Environment.TRANSACTION_STRATEGY, JdbcTransactionFactory.class.getName());
 
-// configuration for Redis that used by hibernate
+// Configuration for Redis that used by hibernate
 props.put(Environment.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties");
 ```
 
 also same configuration for using Spring Framework or [Spring Data JPA][4]
 
-### redis settings for hibernate-redis
+### Redis settings for hibernate-redis
 
 sample for hibernate-redis.properties
 
