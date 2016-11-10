@@ -6,7 +6,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Date;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -19,6 +18,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Stresser {
 
     private static final int ITERATIONS = 10000;
+    private static final int ENTITIES = 5000;
     private static final int CONCURRENCY = 10;
 
     public static void main(String[] args) throws InterruptedException {
@@ -29,6 +29,8 @@ public class Stresser {
             final RateLimiter limiter = RateLimiter.create(5000); // 5k rps
             final PlayerDao playerDao = context.getBean(PlayerDao.class);
 
+            playerDao.saveAll(ENTITIES);
+
             Thread[] threads = new Thread[CONCURRENCY];
             for (int i = 0; i < CONCURRENCY; i++) {
                 threads[i] = new Thread() {
@@ -37,16 +39,11 @@ public class Stresser {
                         for (int i = 0; i < ITERATIONS; i++) {
                             limiter.acquire();
                             ThreadLocalRandom random = ThreadLocalRandom.current();
-                            int playerId = random.nextInt(10000);
-                            Player player = playerDao.get(playerId);
-                            if (player == null) {
-                                player = new Player();
-                                player.setName("player" + playerId);
-                                playerDao.save(player);
-                            } else if (random.nextDouble() < 0.7) {
-                                player.setUpdateTime(new Date());
-                                player.setCount(i);
-                                playerDao.update(player);
+                            int playerId = random.nextInt(ENTITIES);
+                            if (random.nextDouble() < 0.7) {
+                                playerDao.update(playerId, i);
+                            } else {
+                                playerDao.get(playerId);
                             }
                         }
                     }

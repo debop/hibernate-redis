@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.orm.hibernate4.HibernateExceptionTranslator;
+import org.springframework.orm.hibernate5.HibernateExceptionTranslator;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -41,7 +41,7 @@ public class PersistenceContext {
         config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(databaseConfig.getConnectionTimeout()));
         config.setDriverClassName(databaseConfig.getDriver());
         config.setJdbcUrl(databaseConfig.getUrl());
-        config.addDataSourceProperty("user", databaseConfig.getUrl());
+        config.addDataSourceProperty("user", databaseConfig.getUser());
         config.addDataSourceProperty("password", databaseConfig.getPassword());
         config.addDataSourceProperty("cachePrepStmts", true);
         config.addDataSourceProperty("prepStmtCacheSize", 250);
@@ -74,6 +74,8 @@ public class PersistenceContext {
 
         properties.put(Environment.USE_SECOND_LEVEL_CACHE, true);
         properties.put(Environment.USE_QUERY_CACHE, true);
+        properties.put(Environment.USE_MINIMAL_PUTS, true);
+        properties.put(Environment.STATEMENT_BATCH_SIZE, 200);
 
         // Configure second level cache.
         properties.put(Environment.CACHE_REGION_FACTORY, RedisRegionFactory.class.getName());

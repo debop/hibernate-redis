@@ -13,7 +13,7 @@
         <Logger name="org.hibernate" level="WARN"/>
         <Logger name="org.springframework" level="WARN"/>
 
-        <Logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" level="INFO"/>
+        <Logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" level="WARN"/>
 
         <!-- statement.getWarnings() is expensive, set to ERROR in production -->
         <Logger name="org.hibernate.engine.jdbc.spi.SqlExceptionHelper" level="WARN"/>
