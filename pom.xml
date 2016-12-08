@@ -20,7 +20,7 @@
 
   <groupId>com.github.debop</groupId>
   <artifactId>hibernate-redis-parent</artifactId>
-  <version>2.3.3-SNAPSHOT</version>
+  <version>2.3.3-INTERNAL-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>hibernate-redis</name>
@@ -46,21 +46,23 @@
   </modules>
 
   <scm>
-    <connection>scm:git:ssh://git@github.com/debop/hibernate-redis.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/debop/hibernate-redis.git</developerConnection>
-    <url>https://github.com/debop/hibernate-redis</url>
+    <url>https://github.com/jontejj/hibernate-redis</url>
+    <connection>scm:git:git://github.com/jontejj/hibernate-redis.git</connection>
+    <developerConnection>scm:git:git@github.com:jontejj/hibernate-redis.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
   <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
     <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <id>deployment</id>
+      <name>Internal Releases</name>
+      <url>http://10.98.32.25:8081/nexus/content/repositories/releases/</url>
     </repository>
+    <snapshotRepository>
+      <id>deployment</id>
+      <name>Internal Releases</name>
+      <url>http://10.98.32.25:8081/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <issueManagement>
@@ -122,7 +124,8 @@
       <dependency>
         <groupId>org.redisson</groupId>
         <artifactId>redisson</artifactId>
-        <version>2.5.1</version>
+        <version>2.7.0</version>
+        <classifier>pro</classifier>
       </dependency>
 
       <dependency>
@@ -244,6 +247,12 @@
   </dependencyManagement>
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.redisson</groupId>
+      <artifactId>redisson</artifactId>
+      <classifier>pro</classifier>
+    </dependency>
 
     <!-- Logging -->
     <dependency>
@@ -394,8 +403,33 @@
         <artifactId>maven-release-plugin</artifactId>
         <version>2.5</version>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.19.1</version>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>redisson.pro.key</name>
+              <value>${redisson.pro.key}</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
     </plugins>
+
   </build>
+
+  <repositories>
+    <repository>
+      <id>redisson-repo</id>
+      <url>http://redisson.pro/repo/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <profiles>
     <profile>

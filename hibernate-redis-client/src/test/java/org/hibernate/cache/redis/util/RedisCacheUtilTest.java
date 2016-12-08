@@ -22,13 +22,6 @@ public class RedisCacheUtilTest {
 
     RedisCacheUtil.loadCacheProperties(props);
 
-    int expire = RedisCacheUtil.getExpiryInSeconds("xx");
-    log.debug("no defined region's expiry in seconds={}", expire);
-    assertThat(expire).isEqualTo(RedisCacheUtil.getDefaultExpiryInSeconds());
-
-    assertThat(RedisCacheUtil.getExpiryInSeconds("default")).isEqualTo(360);
-    assertThat(RedisCacheUtil.getExpiryInSeconds("hibernate.common")).isEqualTo(0);
-    assertThat(RedisCacheUtil.getExpiryInSeconds("hibernate.account")).isEqualTo(1200);
   }
 
   @Test
@@ -42,9 +35,6 @@ public class RedisCacheUtilTest {
 
     RedisCacheUtil.loadCacheProperties(props);
 
-    assertThat(RedisCacheUtil.getExpiryInSeconds("default")).isEqualTo(240);
-    assertThat(RedisCacheUtil.getExpiryInSeconds("hibernate.common")).isEqualTo(0);
-    assertThat(RedisCacheUtil.getExpiryInSeconds("hibernate.account")).isEqualTo(2400);
   }
 
   @Test

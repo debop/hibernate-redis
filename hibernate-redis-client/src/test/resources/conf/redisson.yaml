@@ -1,29 +1,32 @@
 # redisson configuration for redis servers
 # see : https://github.com/mrniko/redisson/wiki/2.-Configuration
 
-singleServerConfig:
+clusterServersConfig:
   idleConnectionTimeout: 10000
   pingTimeout: 1000
-  connectTimeout: 1000
-  timeout: 1000
-  retryAttempts: 1
-  retryInterval: 1000
+  connectTimeout: 10000
+  timeout: 3000
+  retryAttempts: 3
+  retryInterval: 1500
   reconnectionTimeout: 3000
-  failedAttempts: 1
+  failedAttempts: 3
   password: null
   subscriptionsPerConnection: 5
   clientName: null
-  address:
+  loadBalancer: !<org.redisson.connection.balancer.RoundRobinLoadBalancer> {}
+  slaveSubscriptionConnectionMinimumIdleSize: 1
+  slaveSubscriptionConnectionPoolSize: 50
+  slaveConnectionMinimumIdleSize: 5
+  slaveConnectionPoolSize: 250
+  masterConnectionMinimumIdleSize: 5
+  masterConnectionPoolSize: 250
+  readMode: "SLAVE"
+  nodeAddresses:
   - "//127.0.0.1:6379"
-  subscriptionConnectionMinimumIdleSize: 1
-  subscriptionConnectionPoolSize: 25
-  connectionMinimumIdleSize: 5
-  connectionPoolSize: 100
-  database: 0
-  dnsMonitoring: false
-  dnsMonitoringInterval: 5000
+  - "//127.0.0.1:6381"
+  - "//127.0.0.1:6382"
+  scanInterval: 1000
 threads: 0
-# Codec
+nettyThreads: 0
 codec: !<org.redisson.codec.SnappyCodec> {}
 useLinuxNativeEpoll: false
-eventLoopGroup: null
