@@ -38,3 +38,4 @@ generatedTest
 !maven-wrapper.properties
 /hibernate-redis/dependency-reduced-pom.xml
 **/pom.xml.versionsBackup
+release.properties
