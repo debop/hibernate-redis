@@ -20,7 +20,7 @@
 
   <groupId>com.github.debop</groupId>
   <artifactId>hibernate-redis-parent</artifactId>
-  <version>2.3.3-INTERNAL-SNAPSHOT</version>
+  <version>2.3.4-INTERNAL-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>hibernate-redis</name>

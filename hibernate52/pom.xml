@@ -19,7 +19,11 @@
   <parent>
     <artifactId>hibernate-redis-parent</artifactId>
     <groupId>com.github.debop</groupId>
+<<<<<<< 980006da4433b1e30f231e9b2e1f4d0757eb07d0
     <version>2.3.3-INTERNAL-SNAPSHOT</version>
+=======
+    <version>2.3.4-INTERNAL-SNAPSHOT</version>
+>>>>>>> Changed from redisson to redisson PRO because of CROSSSLOT issues when deleting cache entries
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
