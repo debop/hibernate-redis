@@ -54,9 +54,6 @@ public abstract class RedisDataRegion implements Region {
 
   private final CacheTimestamper cacheTimestamper;
 
-  @Getter
-  private final int expiryInSeconds;  // seconds
-
   public RedisDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
                          RedisClient redis, ConfigurableRedisRegionFactory configurableRedisRegionFactory,
                          String regionName,
@@ -66,8 +63,7 @@ public abstract class RedisDataRegion implements Region {
     this.regionName = regionName;
     this.cacheTimestamper = configurableRedisRegionFactory.createCacheTimestamper(redis, regionName);
 
-    this.expiryInSeconds = RedisCacheUtil.getExpiryInSeconds(this.regionName);
-    log.debug("redis region={}, expiryInSeconds={}", regionName, expiryInSeconds);
+    log.debug("redis region={}", regionName);
   }
 
   /**

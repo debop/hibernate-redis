@@ -79,7 +79,7 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
 
   public void put(Object key, Object value) {
     try {
-      redis.set(getName(), key, value, getExpiryInSeconds());
+      redis.set(getName(), key, value);
     } catch (Exception ignored) {
       log.warn("Fail to put cache item... key=" + key, ignored);
     }
