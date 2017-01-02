@@ -1,8 +1,5 @@
 hibernate-redis  
 ===============
-
-(About this fork): Created because hibernate-redis has some problems with removing cache entries when configured with a cluster (CROSSLOT issues). So this fork uses redisson PRO and uses the built in "cache-like" features of redis. Configured with "maxmemory 1GB" and "maxmemory-policy allkeys-lru" in the redis.conf. The caveat of this is that it's impossible to configure TTL for cache regions, the last used entry will be flushed when redis memory gets full. As redisson PRO costs, this fork releases against an internal maven server (nexus). To release use: mvn -Darguments=-Dredisson.pro.key="key_from_redisson_pro_email" release:prepare release:perform.
-
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.debop/hibernate-redis.svg)](https://repo1.maven.org/maven2/com/github/debop/hibernate-redis) [![Build Status](https://travis-ci.org/debop/hibernate-redis.png)](https://travis-ci.org/debop/hibernate-redis)
 
 [hibernate][1] (4.x, 5.1.x, 5.2.x) 2nd level cache provider using redis server 3.x. with [Redisson][2] 2.3.x
@@ -89,6 +86,13 @@ sample for hibernate-redis.properties
 
  # Redisson configuration file
  redisson-config=conf/redisson.yaml
+
+ # Cache Expiry settings
+ # 'hibernate' is second cache prefix
+ # 'common', 'account' is actual region name
+ redis.expiryInSeconds.default=120
+ redis.expiryInSeconds.hibernate.common=0
+ redis.expiryInSeconds.hibernate.account=1200
 ```
 
 sample for Redisson configuration (see [more samples](https://github.com/mrniko/redisson/wiki/2.-Configuration) )
@@ -97,35 +101,32 @@ sample for Redisson configuration (see [more samples](https://github.com/mrniko/
 # redisson configuration for redis servers
 # see : https://github.com/mrniko/redisson/wiki/2.-Configuration
 
-clusterServersConfig:
+singleServerConfig:
   idleConnectionTimeout: 10000
   pingTimeout: 1000
-  connectTimeout: 10000
-  timeout: 3000
-  retryAttempts: 3
-  retryInterval: 1500
+  connectTimeout: 1000
+  timeout: 1000
+  retryAttempts: 1
+  retryInterval: 1000
   reconnectionTimeout: 3000
-  failedAttempts: 3
+  failedAttempts: 1
   password: null
   subscriptionsPerConnection: 5
   clientName: null
-  loadBalancer: !<org.redisson.connection.balancer.RoundRobinLoadBalancer> {}
-  slaveSubscriptionConnectionMinimumIdleSize: 1
-  slaveSubscriptionConnectionPoolSize: 50
-  slaveConnectionMinimumIdleSize: 5
-  slaveConnectionPoolSize: 250
-  masterConnectionMinimumIdleSize: 5
-  masterConnectionPoolSize: 250
-  readMode: "SLAVE"
-  nodeAddresses:
+  address:
   - "//127.0.0.1:6379"
-  - "//127.0.0.1:6381"
-  - "//127.0.0.1:6382"
-  scanInterval: 1000
+  subscriptionConnectionMinimumIdleSize: 1
+  subscriptionConnectionPoolSize: 25
+  connectionMinimumIdleSize: 5
+  connectionPoolSize: 100
+  database: 0
+  dnsMonitoring: false
+  dnsMonitoringInterval: 5000
 threads: 0
-nettyThreads: 0
+# Codec
 codec: !<org.redisson.codec.SnappyCodec> {}
 useLinuxNativeEpoll: false
+eventLoopGroup: null
 ```
 
 ### Hibernate configuration via Spring [Application property files](http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-application-property-files)
@@ -143,6 +144,10 @@ spring.jpa.properties.hibernate.cache.use_structured_entries=true
 spring.jpa.properties.hibernate.generate_statistics=true
 
 spring.jpa.properties.redisson-config=classpath:conf/redisson.yaml
+
+spring.jpa.properties.redis.expiryInSeconds.default=120
+spring.jpa.properties.redis.expiryInSeconds.hibernate.common=0
+spring.jpa.properties.redis.expiryInSeconds.hibernate.account=1200
 ```
 
 ### Setup hibernate entity to use cache

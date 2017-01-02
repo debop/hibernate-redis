@@ -54,7 +54,7 @@ public class RedisGeneralDataRegion extends RedisDataRegion implements GeneralDa
   @Override
   public void put(SharedSessionContractImplementor session, Object key, Object value) throws CacheException {
     try {
-      redis.set(getName(), key, value);
+      redis.set(getName(), key, value, getExpiryInSeconds());
     } catch (Exception ignored) {
       log.warn("Fail to put. key=" + key, ignored);
     }
