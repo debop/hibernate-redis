@@ -22,7 +22,6 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.redis.util.RedisCacheUtil;
-import org.redisson.api.RClusteredMap;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RScript;
 import org.redisson.api.RedissonClient;
@@ -50,11 +49,22 @@ public class RedisClient {
   @Getter
   private final transient RedissonClient redisson;
 
+  @Getter
+  @Setter
+  private int expiryInSeconds;
+
+  public RedisClient(RedissonClient redisson) {
+    this(redisson, RedisCacheUtil.DEFAULT_EXPIRY_IN_SECONDS);
+  }
+
   @SneakyThrows
-  public RedisClient(@NonNull RedissonClient redisson) {
-    log.trace("RedisClient created. config={}", redisson.getConfig().toJSON());
+  public RedisClient(@NonNull RedissonClient redisson, int expiryInSeconds) {
+    log.trace("RedisClient created. config={}, expiryInSeconds={}", redisson.getConfig().toJSON(), expiryInSeconds);
     this.redisson = redisson;
 
+    if (expiryInSeconds >= 0) {
+      this.expiryInSeconds = expiryInSeconds;
+    }
   }
 
   public long nextTimestamp(final List<Object> keys) {
@@ -79,6 +89,10 @@ public class RedisClient {
     return cacheItem;
   }
 
+  public boolean isExpired(final String region, final Object key) {
+    return exists(region, key);
+  }
+
   public Set<Object> keysInRegion(final String region) {
     return getCache(region).keySet();
   }
@@ -93,16 +107,23 @@ public class RedisClient {
   }
 
   public void set(final String region, final Object key, Object value) {
-    log.trace("set cache item. region={}, key={}",
-              region, key);
+    set(region, key, value, expiryInSeconds);
+  }
 
-    RClusteredMap<Object, Object> cache = getCache(region);
-    //TODO(jontejj): Removed because of CROSSSLOT issues redisson PRO is working on such a structure for 2017
-    //if (timeout > 0L) {
-    //  cache.fastPut(key, value, timeout, unit);
-    //} else {
+  public void set(final String region, final Object key, Object value, final long timeoutInSeconds) {
+    set(region, key, value, timeoutInSeconds, TimeUnit.SECONDS);
+  }
+
+  public void set(final String region, final Object key, Object value, final long timeout, final TimeUnit unit) {
+    log.trace("set cache item. region={}, key={}, timeout={}, unit={}",
+              region, key, timeout, unit);
+
+    RMapCache<Object, Object> cache = getCache(region);
+    if (timeout > 0L) {
+      cache.fastPut(key, value, timeout, unit);
+    } else {
       cache.fastPut(key, value);
-    //}
+    }
   }
 
   public void expire(final String region) {
@@ -134,13 +155,13 @@ public class RedisClient {
     redisson.shutdown();
   }
 
-  private final ConcurrentMap<String, RClusteredMap<Object, Object>> caches = new ConcurrentHashMap<String, RClusteredMap<Object, Object>>();
+  private final ConcurrentMap<String, RMapCache<Object, Object>> caches = new ConcurrentHashMap<String, RMapCache<Object, Object>>();
 
-  private RClusteredMap<Object, Object> getCache(final String region) {
-    RClusteredMap<Object, Object> cache = caches.get(region);
+  private RMapCache<Object, Object> getCache(final String region) {
+    RMapCache<Object, Object> cache = caches.get(region);
     if (cache == null) {
-      cache = redisson.getClusteredMap(region);
-      RClusteredMap<Object, Object> concurrent = caches.putIfAbsent(region, cache);
+      cache = redisson.getMapCache(region);
+      RMapCache<Object, Object> concurrent = caches.putIfAbsent(region, cache);
       if (concurrent != null) {
         cache = concurrent;
       }

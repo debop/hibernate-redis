@@ -60,5 +60,9 @@ public class HibernateRedisConfigTest {
     String redissonConf = props.getProperty("redisson-config");
     assertThat(redissonConf).isNotEmpty();
 
+    // default expiry
+    int defaultExpiry = RedisCacheUtil.getExpiryInSeconds("xx");
+    log.debug("defaultExpiry={}", defaultExpiry);
+    assertThat(defaultExpiry).isEqualTo(RedisCacheUtil.getDefaultExpiryInSeconds());
   }
 }

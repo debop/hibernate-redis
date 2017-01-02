@@ -34,6 +34,8 @@ public final class RedisCacheUtil {
 
   public static final String FILE_URL_PREFIX = "file:";
   public static final String RESOURCE_URL_PREFIX = "classpath:";
+  public static final String EXPIRY_PROPERTY_PREFIX = "redis.expiryInSeconds";
+  public static final int DEFAULT_EXPIRY_IN_SECONDS = 120;
 
   public static final String REDISSON_CONFIG = "redisson-config";
   public static final String DEFAULT_REDISSON_CONFIG_PATH = "classpath:conf/redisson.yaml";
@@ -41,7 +43,13 @@ public final class RedisCacheUtil {
 
   private static final Properties cacheProperties = new Properties();
 
+  private static int defaultExpiryInSeconds = DEFAULT_EXPIRY_IN_SECONDS;
+
   private RedisCacheUtil() { }
+
+  public static int getDefaultExpiryInSeconds() {
+    return defaultExpiryInSeconds;
+  }
 
   /**
    * Load hibernate-redis.properties
@@ -58,6 +66,8 @@ public final class RedisCacheUtil {
       log.debug("Loading cache properties... path={}", cachePropsPath);
       is = getFileInputStream(cachePropsPath);
       cacheProperties.load(is);
+      loadDefaultExpiry();
+
     } catch (Exception e) {
       log.warn("Fail to load cache properties. path={}", cachePropsPath, e);
     } finally {
@@ -91,12 +101,44 @@ public final class RedisCacheUtil {
   }
 
   /**
+   * Load default expiry (seconds)
+   */
+  private static void loadDefaultExpiry() {
+    try {
+      defaultExpiryInSeconds = Integer.parseInt(getProperty(EXPIRY_PROPERTY_PREFIX + ".default", String.valueOf(DEFAULT_EXPIRY_IN_SECONDS)));
+    } catch (Exception ignored) {
+      defaultExpiryInSeconds = DEFAULT_EXPIRY_IN_SECONDS;
+    }
+  }
+
+  /**
    * Get Redisson configuration file path (redisson.yaml)
    *
    * @return Redisson configuration yaml file path
    */
   public static String getRedissonConfigPath() {
     return cacheProperties.getProperty(REDISSON_CONFIG, DEFAULT_REDISSON_CONFIG_PATH);
+  }
+
+
+  /**
+   * get expiry timeout (seconds) by region name.
+   *
+   * @param region region name
+   * @return expiry (seconds)
+   */
+  public static int getExpiryInSeconds(final String region) {
+    try {
+      String key = EXPIRY_PROPERTY_PREFIX + "." + region;
+      String value = getProperty(key, String.valueOf(defaultExpiryInSeconds));
+
+      log.trace("load expiry property. region={}, expiryInSeconds={}", key, value);
+
+      return Integer.parseInt(value);
+    } catch (Exception e) {
+      log.warn("Fail to get expiryInSeconds in region={}", region, e);
+      return defaultExpiryInSeconds;
+    }
   }
 
   /**

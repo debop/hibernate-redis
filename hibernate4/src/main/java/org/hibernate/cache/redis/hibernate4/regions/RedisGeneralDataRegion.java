@@ -54,7 +54,7 @@ public abstract class RedisGeneralDataRegion extends RedisDataRegion implements 
   @Override
   public void put(Object key, Object value) {
     try {
-      redis.set(getName(), key, value);
+      redis.set(getName(), key, value, getExpiryInSeconds());
     } catch (Exception e) {
       log.warn("Fail to put cache item... key=" + key, e);
     }
