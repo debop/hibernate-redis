@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. Sunghyouk Bae <sunghyouk.bae@gmail.com>
+ * Copyright (c) 2017. Sunghyouk Bae <sunghyouk.bae@gmail.com>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,12 +51,12 @@ public class ReadWriteRedisEntityRegionAccessStrategy
                                  EntityPersister persister,
                                  SessionFactoryImplementor factory,
                                  String tenantIdentifier) {
-    return DefaultCacheKeysFactory.createEntityKey(id, persister, factory, tenantIdentifier);
+    return DefaultCacheKeysFactory.INSTANCE.createEntityKey(id, persister, factory, tenantIdentifier);
   }
 
   @Override
   public Object getCacheKeyId(Object cacheKey) {
-    return DefaultCacheKeysFactory.getEntityId(cacheKey);
+    return DefaultCacheKeysFactory.INSTANCE.getEntityId(cacheKey);
   }
 
   @Override

@@ -6,15 +6,14 @@ singleServerConfig:
   pingTimeout: 1000
   connectTimeout: 1000
   timeout: 1000
-  retryAttempts: 1
+  retryAttempts: 3
   retryInterval: 1000
   reconnectionTimeout: 3000
-  failedAttempts: 1
+  failedAttempts: 3
   password: null
   subscriptionsPerConnection: 5
   clientName: null
-  address:
-  - "//127.0.0.1:6379"
+  address: "redis://127.0.0.1:6379"
   subscriptionConnectionMinimumIdleSize: 1
   subscriptionConnectionPoolSize: 25
   connectionMinimumIdleSize: 5
@@ -23,7 +22,6 @@ singleServerConfig:
   dnsMonitoring: false
   dnsMonitoringInterval: 5000
 threads: 0
-# Codec
 codec: !<org.redisson.codec.SnappyCodec> {}
 useLinuxNativeEpoll: false
 eventLoopGroup: null

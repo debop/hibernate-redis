@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. Sunghyouk Bae <sunghyouk.bae@gmail.com>
+ * Copyright (c) 2017. Sunghyouk Bae <sunghyouk.bae@gmail.com>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -66,12 +66,12 @@ public class TransactionalRedisNaturalIdRegionAccessStrategy
   public Object generateCacheKey(Object[] naturalIdValues,
                                  EntityPersister persister,
                                  SharedSessionContractImplementor session) {
-    return DefaultCacheKeysFactory.createNaturalIdKey(naturalIdValues, persister, session);
+    return DefaultCacheKeysFactory.INSTANCE.createNaturalIdKey(naturalIdValues, persister, session);
   }
 
   @Override
   public Object[] getNaturalIdValues(Object cacheKey) {
-    return DefaultCacheKeysFactory.getNaturalIdValues(cacheKey);
+    return DefaultCacheKeysFactory.INSTANCE.getNaturalIdValues(cacheKey);
   }
 
   @Override
