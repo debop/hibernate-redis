@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2017. Sunghyouk Bae <sunghyouk.bae@gmail.com>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package org.hibernate.stresser.persistence.config;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -16,7 +32,6 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -27,83 +42,83 @@ import java.util.concurrent.TimeUnit;
 @EnableTransactionManagement
 public class PersistenceContext {
 
-    @Autowired
-    private DatabaseConfig databaseConfig;
+  @Autowired
+  private DatabaseConfig databaseConfig;
 
-    @Bean
-    public DataSource dataSource() {
-        HikariConfig config = new HikariConfig();
-        if (databaseConfig.getMinimumIdle() > 0) {
-            config.setMinimumIdle(databaseConfig.getMinimumIdle());
-        }
-        config.setMaximumPoolSize(databaseConfig.getMaximumPoolSize());
-        config.setIdleTimeout(TimeUnit.SECONDS.toMillis(databaseConfig.getIdleTimeout()));
-        config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(databaseConfig.getConnectionTimeout()));
-        config.setDriverClassName(databaseConfig.getDriver());
-        config.setJdbcUrl(databaseConfig.getUrl());
-        config.addDataSourceProperty("user", databaseConfig.getUser());
-        config.addDataSourceProperty("password", databaseConfig.getPassword());
-        config.addDataSourceProperty("cachePrepStmts", true);
-        config.addDataSourceProperty("prepStmtCacheSize", 250);
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
-        config.addDataSourceProperty("useServerPrepStmts", true);
-        config.addDataSourceProperty("rewriteBatchedStatements", true);
-
-        return new HikariDataSource(config); // fastPathPool ftw
+  @Bean
+  public DataSource dataSource() {
+    HikariConfig config = new HikariConfig();
+    if (databaseConfig.getMinimumIdle() > 0) {
+      config.setMinimumIdle(databaseConfig.getMinimumIdle());
     }
+    config.setMaximumPoolSize(databaseConfig.getMaximumPoolSize());
+    config.setIdleTimeout(TimeUnit.SECONDS.toMillis(databaseConfig.getIdleTimeout()));
+    config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(databaseConfig.getConnectionTimeout()));
+    config.setDriverClassName(databaseConfig.getDriver());
+    config.setJdbcUrl(databaseConfig.getUrl());
+    config.addDataSourceProperty("user", databaseConfig.getUser());
+    config.addDataSourceProperty("password", databaseConfig.getPassword());
+    config.addDataSourceProperty("cachePrepStmts", true);
+    config.addDataSourceProperty("prepStmtCacheSize", 250);
+    config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
+    config.addDataSourceProperty("useServerPrepStmts", true);
+    config.addDataSourceProperty("rewriteBatchedStatements", true);
 
-    @Bean
-    @DependsOn(value = "redisClientProvider")
-    public SessionFactory sessionFactory() {
-        LocalSessionFactoryBuilder builder = new LocalSessionFactoryBuilder(dataSource());
-        builder.scanPackages("org.hibernate.stresser.persistence").addProperties(getHibernateProperties()); // .setNamingStrategy(new ImprovedNamingStrategy())
-        return builder.buildSessionFactory();
-    }
+    return new HikariDataSource(config); // fastPathPool ftw
+  }
 
-    private Properties getHibernateProperties() {
-        Properties properties = new Properties();
+  @Bean
+  @DependsOn(value = "redisClientProvider")
+  public SessionFactory sessionFactory() {
+    LocalSessionFactoryBuilder builder = new LocalSessionFactoryBuilder(dataSource());
+    builder.scanPackages("org.hibernate.stresser.persistence").addProperties(getHibernateProperties()); // .setNamingStrategy(new ImprovedNamingStrategy())
+    return builder.buildSessionFactory();
+  }
 
-        // Configures the used database dialect. This allows Hibernate to create SQL that is optimized for the used database.
-        properties.put(Environment.DIALECT, MySQL5InnoDBDialect.class.getName());
+  private Properties getHibernateProperties() {
+    Properties properties = new Properties();
 
-        // Specifies the action that is invoked to the database when the Hibernate SessionFactory is created or closed.
-        properties.put(Environment.HBM2DDL_AUTO, "create");
+    // Configures the used database dialect. This allows Hibernate to create SQL that is optimized for the used database.
+    properties.put(Environment.DIALECT, MySQL5InnoDBDialect.class.getName());
 
-        // Hibernate statistics for JMX.
-        properties.put(Environment.GENERATE_STATISTICS, true);
+    // Specifies the action that is invoked to the database when the Hibernate SessionFactory is created or closed.
+    properties.put(Environment.HBM2DDL_AUTO, "create");
 
-        properties.put(Environment.USE_SECOND_LEVEL_CACHE, true);
-        properties.put(Environment.USE_QUERY_CACHE, true);
-        properties.put(Environment.USE_MINIMAL_PUTS, true);
-        properties.put(Environment.STATEMENT_BATCH_SIZE, 200);
+    // Hibernate statistics for JMX.
+    properties.put(Environment.GENERATE_STATISTICS, true);
 
-        // Configure second level cache.
-        properties.put(Environment.CACHE_REGION_FACTORY, RedisRegionFactory.class.getName());
-        properties.put(Environment.USE_STRUCTURED_CACHE, false);
-        properties.put(Environment.CACHE_REGION_PREFIX, "hibernate");
-        properties.put(Environment.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties");
+    properties.put(Environment.USE_SECOND_LEVEL_CACHE, true);
+    properties.put(Environment.USE_QUERY_CACHE, true);
+    properties.put(Environment.USE_MINIMAL_PUTS, true);
+    properties.put(Environment.STATEMENT_BATCH_SIZE, 200);
 
-        // If the value of this property is true, Hibernate writes all SQL statements to the console.
-        properties.put(Environment.SHOW_SQL, false);
+    // Configure second level cache.
+    properties.put(Environment.CACHE_REGION_FACTORY, RedisRegionFactory.class.getName());
+    properties.put(Environment.USE_STRUCTURED_CACHE, false);
+    properties.put(Environment.CACHE_REGION_PREFIX, "hibernate");
+    properties.put(Environment.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties");
 
-        // If the value of this property is true, Hibernate will use pretty-print when it writes SQL to the console.
-        properties.put(Environment.FORMAT_SQL, false);
+    // If the value of this property is true, Hibernate writes all SQL statements to the console.
+    properties.put(Environment.SHOW_SQL, false);
 
-        return properties;
-    }
+    // If the value of this property is true, Hibernate will use pretty-print when it writes SQL to the console.
+    properties.put(Environment.FORMAT_SQL, false);
 
-    @Bean
-    public HibernateTransactionManager transactionManager() {
-        return new HibernateTransactionManager(sessionFactory());
-    }
+    return properties;
+  }
 
-    @Bean
-    public HibernateExceptionTranslator hibernateExceptionTranslator() {
-        return new HibernateExceptionTranslator();
-    }
+  @Bean
+  public HibernateTransactionManager transactionManager() {
+    return new HibernateTransactionManager(sessionFactory());
+  }
 
-    @Bean
-    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
-        return new PersistenceExceptionTranslationPostProcessor();
-    }
+  @Bean
+  public HibernateExceptionTranslator hibernateExceptionTranslator() {
+    return new HibernateExceptionTranslator();
+  }
+
+  @Bean
+  public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+    return new PersistenceExceptionTranslationPostProcessor();
+  }
 }
