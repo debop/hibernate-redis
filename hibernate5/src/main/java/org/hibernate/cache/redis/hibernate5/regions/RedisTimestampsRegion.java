@@ -18,6 +18,7 @@ package org.hibernate.cache.redis.hibernate5.regions;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.redis.client.RedisClient;
+import org.hibernate.cache.redis.hibernate5.ConfigurableRedisRegionFactory;
 import org.hibernate.cache.redis.hibernate5.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.spi.TimestampsRegion;
 
@@ -33,9 +34,9 @@ import java.util.Properties;
 public class RedisTimestampsRegion extends RedisGeneralDataRegion implements TimestampsRegion {
 
   public RedisTimestampsRegion(RedisAccessStrategyFactory accessStrategyFactory,
-                               RedisClient redis,
+                               RedisClient redis, ConfigurableRedisRegionFactory configurableRedisRegionFactory,
                                String regionName,
                                Properties props) {
-    super(accessStrategyFactory, redis, regionName, props);
+    super(accessStrategyFactory, redis, configurableRedisRegionFactory, regionName, props);
   }
 }

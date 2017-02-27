@@ -1,5 +1,6 @@
-hibernate-redis  [![Build Status](https://travis-ci.org/debop/hibernate-redis.png)](https://travis-ci.org/debop/hibernate-redis)
+hibernate-redis  
 ===============
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.debop/hibernate-redis.svg)](https://repo1.maven.org/maven2/com/github/debop/hibernate-redis) [![Build Status](https://travis-ci.org/debop/hibernate-redis.png)](https://travis-ci.org/debop/hibernate-redis)
 
 [hibernate][1] (4.x, 5.1.x, 5.2.x) 2nd level cache provider using redis server 3.x. with [Redisson][2] 2.3.x
 
@@ -7,11 +8,11 @@ Reduce cache size by [Redisson][2] SnappyCodec (see [snappy-java][snappy], [Fast
 
 ### Note
 
+From 2.2.1 onwards Hibernate region naming (hibernate.cache.region_prefix) has been simplified to "hibernate".
+
 hibernate-core 5.2.x based on Java 8, use hibernate-redis 2.2.0 or higher
 
 Region factory for hibernate 5.2.x is hibernate.redis.cache.hibernate52.SingletonRedisRegionFactory
-
-
 
 ### Setup
 
@@ -23,30 +24,11 @@ add dependency
 <dependency>
     <groupId>com.github.debop</groupId>
     <artifactId>hibernate-redis</artifactId>
-    <version>2.2.0</version>
+    <version>2.3.2</version>
 </dependency>
 ```
 
-add repository (until added to central Maven)
-```xml
-<repositories>
-    <repository>
-        <id>jcenter</id>
-        <url>http://jcenter.bintray.com</url>
-    </repository>
-</repositories>
-```
-or
-```xml
-<repositories>
-    <repository>
-        <id>debop-releases-bintray</id>
-        <url>http://dl.bintray.com/debop/maven</url>
-    </repository>
-</repositories>
-```
-
-optional dependencies.
+Optional dependencies.
 Redisson support various codec (serializer, compression). you can choose other codec. see Redisson Help.
 
 ```xml
@@ -67,9 +49,9 @@ Redisson support various codec (serializer, compression). you can choose other c
 </dependency>
 ```
 
-##### setup hibernate configuration
+##### Setup hibernate configuration
 
-setup hibernate configuration (Note package name for hibernate 4 / hibernate 5 / hibernate52)
+Setup hibernate configuration (Note package name for hibernate 4 / hibernate 5 / hibernate52)
 
 ```java
 // Secondary Cache
@@ -78,20 +60,20 @@ props.put(Environment.USE_QUERY_CACHE, true);
 props.put(Environment.CACHE_REGION_FACTORY, org.hibernate.cache.redis.hibernate52.SingletonRedisRegionFactory.class.getName());
 props.put(Environment.CACHE_REGION_PREFIX, "hibernate");
 
-// optional setting for second level cache statistics
+// Optional setting for second level cache statistics
 props.setProperty(Environment.GENERATE_STATISTICS, "true");
 props.setProperty(Environment.USE_STRUCTURED_CACHE, "true");
 
-// for Hibernate 4
+// Hibernate 4
 props.setProperty(Environment.TRANSACTION_STRATEGY, JdbcTransactionFactory.class.getName());
 
-// configuration for Redis that used by hibernate
+// Configuration for Redis that used by hibernate
 props.put(Environment.CACHE_PROVIDER_CONFIG, "hibernate-redis.properties");
 ```
 
 also same configuration for using Spring Framework or [Spring Data JPA][4]
 
-### redis settings for hibernate-redis
+### Redis settings for hibernate-redis
 
 sample for hibernate-redis.properties
 
@@ -106,11 +88,11 @@ sample for hibernate-redis.properties
  redisson-config=conf/redisson.yaml
 
  # Cache Expiry settings
- # 'hibernate5' is second cache prefix
+ # 'hibernate' is second cache prefix
  # 'common', 'account' is actual region name
  redis.expiryInSeconds.default=120
- redis.expiryInSeconds.hibernate5.common=0
- redis.expiryInSeconds.hibernate5.account=1200
+ redis.expiryInSeconds.hibernate.common=0
+ redis.expiryInSeconds.hibernate.account=1200
 ```
 
 sample for Redisson configuration (see [more samples](https://github.com/mrniko/redisson/wiki/2.-Configuration) )
@@ -131,8 +113,7 @@ singleServerConfig:
   password: null
   subscriptionsPerConnection: 5
   clientName: null
-  address:
-  - "//127.0.0.1:6379"
+  address: "redis://127.0.0.1:6379"
   subscriptionConnectionMinimumIdleSize: 1
   subscriptionConnectionPoolSize: 25
   connectionMinimumIdleSize: 5
@@ -164,8 +145,8 @@ spring.jpa.properties.hibernate.generate_statistics=true
 spring.jpa.properties.redisson-config=classpath:conf/redisson.yaml
 
 spring.jpa.properties.redis.expiryInSeconds.default=120
-spring.jpa.properties.redis.expiryInSeconds.hibernate5.common=0
-spring.jpa.properties.redis.expiryInSeconds.hibernate5.account=1200
+spring.jpa.properties.redis.expiryInSeconds.hibernate.common=0
+spring.jpa.properties.redis.expiryInSeconds.hibernate.account=1200
 ```
 
 ### Setup hibernate entity to use cache

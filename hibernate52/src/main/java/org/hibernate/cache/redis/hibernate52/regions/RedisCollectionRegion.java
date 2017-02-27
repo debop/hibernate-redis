@@ -19,6 +19,7 @@ package org.hibernate.cache.redis.hibernate52.regions;
 import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.client.RedisClient;
+import org.hibernate.cache.redis.hibernate52.ConfigurableRedisRegionFactory;
 import org.hibernate.cache.redis.hibernate52.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.spi.CacheDataDescription;
 import org.hibernate.cache.spi.CollectionRegion;
@@ -37,12 +38,12 @@ public class RedisCollectionRegion extends RedisTransactionalDataRegion implemen
 
 
   public RedisCollectionRegion(RedisAccessStrategyFactory accessStrategyFactory,
-                               RedisClient redis,
+                               RedisClient redis, ConfigurableRedisRegionFactory configurableRedisRegionFactory,
                                String regionName,
                                SessionFactoryOptions options,
                                CacheDataDescription metadata,
                                Properties props) {
-    super(accessStrategyFactory, redis, regionName, options, metadata, props);
+    super(accessStrategyFactory, redis, configurableRedisRegionFactory, regionName, options, metadata, props);
   }
 
   @Override

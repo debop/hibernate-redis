@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. Sunghyouk Bae <sunghyouk.bae@gmail.com>
+ * Copyright (c) 2017. Sunghyouk Bae <sunghyouk.bae@gmail.com>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,6 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.hibernate.cache.redis.jpa;
@@ -42,7 +43,7 @@ import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
 
 @Slf4j
 @Configuration
-@EnableTransactionManagement
+@EnableTransactionManagement(proxyTargetClass = true)
 @EnableJpaRepositories(basePackageClasses = {EventRepository.class})
 public class JpaCacheConfiguration {
 
@@ -77,7 +78,7 @@ public class JpaCacheConfiguration {
     props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
     props.put(Environment.USE_QUERY_CACHE, true);
     props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
-    props.put(Environment.CACHE_REGION_PREFIX, "hibernate5");
+    props.put(Environment.CACHE_REGION_PREFIX, "hibernate");
     props.put(Environment.CACHE_PROVIDER_CONFIG, "conf/hibernate-redis.properties");
 
     props.setProperty(Environment.GENERATE_STATISTICS, "true");

@@ -19,17 +19,18 @@ package org.hibernate.cache.redis.hibernate4;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.client.RedisClient;
+import org.hibernate.cache.redis.client.RedisClientFactory;
 import org.hibernate.cache.redis.hibernate4.regions.*;
 import org.hibernate.cache.redis.hibernate4.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.redis.hibernate4.strategy.RedisAccessStrategyFactoryImpl;
+import org.hibernate.cache.redis.util.CacheTimestamper;
+import org.hibernate.cache.redis.util.RedisCacheUtil;
 import org.hibernate.cache.redis.util.Timestamper;
 import org.hibernate.cache.spi.*;
 import org.hibernate.cache.spi.access.AccessType;
 import org.hibernate.cfg.Settings;
 
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * Abstract Hibernate 4.x 2nd Redis Region Factory
@@ -38,7 +39,7 @@ import java.util.Set;
  * @since 13. 4. 5. 오후 11:59
  */
 @Slf4j
-abstract class AbstractRedisRegionFactory implements RegionFactory {
+abstract class AbstractRedisRegionFactory implements RegionFactory, ConfigurableRedisRegionFactory {
 
   /**
    * Settings object for the Hibernate persistence unit.
@@ -50,17 +51,22 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
   protected final RedisAccessStrategyFactory accessStrategyFactory = new RedisAccessStrategyFactoryImpl();
 
   /**
-   * Region names
-   */
-  protected final Set<String> regionNames = new HashSet<String>();
-
-  /**
    * RedisClient instance.
    */
   protected RedisClient redis = null;
+  protected CacheTimestamper cacheTimestamper = null;
 
   protected AbstractRedisRegionFactory(Properties props) {
     this.props = props;
+  }
+
+  @Override
+  public CacheTimestamper createCacheTimestamper(RedisClient redisClient, String cacheKey) {
+    return new Timestamper();
+  }
+
+  public RedisClient createRedisClient() {
+    return RedisClientFactory.createRedisClient(RedisCacheUtil.getRedissonConfigPath());
   }
 
   /**
@@ -76,6 +82,7 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
    *
    * @return true, optimize for minimal puts
    */
+  @Override
   public boolean isMinimalPutsEnabledByDefault() {
     return true;
   }
@@ -86,66 +93,66 @@ abstract class AbstractRedisRegionFactory implements RegionFactory {
   }
 
   public long nextTimestamp() {
-    return Timestamper.next();
+    return cacheTimestamper.next();
   }
 
   @Override
   public EntityRegion buildEntityRegion(String regionName,
                                         Properties properties,
                                         CacheDataDescription metadata) throws CacheException {
-    regionNames.add(regionName);
     return new RedisEntityRegion(accessStrategyFactory,
-                                 redis,
-                                 regionName,
-                                 settings,
-                                 metadata,
-                                 properties);
+            redis,
+            this,
+            regionName,
+            settings,
+            metadata,
+            properties);
   }
 
   @Override
   public NaturalIdRegion buildNaturalIdRegion(String regionName,
                                               Properties properties,
                                               CacheDataDescription metadata) throws CacheException {
-    regionNames.add(regionName);
     return new RedisNaturalIdRegion(accessStrategyFactory,
-                                    redis,
-                                    regionName,
-                                    settings,
-                                    metadata,
-                                    properties);
+            redis,
+            this,
+            regionName,
+            settings,
+            metadata,
+            properties);
   }
 
   @Override
   public CollectionRegion buildCollectionRegion(String regionName,
                                                 Properties properties,
                                                 CacheDataDescription metadata) throws CacheException {
-    regionNames.add(regionName);
     return new RedisCollectionRegion(accessStrategyFactory,
-                                     redis,
-                                     regionName,
-                                     settings,
-                                     metadata,
-                                     properties);
+            redis,
+            this,
+            regionName,
+            settings,
+            metadata,
+            properties);
   }
 
   @Override
   public QueryResultsRegion buildQueryResultsRegion(String regionName,
                                                     Properties properties) throws CacheException {
-    regionNames.add(regionName);
     return new RedisQueryResultsRegion(accessStrategyFactory,
-                                       redis,
-                                       regionName,
-                                       properties);
+            redis,
+            this,
+            regionName,
+            properties);
   }
 
   @Override
   public TimestampsRegion buildTimestampsRegion(String regionName,
                                                 Properties properties) throws CacheException {
-    // regionNames.add(regionName);
     return new RedisTimestampsRegion(accessStrategyFactory,
-                                     redis,
-                                     regionName,
-                                     properties);
+            redis,
+            this,
+            regionName,
+            properties);
   }
 
   private static final long serialVersionUID = -5441842686229077097L;

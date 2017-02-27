@@ -11,6 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package org.hibernate.cache.redis.jpa;
@@ -18,7 +19,7 @@ package org.hibernate.cache.redis.jpa;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.cache.redis.hibernate52.SingletonRedisRegionFactory;
+import org.hibernate.cache.redis.hibernate52.CustomRedisRegionFactory;
 import org.hibernate.cache.redis.jpa.models.Account;
 import org.hibernate.cache.redis.jpa.repository.EventRepository;
 import org.hibernate.cfg.Environment;
@@ -76,8 +77,8 @@ public class JpaCacheConfiguration {
     // Secondary Cache
     props.put(Environment.USE_SECOND_LEVEL_CACHE, true);
     props.put(Environment.USE_QUERY_CACHE, true);
-    props.put(Environment.CACHE_REGION_FACTORY, SingletonRedisRegionFactory.class.getName());
-    props.put(Environment.CACHE_REGION_PREFIX, "hibernate52");
+    props.put(Environment.CACHE_REGION_FACTORY, CustomRedisRegionFactory.class.getName());
+    props.put(Environment.CACHE_REGION_PREFIX, "hibernate");
     props.put(Environment.CACHE_PROVIDER_CONFIG, "conf/hibernate-redis.properties");
 
     props.setProperty(Environment.GENERATE_STATISTICS, "true");

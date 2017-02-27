@@ -36,3 +36,4 @@ generatedTest
 !maven
 !maven-wrapper.jar
 !maven-wrapper.properties
+/hibernate-redis/dependency-reduced-pom.xml

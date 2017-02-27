@@ -18,7 +18,6 @@ package org.hibernate.cache.redis.hibernate4;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
-import org.hibernate.cache.redis.client.RedisClientFactory;
 import org.hibernate.cache.redis.util.RedisCacheUtil;
 import org.hibernate.cfg.Settings;
 
@@ -48,7 +47,8 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
     try {
       if (redis == null) {
         RedisCacheUtil.loadCacheProperties(properties);
-        this.redis = RedisClientFactory.createRedisClient(RedisCacheUtil.getRedissonConfigPath());
+        this.redis = createRedisClient();
+        this.cacheTimestamper = createCacheTimestamper(redis, SingletonRedisRegionFactory.class.getName());
       }
       ReferenceCount.incrementAndGet();
       log.info("Started SingletonRedisRegionFactory");
@@ -65,6 +65,7 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
       try {
         redis.shutdown();
         redis = null;
+        cacheTimestamper = null;
         log.info("stopped SingletonRedisRegionFactory");
       } catch (Exception ignored) {
         log.warn("Error occurred in stopping hibernate-redis client.", ignored);

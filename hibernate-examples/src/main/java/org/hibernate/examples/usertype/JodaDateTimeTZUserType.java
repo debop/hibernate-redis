@@ -1,8 +1,24 @@
+/*
+ * Copyright (c) 2016. Sunghyouk Bae <sunghyouk.bae@gmail.com>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 package org.hibernate.examples.usertype;
 
 import com.google.common.base.Objects;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.usertype.UserType;
 import org.joda.time.DateTime;
@@ -52,9 +68,9 @@ public class JodaDateTimeTZUserType implements UserType {
   }
 
   @Override
-  public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException {
-    Timestamp timestamp = (Timestamp) StandardBasicTypes.TIMESTAMP.nullSafeGet(rs, names[0], session, owner);
-    String timezone = (String) StandardBasicTypes.STRING.nullSafeGet(rs, names[1], session, owner);
+  public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor sharedSessionContractImplementor, Object owner) throws HibernateException, SQLException {
+    Timestamp timestamp = (Timestamp) StandardBasicTypes.TIMESTAMP.nullSafeGet(rs, names[0], sharedSessionContractImplementor, owner);
+    String timezone = (String) StandardBasicTypes.STRING.nullSafeGet(rs, names[1], sharedSessionContractImplementor, owner);
 
     if (timestamp == null || timezone == null)
       return null;
@@ -63,14 +79,14 @@ public class JodaDateTimeTZUserType implements UserType {
   }
 
   @Override
-  public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException {
+  public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor sharedSessionContractImplementor) throws HibernateException, SQLException {
     DateTime dt = (DateTime) value;
     if (dt == null) {
-      StandardBasicTypes.TIMESTAMP.nullSafeSet(st, null, index, session);
-      StandardBasicTypes.STRING.nullSafeSet(st, null, index + 1, session);
+      StandardBasicTypes.TIMESTAMP.nullSafeSet(st, null, index, sharedSessionContractImplementor);
+      StandardBasicTypes.STRING.nullSafeSet(st, null, index + 1, sharedSessionContractImplementor);
     } else {
-      StandardBasicTypes.TIMESTAMP.nullSafeSet(st, dt.toDate(), index, session);
-      StandardBasicTypes.STRING.nullSafeSet(st, dt.getZone().getID(), index + 1, session);
+      StandardBasicTypes.TIMESTAMP.nullSafeSet(st, dt.toDate(), index, sharedSessionContractImplementor);
+      StandardBasicTypes.STRING.nullSafeSet(st, dt.getZone().getID(), index + 1, sharedSessionContractImplementor);
     }
   }
 
