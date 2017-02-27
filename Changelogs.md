@@ -1,6 +1,11 @@
 # Hibernate-Redis Change logs
 
 
+### 2.4.0
+
+- [update] change hibernate latest version
+- [update] change redisson latest version (3.2.4)
+
 ### 2.3.0
 
 - [update] change build tool from gradle to maven. 
