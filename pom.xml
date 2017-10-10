@@ -125,6 +125,13 @@
         <version>3.5.4</version>
       </dependency>
 
+      <!-- Lattuce -->
+      <dependency>
+        <groupId>io.lettuce</groupId>
+        <artifactId>lettuce-core</artifactId>
+        <version>5.0.0.RELEASE</version>
+      </dependency>
+
       <dependency>
         <groupId>de.ruedigermoeller</groupId>
         <artifactId>fst</artifactId>
