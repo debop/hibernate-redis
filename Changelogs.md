@@ -1,5 +1,11 @@
 # Hibernate-Redis Change logs
 
+### 2.5.0
+
+- [update] Bump up hibernate versions 5.2.11.Final, 5.1.10.Final, 4.3.11.Final
+- [update] Bump up Redisson version 3.5.4
+- [update] Bump up FST (2.53), snappy-java (1.1.4)
+
 
 ### 2.4.0
 

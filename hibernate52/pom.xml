@@ -29,7 +29,7 @@
   <description>hibernate-redis for hibernate 5.2.x or higher</description>
 
   <properties>
-    <hibernate.version>5.2.8.Final</hibernate.version>
+    <hibernate.version>5.2.11.Final</hibernate.version>
   </properties>
 
   <dependencies>
