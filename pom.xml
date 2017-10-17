@@ -102,7 +102,7 @@
 
     <springframework.version>4.3.11.RELEASE</springframework.version>
     <spring.boot.version>1.5.7.RELEASE</spring.boot.version>
-    <spring.data.jpa.version>1.11.7.RELEASE</spring.data.jpa.version>
+    <spring.data.jpa.version>1.11.8.RELEASE</spring.data.jpa.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
