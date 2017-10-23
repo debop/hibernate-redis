@@ -16,6 +16,7 @@
 
 package org.hibernate.cache.redis.hibernate5;
 
+import static java.util.Objects.nonNull;
 import lombok.NonNull;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
@@ -51,9 +52,13 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
     this.options = options;
     try {
       if (redis == null) {
-        RedisCacheUtil.loadCacheProperties(properties);
-        this.redis = createRedisClient();
-        this.cacheTimestamper = createCacheTimestamper(redis, SingletonRedisRegionFactory.class.getName());
+         if ( nonNull(RedisCacheUtil.getRedissonJavaConfig())){
+		this.redis = createRedisClient(RedisCacheUtil.getRedissonJavaConfig()); 
+	}else{
+		RedisCacheUtil.loadCacheProperties(properties);
+		this.redis = createRedisClient();
+	}
+         this.cacheTimestamper = createCacheTimestamper(redis, SingletonRedisRegionFactory.class.getName());
       }
       referenceCount.incrementAndGet();
       log.info("RedisRegionFactory is started.");

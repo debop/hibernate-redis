@@ -30,6 +30,7 @@ import org.hibernate.cache.redis.util.RedisCacheUtil;
 import org.hibernate.cache.redis.util.Timestamper;
 import org.hibernate.cache.spi.*;
 import org.hibernate.cache.spi.access.AccessType;
+import org.redisson.config.Config;
 
 import java.util.Properties;
 
@@ -59,6 +60,10 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory, Confi
   @Override
   public CacheTimestamper createCacheTimestamper(RedisClient redisClient, String cacheKey) {
     return new Timestamper();
+  }
+
+  public RedisClient createRedisClient(Config config) {
+    return RedisClientFactory.createRedisClient(config);
   }
 
   public RedisClient createRedisClient() {
