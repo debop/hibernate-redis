@@ -18,6 +18,7 @@ package org.hibernate.cache.redis.hibernate5.strategy;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.boot.spi.SessionFactoryOptions;
+import org.hibernate.cache.internal.DefaultCacheKeysFactory;
 import org.hibernate.cache.redis.hibernate5.regions.RedisEntityRegion;
 import org.hibernate.cache.spi.EntityRegion;
 import org.hibernate.cache.spi.access.EntityRegionAccessStrategy;
@@ -47,7 +48,7 @@ public class ReadOnlyRedisEntityRegionAccessStrategy
                                  EntityPersister persister,
                                  SessionFactoryImplementor factory,
                                  String tenantIdentifier) {
-    return null;
+    return DefaultCacheKeysFactory.staticCreateEntityKey(id, persister, factory, tenantIdentifier);
   }
 
   @Override

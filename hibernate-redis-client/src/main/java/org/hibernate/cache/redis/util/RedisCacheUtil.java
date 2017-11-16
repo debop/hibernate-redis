@@ -62,8 +62,9 @@ public final class RedisCacheUtil {
   public static Properties loadCacheProperties(final Properties props) {
     cacheProperties.putAll(props);
 
-    Config config = (Config) props.get("hibernate.cache.redis-config");
+    Config config = (Config) props.get(REDISSON_JAVA_CONFIG);
     if (config != null){
+        log.debug("Loading redisson config from Java Object in system properties");
         cacheProperties.put(REDISSON_JAVA_CONFIG, config);
     }else {
 
