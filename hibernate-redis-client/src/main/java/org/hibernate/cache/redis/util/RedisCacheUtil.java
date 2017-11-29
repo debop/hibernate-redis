@@ -17,6 +17,7 @@
 package org.hibernate.cache.redis.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.config.Config;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,6 +39,7 @@ public final class RedisCacheUtil {
   public static final int DEFAULT_EXPIRY_IN_SECONDS = 120;
 
   public static final String REDISSON_CONFIG = "redisson-config";
+  public static final String REDISSON_JAVA_CONFIG = "redisson-java-config";
   public static final String DEFAULT_REDISSON_CONFIG_PATH = "classpath:conf/redisson.yaml";
 
 
@@ -59,23 +61,33 @@ public final class RedisCacheUtil {
    */
   public static Properties loadCacheProperties(final Properties props) {
     cacheProperties.putAll(props);
-    String cachePropsPath = props.getProperty("hibernate.cache.provider_configuration_file_resource_path",
-                                              RESOURCE_URL_PREFIX + "conf/hibernate-redis.properties");
-    InputStream is = null;
-    try {
-      log.debug("Loading cache properties... path={}", cachePropsPath);
-      is = getFileInputStream(cachePropsPath);
-      cacheProperties.load(is);
-      loadDefaultExpiry();
 
-    } catch (Exception e) {
-      log.warn("Fail to load cache properties. path={}", cachePropsPath, e);
-    } finally {
-      if (is != null) {
-        try { is.close(); } catch (Exception ignored) {}
+    Config config = (Config) props.get(REDISSON_JAVA_CONFIG);
+    if (config != null){
+        log.debug("Loading redisson config from Java Object in system properties");
+        cacheProperties.put(REDISSON_JAVA_CONFIG, config);
+    }else {
+
+      String cachePropsPath = props.getProperty("hibernate.cache.provider_configuration_file_resource_path",
+              RESOURCE_URL_PREFIX + "conf/hibernate-redis.properties");
+      InputStream is = null;
+      try {
+        log.debug("Loading cache properties... path={}", cachePropsPath);
+        is = getFileInputStream(cachePropsPath);
+        cacheProperties.load(is);
+        loadDefaultExpiry();
+
+      } catch (Exception e) {
+        log.warn("Fail to load cache properties. path={}", cachePropsPath, e);
+      } finally {
+        if (is != null) {
+          try {
+            is.close();
+          } catch (Exception ignored) {
+          }
+        }
       }
     }
-
     return cacheProperties;
   }
 
@@ -162,4 +174,11 @@ public final class RedisCacheUtil {
     }
   }
 
+  /**
+   * get property value of REDISSION_JAVA_CONFIG
+   * @return property value
+   */
+  public static Config getRedissonJavaConfig() {
+    return (Config) cacheProperties.get(REDISSON_JAVA_CONFIG);
+  }
 }

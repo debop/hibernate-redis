@@ -16,6 +16,7 @@
 
 package org.hibernate.cache.redis.hibernate4;
 
+import static java.util.Objects.nonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.util.RedisCacheUtil;
@@ -47,8 +48,10 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
     try {
       if (redis == null) {
         RedisCacheUtil.loadCacheProperties(properties);
-        this.redis = createRedisClient();
-        this.cacheTimestamper = createCacheTimestamper(redis, SingletonRedisRegionFactory.class.getName());
+        this.redis = (nonNull(RedisCacheUtil.getRedissonJavaConfig())) ?
+                createRedisClient(RedisCacheUtil.getRedissonJavaConfig()) :
+                createRedisClient();
+	    this.cacheTimestamper = createCacheTimestamper(redis, SingletonRedisRegionFactory.class.getName());
       }
       ReferenceCount.incrementAndGet();
       log.info("Started SingletonRedisRegionFactory");
