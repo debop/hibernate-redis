@@ -46,12 +46,12 @@ public class ReadWriteRedisCollectionRegionAccessStrategy
                                  CollectionPersister persister,
                                  SessionFactoryImplementor factory,
                                  String tenantIdentifier) {
-    return DefaultCacheKeysFactory.staticCreateCollectionKey(id, persister, factory, tenantIdentifier);
+    return DefaultCacheKeysFactory.INSTANCE.createCollectionKey(id, persister, factory, tenantIdentifier);
   }
 
   @Override
   public Object getCacheKeyId(Object cacheKey) {
-    return DefaultCacheKeysFactory.staticGetCollectionId(cacheKey);
+    return DefaultCacheKeysFactory.INSTANCE.getCollectionId(cacheKey);
   }
 
   @Override
