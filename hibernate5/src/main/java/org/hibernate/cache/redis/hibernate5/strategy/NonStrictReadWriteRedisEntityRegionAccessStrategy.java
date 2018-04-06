@@ -47,12 +47,12 @@ public class NonStrictReadWriteRedisEntityRegionAccessStrategy
                                  EntityPersister persister,
                                  SessionFactoryImplementor factory,
                                  String tenantIdentifier) {
-    return DefaultCacheKeysFactory.staticCreateEntityKey(id, persister, factory, tenantIdentifier);
+    return DefaultCacheKeysFactory.INSTANCE.createEntityKey(id, persister, factory, tenantIdentifier);
   }
 
   @Override
   public Object getCacheKeyId(Object cacheKey) {
-    return DefaultCacheKeysFactory.staticGetEntityId(cacheKey);
+    return DefaultCacheKeysFactory.INSTANCE.getEntityId(cacheKey);
   }
 
   @Override
