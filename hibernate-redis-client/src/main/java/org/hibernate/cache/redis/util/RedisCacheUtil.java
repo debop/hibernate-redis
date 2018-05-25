@@ -75,11 +75,11 @@ public final class RedisCacheUtil {
         log.debug("Loading cache properties... path={}", cachePropsPath);
         is = getFileInputStream(cachePropsPath);
         cacheProperties.load(is);
-        loadDefaultExpiry();
 
       } catch (Exception e) {
         log.warn("Fail to load cache properties. path={}", cachePropsPath, e);
       } finally {
+        loadDefaultExpiry();
         if (is != null) {
           try {
             is.close();
