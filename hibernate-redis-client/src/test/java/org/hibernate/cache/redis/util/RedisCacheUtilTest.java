@@ -64,6 +64,27 @@ public class RedisCacheUtilTest {
   }
 
   @Test
+  public void testGetExpiryInSecondsWithPassedPropertiesWithoutProviderConfigurationFileResourcePath() {
+
+    Properties props = new Properties();
+    //the following line is used to simulate there is no configuration on props and there is no default file on "conf/hibernate-redis.properties".
+    //after that we will get is = null on RedisCacheUtil.
+    props.setProperty("hibernate.cache.provider_configuration_file_resource_path", "-");
+    props.setProperty("redis.expiryInSeconds.default", "240");
+    props.setProperty("redis.expiryInSeconds.hibernate.common", "0");
+    props.setProperty("redis.expiryInSeconds.hibernate.account", "2400");
+
+    RedisCacheUtil.loadCacheProperties(props);
+
+    //as real use case, don't call get default expiry
+    //assertThat(RedisCacheUtil.getExpiryInSeconds("default")).isEqualTo(240);
+    assertThat(RedisCacheUtil.getExpiryInSeconds("hibernate.common")).isEqualTo(0);
+    assertThat(RedisCacheUtil.getExpiryInSeconds("hibernate.account")).isEqualTo(2400);
+    //try to load the setting from default
+    assertThat(RedisCacheUtil.getExpiryInSeconds("hibernate.not_defined")).isEqualTo(240);
+  }
+
+  @Test
   public void testGetRedissonConfig() {
 
     Properties props = new Properties();
