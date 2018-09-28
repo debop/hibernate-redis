@@ -51,12 +51,12 @@ public class ReadWriteRedisEntityRegionAccessStrategy
                                  EntityPersister persister,
                                  SessionFactoryImplementor factory,
                                  String tenantIdentifier) {
-    return DefaultCacheKeysFactory.INSTANCE.createEntityKey(id, persister, factory, tenantIdentifier);
+    return region.getCacheKeysFactory().createEntityKey(id, persister, factory, tenantIdentifier);
   }
 
   @Override
   public Object getCacheKeyId(Object cacheKey) {
-    return DefaultCacheKeysFactory.INSTANCE.getEntityId(cacheKey);
+    return region.getCacheKeysFactory().getEntityId(cacheKey);
   }
 
   @Override

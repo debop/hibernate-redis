@@ -49,12 +49,12 @@ public class NonStrictReadWriteRedisCollectionRegionAccessStrategy
                                  CollectionPersister persister,
                                  SessionFactoryImplementor factory,
                                  String tenantIdentifier) {
-    return DefaultCacheKeysFactory.INSTANCE.createCollectionKey(id, persister, factory, tenantIdentifier);
+    return region.getKeysFactory().createCollectionKey(id, persister, factory, tenantIdentifier);
   }
 
   @Override
   public Object getCacheKeyId(Object cacheKey) {
-    return DefaultCacheKeysFactory.INSTANCE.getCollectionId(cacheKey);
+    return region.getKeysFactory().getCollectionId(cacheKey);
   }
 
   @Override

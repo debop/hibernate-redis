@@ -26,7 +26,7 @@ import org.hibernate.cache.spi.CacheDataDescription;
 import org.hibernate.cache.spi.NaturalIdRegion;
 import org.hibernate.cache.spi.access.AccessType;
 import org.hibernate.cache.spi.access.NaturalIdRegionAccessStrategy;
-
+import org.hibernate.cache.spi.CacheKeysFactory;
 import java.util.Properties;
 
 /**
@@ -43,8 +43,8 @@ public class RedisNaturalIdRegion extends RedisTransactionalDataRegion implement
                               String regionName,
                               SessionFactoryOptions options,
                               CacheDataDescription metadata,
-                              Properties props) {
-    super(accessStrategyFactory, redis, configurableRedisRegionFactory, regionName, options, metadata, props);
+                              Properties props, CacheKeysFactory cacheKeysFactory) {
+    super(accessStrategyFactory, redis, configurableRedisRegionFactory, regionName, options, metadata, props, cacheKeysFactory);
   }
 
   @Override

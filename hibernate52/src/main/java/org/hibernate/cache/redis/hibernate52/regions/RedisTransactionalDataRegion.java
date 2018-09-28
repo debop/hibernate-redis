@@ -25,7 +25,7 @@ import org.hibernate.cache.redis.hibernate52.ConfigurableRedisRegionFactory;
 import org.hibernate.cache.redis.hibernate52.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.spi.CacheDataDescription;
 import org.hibernate.cache.spi.TransactionalDataRegion;
-
+import org.hibernate.cache.spi.CacheKeysFactory;
 import java.util.Properties;
 
 /**
@@ -51,8 +51,8 @@ public class RedisTransactionalDataRegion extends RedisDataRegion implements Tra
                                       String regionName,
                                       SessionFactoryOptions options,
                                       CacheDataDescription metadata,
-                                      Properties props) {
-    super(accessStrategyFactory, redis, configurableRedisRegionFactory, regionName, props);
+                                      Properties props, CacheKeysFactory cacheKeysFactory) {
+    super(accessStrategyFactory, redis, configurableRedisRegionFactory, regionName, props, cacheKeysFactory);
 
     this.options = options;
     this.metadata = metadata;

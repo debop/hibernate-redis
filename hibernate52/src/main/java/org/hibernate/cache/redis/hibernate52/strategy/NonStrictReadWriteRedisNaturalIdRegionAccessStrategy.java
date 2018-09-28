@@ -48,12 +48,12 @@ public class NonStrictReadWriteRedisNaturalIdRegionAccessStrategy
   public Object generateCacheKey(Object[] naturalIdValues,
                                  EntityPersister persister,
                                  SharedSessionContractImplementor session) {
-    return DefaultCacheKeysFactory.INSTANCE.createNaturalIdKey(naturalIdValues, persister, session);
+    return region.getCacheKeysFactory().createNaturalIdKey(naturalIdValues, persister, session);
   }
 
   @Override
   public Object[] getNaturalIdValues(Object cacheKey) {
-    return DefaultCacheKeysFactory.INSTANCE.getNaturalIdValues(cacheKey);
+    return region.getCacheKeysFactory().getNaturalIdValues(cacheKey);
   }
 
   @Override

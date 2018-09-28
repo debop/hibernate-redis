@@ -54,12 +54,12 @@ public class TransactionalRedisEntityRegionAccessStrategy
                                  EntityPersister persister,
                                  SessionFactoryImplementor factory,
                                  String tenantIdentifier) {
-    return DefaultCacheKeysFactory.INSTANCE.createEntityKey(id, persister, factory, tenantIdentifier);
+    return region.getKeysFactory().createEntityKey(id, persister, factory, tenantIdentifier);
   }
 
   @Override
   public Object getCacheKeyId(Object cacheKey) {
-    return DefaultCacheKeysFactory.INSTANCE.getEntityId(cacheKey);
+    return region.getKeysFactory().getEntityId(cacheKey);
   }
 
   @Override

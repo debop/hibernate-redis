@@ -30,6 +30,9 @@ import org.hibernate.cache.redis.util.RedisCacheUtil;
 import org.hibernate.cache.redis.util.Timestamper;
 import org.hibernate.cache.spi.*;
 import org.hibernate.cache.spi.access.AccessType;
+import org.hibernate.cache.internal.DefaultCacheKeysFactory;
+import org.hibernate.cache.internal.SimpleCacheKeysFactory;
+import org.hibernate.cfg.Environment;
 import org.redisson.config.Config;
 
 import java.util.Properties;
@@ -53,8 +56,38 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory, Confi
   protected volatile RedisClient redis = null;
   protected CacheTimestamper cacheTimestamper = null;
 
+  protected CacheKeysFactory cacheKeysFactory = null;
+
   protected AbstractRedisRegionFactory(@NonNull Properties props) {
     this.props = props;
+    prepareCacheKeysFactory(props);
+  }
+
+  /**
+   * Query properties for {@link Environment#CACHE_KEYS_FACTORY} definition in order to
+   * support more than {@link DefaultCacheKeysFactory}. If no definition is found or there
+   * is a problem with the implementation class {@link DefaultCacheKeysFactory#INSTANCE} is
+   * set as default.
+   *
+   * @param props Properties where to search and set for the custom implementation of CacheKeysFactory
+   */
+  private void prepareCacheKeysFactory(Properties props) {
+    String factoryName = props.getProperty(Environment.CACHE_KEYS_FACTORY, null);
+    if (factoryName == null || "default".equalsIgnoreCase(factoryName)){
+      cacheKeysFactory = DefaultCacheKeysFactory.INSTANCE;
+      return;
+    }
+    if ("simple".equalsIgnoreCase(factoryName)){
+      cacheKeysFactory = SimpleCacheKeysFactory.INSTANCE;
+    }
+    try {
+      Class<?> clazz = Class.forName(factoryName);
+      if (CacheKeysFactory.class.isAssignableFrom(CacheKeysFactory.class)){
+        cacheKeysFactory = (CacheKeysFactory) clazz.newInstance();
+      }
+    }catch (Throwable t){
+      log.warn("CacheKeysFactory class {} can't be instantiated. Defaulting to DefaultCacheKeysFactory", factoryName);
+    }
   }
 
   @Override
@@ -94,7 +127,7 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory, Confi
                                  regionName,
                                  options,
                                  metadata,
-                                 properties);
+                                 properties, cacheKeysFactory);
   }
 
   @Override
@@ -107,7 +140,7 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory, Confi
                                     regionName,
                                     options,
                                     metadata,
-                                    properties);
+                                    properties, cacheKeysFactory);
   }
 
   @Override
@@ -120,7 +153,7 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory, Confi
                                      regionName,
                                      options,
                                      metadata,
-                                     properties);
+                                     properties, cacheKeysFactory);
   }
 
   @Override
@@ -130,7 +163,7 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory, Confi
                                        redis,
                                        this,
                                        regionName,
-                                       properties);
+                                       properties, cacheKeysFactory);
   }
 
   @Override
@@ -140,7 +173,7 @@ public abstract class AbstractRedisRegionFactory implements RegionFactory, Confi
                                      redis,
                                      this,
                                      regionName,
-                                     properties);
+                                     properties, cacheKeysFactory);
   }
 
   private static final long serialVersionUID = 4244155609146774509L;
