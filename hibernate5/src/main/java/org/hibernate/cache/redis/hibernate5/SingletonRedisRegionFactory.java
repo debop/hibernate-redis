@@ -16,16 +16,14 @@
 
 package org.hibernate.cache.redis.hibernate5;
 
-import static java.util.Objects.nonNull;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.NonNull;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.util.RedisCacheUtil;
-
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Singleton Hibernate 5.x 2nd Cache Region Factory using Redis
@@ -53,10 +51,11 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
     try {
       if (redis == null) {
         RedisCacheUtil.loadCacheProperties(properties);
-        this.redis = (nonNull(RedisCacheUtil.getRedissonJavaConfig())) ?
-		     createRedisClient(RedisCacheUtil.getRedissonJavaConfig()) :
-		     createRedisClient();
-         this.cacheTimestamper = createCacheTimestamper(redis, SingletonRedisRegionFactory.class.getName());
+        this.redis = (RedisCacheUtil.getRedissonJavaConfig() != null) ?
+            createRedisClient(RedisCacheUtil.getRedissonJavaConfig()) :
+            createRedisClient();
+        this.cacheTimestamper = createCacheTimestamper(redis, SingletonRedisRegionFactory.class.getName());
+        RedisCacheUtil.saveRedisSingletonClient(redis);
       }
       referenceCount.incrementAndGet();
       log.info("RedisRegionFactory is started.");

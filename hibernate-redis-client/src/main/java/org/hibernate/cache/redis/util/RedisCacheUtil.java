@@ -16,7 +16,10 @@
 
 package org.hibernate.cache.redis.util;
 
+import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.cache.redis.client.RedisClient;
+import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 
 import java.io.File;
@@ -41,7 +44,7 @@ public final class RedisCacheUtil {
   public static final String REDISSON_CONFIG = "redisson-config";
   public static final String REDISSON_JAVA_CONFIG = "redisson-java-config";
   public static final String DEFAULT_REDISSON_CONFIG_PATH = "classpath:conf/redisson.yaml";
-
+  public static final String REDIS_SINGLETON_CLIENT = "hibernate-redis-singleton-client";
 
   private static final Properties cacheProperties = new Properties();
 
@@ -53,6 +56,8 @@ public final class RedisCacheUtil {
     return defaultExpiryInSeconds;
   }
 
+  private static AtomicReference<RedissonClient> redissonClient = null;
+
   /**
    * Load hibernate-redis.properties
    *
@@ -63,11 +68,10 @@ public final class RedisCacheUtil {
     cacheProperties.putAll(props);
 
     Config config = (Config) props.get(REDISSON_JAVA_CONFIG);
-    if (config != null){
-        log.debug("Loading redisson config from Java Object in system properties");
-        cacheProperties.put(REDISSON_JAVA_CONFIG, config);
-    }else {
-
+    if (config != null) {
+      log.debug("Loading redisson config from Java Object in system properties");
+      cacheProperties.put(REDISSON_JAVA_CONFIG, config);
+    }
       String cachePropsPath = props.getProperty("hibernate.cache.provider_configuration_file_resource_path",
               RESOURCE_URL_PREFIX + "conf/hibernate-redis.properties");
       InputStream is = null;
@@ -87,7 +91,6 @@ public final class RedisCacheUtil {
           }
         }
       }
-    }
     return cacheProperties;
   }
 
@@ -181,4 +184,13 @@ public final class RedisCacheUtil {
   public static Config getRedissonJavaConfig() {
     return (Config) cacheProperties.get(REDISSON_JAVA_CONFIG);
   }
+
+  public static void saveRedisSingletonClient(RedisClient client) {
+    cacheProperties.put(REDIS_SINGLETON_CLIENT, client);
+  }
+
+  public static RedisClient getRedisSingletonClient() {
+    return (RedisClient) cacheProperties.getOrDefault(REDIS_SINGLETON_CLIENT, null);
+  }
+
 }

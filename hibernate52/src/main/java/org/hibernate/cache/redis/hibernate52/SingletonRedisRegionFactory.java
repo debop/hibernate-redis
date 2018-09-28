@@ -56,7 +56,8 @@ public class SingletonRedisRegionFactory extends AbstractRedisRegionFactory {
         this.redis = (nonNull(RedisCacheUtil.getRedissonJavaConfig())) ?
                 createRedisClient(RedisCacheUtil.getRedissonJavaConfig()) :
                 createRedisClient();
-	    this.cacheTimestamper = createCacheTimestamper(redis, SingletonRedisRegionFactory.class.getName());
+	      this.cacheTimestamper = createCacheTimestamper(redis, SingletonRedisRegionFactory.class.getName());
+	      RedisCacheUtil.saveRedisSingletonClient(this.redis);
       }
       if (redis != null)
         referenceCount.incrementAndGet();
