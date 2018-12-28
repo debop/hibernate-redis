@@ -23,6 +23,7 @@ import org.hibernate.cache.redis.client.RedisClient;
 import org.hibernate.cache.redis.hibernate5.ConfigurableRedisRegionFactory;
 import org.hibernate.cache.redis.hibernate5.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.spi.CacheDataDescription;
+import org.hibernate.cache.spi.CacheKeysFactory;
 import org.hibernate.cache.spi.EntityRegion;
 import org.hibernate.cache.spi.access.AccessType;
 import org.hibernate.cache.spi.access.EntityRegionAccessStrategy;
@@ -43,8 +44,8 @@ public class RedisEntityRegion extends RedisTransactionalDataRegion implements E
                            String regionName,
                            SessionFactoryOptions options,
                            CacheDataDescription metadata,
-                           Properties props) {
-    super(accessStrategyFactory, redis, configurableRedisRegionFactory, regionName, options, metadata, props);
+                           Properties props, CacheKeysFactory cacheKeysFactory) {
+    super(accessStrategyFactory, redis, configurableRedisRegionFactory, regionName, options, metadata, props, cacheKeysFactory);
   }
 
   @Override

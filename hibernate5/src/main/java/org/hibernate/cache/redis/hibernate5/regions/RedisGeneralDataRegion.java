@@ -21,6 +21,7 @@ import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.client.RedisClient;
 import org.hibernate.cache.redis.hibernate5.ConfigurableRedisRegionFactory;
 import org.hibernate.cache.redis.hibernate5.strategy.RedisAccessStrategyFactory;
+import org.hibernate.cache.spi.CacheKeysFactory;
 import org.hibernate.cache.spi.GeneralDataRegion;
 import org.hibernate.engine.spi.SessionImplementor;
 
@@ -38,8 +39,9 @@ public class RedisGeneralDataRegion extends RedisDataRegion implements GeneralDa
   public RedisGeneralDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
                                 RedisClient redis, ConfigurableRedisRegionFactory configurableRedisRegionFactory,
                                 String regionName,
-                                Properties props) {
-    super(accessStrategyFactory, redis, configurableRedisRegionFactory, regionName, props);
+                                Properties props, CacheKeysFactory cacheKeysFactory) {
+    super(accessStrategyFactory, redis, configurableRedisRegionFactory, regionName, props,
+        cacheKeysFactory);
   }
 
   @Override

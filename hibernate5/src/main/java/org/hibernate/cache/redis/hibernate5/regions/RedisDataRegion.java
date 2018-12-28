@@ -24,6 +24,7 @@ import org.hibernate.cache.redis.hibernate5.ConfigurableRedisRegionFactory;
 import org.hibernate.cache.redis.hibernate5.strategy.RedisAccessStrategyFactory;
 import org.hibernate.cache.redis.util.CacheTimestamper;
 import org.hibernate.cache.redis.util.RedisCacheUtil;
+import org.hibernate.cache.spi.CacheKeysFactory;
 import org.hibernate.cache.spi.Region;
 
 import java.util.Map;
@@ -57,16 +58,19 @@ public abstract class RedisDataRegion implements Region {
   @Getter
   private final int expiryInSeconds;  // seconds
 
+  @Getter
+  private final CacheKeysFactory keysFactory;
+
   public RedisDataRegion(RedisAccessStrategyFactory accessStrategyFactory,
-                         RedisClient redis, ConfigurableRedisRegionFactory configurableRedisRegionFactory,
-                         String regionName,
-                         Properties props) {
+      RedisClient redis, ConfigurableRedisRegionFactory configurableRedisRegionFactory,
+      String regionName,
+      Properties props, CacheKeysFactory cacheKeysFactory) {
     this.accessStrategyFactory = accessStrategyFactory;
     this.redis = redis;
     this.regionName = regionName;
     this.cacheTimestamper = configurableRedisRegionFactory.createCacheTimestamper(redis, regionName);
-
     this.expiryInSeconds = RedisCacheUtil.getExpiryInSeconds(this.regionName);
+    this.keysFactory = cacheKeysFactory;
     log.debug("redis region={}, expiryInSeconds={}", regionName, expiryInSeconds);
   }
 

@@ -46,12 +46,12 @@ public class ReadOnlyRedisNaturalIdRegionAccessStrategy
   public Object generateCacheKey(Object[] naturalIdValues,
                                  EntityPersister persister,
                                  SessionImplementor session) {
-    return DefaultCacheKeysFactory.INSTANCE.createNaturalIdKey(naturalIdValues, persister, session);
+    return region.getKeysFactory().createNaturalIdKey(naturalIdValues, persister, session);
   }
 
   @Override
   public Object[] getNaturalIdValues(Object cacheKey) {
-    return DefaultCacheKeysFactory.INSTANCE.getNaturalIdValues(cacheKey);
+    return region.getKeysFactory().getNaturalIdValues(cacheKey);
   }
 
   @Override
