@@ -43,7 +43,9 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
     try {
       if (redis == null) {
         RedisCacheUtil.loadCacheProperties(properties);
-        this.redis = createRedisClient();
+        this.redis = (RedisCacheUtil.getRedissonJavaConfig() != null) ?
+            createRedisClient(RedisCacheUtil.getRedissonJavaConfig()) :
+            createRedisClient();
         this.cacheTimestamper = createCacheTimestamper(redis, RedisRegionFactory.class.getName());
       }
       log.info("RedisRegionFactory is started");

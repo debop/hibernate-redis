@@ -16,13 +16,12 @@
 
 package org.hibernate.cache.redis.hibernate5;
 
+import java.util.Properties;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.cache.CacheException;
 import org.hibernate.cache.redis.util.RedisCacheUtil;
-
-import java.util.Properties;
 
 /**
  * Hibernate 5.x 2nd Cache Region Factory using Redis
@@ -45,7 +44,9 @@ public class RedisRegionFactory extends AbstractRedisRegionFactory {
     try {
       if (redis == null) {
         RedisCacheUtil.loadCacheProperties(props);
-        this.redis = createRedisClient();
+        this.redis = (RedisCacheUtil.getRedissonJavaConfig() != null) ?
+            createRedisClient(RedisCacheUtil.getRedissonJavaConfig()) :
+            createRedisClient();
         this.cacheTimestamper = createCacheTimestamper(redis, RedisRegionFactory.class.getName());
       }
       log.info("RedisRegionFactory is started.");
