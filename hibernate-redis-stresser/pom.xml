@@ -29,7 +29,7 @@
 
   <properties>
     <spring.version>4.3.6.RELEASE</spring.version>
-    <log4j.version>2.7</log4j.version>
+    <log4j.version>2.16.0</log4j.version>
   </properties>
 
   <dependencies>
