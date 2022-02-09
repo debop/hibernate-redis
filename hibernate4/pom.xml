@@ -29,7 +29,7 @@
   <description>hibernate-redis for hibernate 4</description>
 
   <properties>
-    <hibernate.version>4.3.11.Final</hibernate.version>
+    <hibernate.version>5.4.24.Final</hibernate.version>
   </properties>
 
   <dependencies>
