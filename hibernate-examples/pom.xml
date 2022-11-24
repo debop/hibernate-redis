@@ -29,7 +29,7 @@
   <description>hibernate examples for hibernate 5</description>
 
   <properties>
-    <hibernate.version>5.2.11.Final</hibernate.version>
+    <hibernate.version>5.3.20.Final</hibernate.version>
     <querydsl.version>4.1.4</querydsl.version>
   </properties>
 
