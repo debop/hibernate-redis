@@ -28,7 +28,7 @@
   <artifactId>hibernate-redis-stresser</artifactId>
 
   <properties>
-    <spring.version>4.3.6.RELEASE</spring.version>
+    <spring.version>5.2.20.RELEASE</spring.version>
     <log4j.version>2.7</log4j.version>
   </properties>
 
